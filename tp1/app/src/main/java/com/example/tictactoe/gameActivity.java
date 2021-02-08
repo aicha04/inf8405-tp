@@ -3,6 +3,8 @@ package com.example.tictactoe;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,20 +28,22 @@ public class gameActivity extends AppCompatActivity {
     }
     void setUpGrid() {
         int size = this.gameInfos.getGridSize();
+        textViews = new TextView[size][size];
 
         gridLayout = findViewById(R.id.grid);
         gridLayout.setOrientation(GridLayout.HORIZONTAL);
-
         gridLayout.setColumnCount(size);
         gridLayout.setRowCount(size);
 
-        textViews = new TextView[size][size];
+
+        Typeface face = ResourcesCompat.getFont(this, R.font.baloo);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
 
                 textViews[i][j] = new TextView(gameActivity.this);
-                textViews[i][j].setText("X");
-                textViews[i][j].setTextSize(35);
+                textViews[i][j].setText("O");
+                textViews[i][j].setTypeface(face);
+                textViews[i][j].setTextSize(60);
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
                 textViews[i][j].setPadding(60, 60, 60, 60);
                 textViews[i][j].setGravity(Gravity.CENTER);
@@ -51,12 +55,11 @@ public class gameActivity extends AppCompatActivity {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 TextView textView = textViews[i][j];
-                //Typeface face = Typeface.createFromAsset(getAssets(), "fonts/baloo.xml");
+
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         textView.setText(gameInfos.getCurrentPlayer());
-                        //textView.setTypeface(face);
                         TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
                         if (gameInfos.getCurrentPlayer() == Player.player1.getValue()) {
@@ -67,7 +70,6 @@ public class gameActivity extends AppCompatActivity {
                             textView.setTextColor(getResources().getColor(R.color.palette_blue));
                             currentPlayerView.setText("Player 2 turn");
                         }
-
                         gameInfos.setNextPlayer();
                     }
                 });
