@@ -10,7 +10,7 @@
         android:id="@+id/reset_button"
         android:layout_width="165dp"
         android:layout_height="75dp"
-        android:layout_marginEnd="36dp"
+        android:layout_marginEnd="44dp"
         android:layout_marginBottom="48dp"
         android:background="@drawable/rounded"
         android:fontFamily="@font/baloo"
@@ -24,34 +24,39 @@
 
     <View
         android:id="@+id/view"
-        android:layout_width="410dp"
-        android:layout_height="83dp"
+        android:layout_width="418dp"
+        android:layout_height="85dp"
         android:layout_marginTop="48dp"
         android:background="@color/palette_blue"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="-3dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/menu_button"
         android:layout_width="173dp"
         android:layout_height="47dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="20dp"
         android:fontFamily="@font/baloo"
-        android:text="Player2: 100"
+        android:text="Player 2: 100"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        tools:layout_editor_absoluteX="234dp"
-        tools:layout_editor_absoluteY="70dp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="178dp"
-        android:layout_height="43dp"
+        android:layout_width="163dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="28dp"
         android:fontFamily="@font/baloo"
-        android:text="Player1: 100"
+        android:text="Player 1: 100"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        tools:layout_editor_absoluteX="3dp"
-        tools:layout_editor_absoluteY="70dp" />
+        android:textSize="25sp"
+        app:layout_constraintEnd_toStartOf="@+id/menu_button"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button"
@@ -71,18 +76,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="193dp"
         android:layout_height="44dp"
-        android:layout_marginTop="536dp"
+        android:layout_marginBottom="28dp"
         android:fontFamily="@font/baloo"
         android:text="Player 1 turn"
         android:textColor="@color/palette_dark_blue"
         android:textSize="30sp"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/reset_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <GridLayout
+        android:id="@+id/grid"
+        android:layout_width="375dp"
+        android:layout_height="375dp"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view" />
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        app:layout_constraintVertical_bias="0.941">
+    </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
