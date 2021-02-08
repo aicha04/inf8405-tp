@@ -78,7 +78,7 @@
 
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/currentPlayerView"
         android:layout_width="193dp"
         android:layout_height="44dp"
         android:layout_marginBottom="28dp"
@@ -94,14 +94,14 @@
 
     <GridLayout
         android:id="@+id/grid"
-        android:layout_width="375dp"
-        android:layout_height="375dp"
+        android:layout_width="352dp"
+        android:layout_height="352dp"
         android:layout_marginBottom="64dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintBottom_toTopOf="@+id/currentPlayerView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        app:layout_constraintVertical_bias="0.941">
-    </GridLayout>
+        app:layout_constraintVertical_bias="1.0"></GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

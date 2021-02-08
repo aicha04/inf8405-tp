@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -28,7 +29,6 @@ public class gameActivity extends AppCompatActivity {
         gridLayout  = findViewById(R.id.grid);
         gridLayout.setOrientation(GridLayout.HORIZONTAL);
 
-        System.out.println( "Size" +size);
         gridLayout.setColumnCount(size);
         gridLayout.setRowCount(size);
 
@@ -37,14 +37,16 @@ public class gameActivity extends AppCompatActivity {
             for(int j = 0; j < size; j++) {
                 int pos = i*size + j;
                 textViews[pos] = new TextView(gameActivity.this);
-                textViews[pos].setText("[" +i + "]" +"[" + j + "]" );
-                textViews[pos].setTextSize(25);
+                textViews[pos].setText("[" + i + "]" +"[" + j + "]" );
+                textViews[pos].setTextSize(35);
+                textViews[pos].set
                 textViews[pos].setTextColor(getResources().getColor(R.color.palette_pink));
-                textViews[pos].setPadding(50, 25, 10, 25);
+                textViews[pos].setPadding(40, 40, 40, 40);
+                textViews[pos].setGravity(Gravity.CENTER);
                 gridLayout.addView(textViews[pos]);
+
             }
         }
-        //setContentView(gridLayout);
 
         for (int i=0; i < textViews.length; i++){
             TextView textView =  textViews[i];
@@ -52,6 +54,17 @@ public class gameActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     textView.setText(gameInfos.getCurrentPlayer());
+                    TextView  currentPlayerView = findViewById(R.id.currentPlayerView);
+                    String currentPlayer = "";
+                    if(gameInfos.getCurrentPlayer() == Player.player1.getValue()) {
+                        textView.setTextColor(getResources().getColor(R.color.palette_pink));
+                        currentPlayer = "Player 1 turn";
+                    }
+                    else {
+                        textView.setTextColor(getResources().getColor(R.color.palette_blue));
+                        currentPlayer ="Player 2 turn";
+                    }
+                    currentPlayerView.setText(currentPlayer);
                     gameInfos.setNextPlayer();
                 }
             });
