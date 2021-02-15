@@ -5,10 +5,11 @@ import android.widget.TextView;
 public class GameInfoSingleton {
 
     public static final GameInfoSingleton instance = new GameInfoSingleton();
-    private GridSize gridSize = GridSize.THREE;
-    private Player currentPlayer = Player.player1;
 
-    public static GameInfoSingleton getInstance() {
+    private GridSize gridSize = GridSize.FIVE;
+    private Player currentPlayer = Player.player1 ;
+    public static GameInfoSingleton getInstance(){
+
         return instance;
     }
 
