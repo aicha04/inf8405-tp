@@ -17,6 +17,8 @@ public class gameActivity extends AppCompatActivity {
     GridLayout gridLayout;
     TextView[][] textViews;
     GameInfoSingleton gameInfos;
+    boolean isGameWon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class gameActivity extends AppCompatActivity {
             for (int j = 0; j < size; j++) {
 
                 textViews[i][j] = new TextView(gameActivity.this);
-                textViews[i][j].setText("O");
+                textViews[i][j].setText("Q"); // TODO: Je mets Q pour suivre le nombre de O mit par le player 2
                 textViews[i][j].setTypeface(face);
                 textViews[i][j].setTextSize(60);
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
@@ -51,28 +53,41 @@ public class gameActivity extends AppCompatActivity {
                 gridLayout.addView(textViews[i][j]);
             }
         }
-
+        isGameWon = false;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 TextView textView = textViews[i][j];
-
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        textView.setText(gameInfos.getCurrentPlayer());
-                        TextView currentPlayerView = findViewById(R.id.currentPlayerView);
+                        if (!isGameWon) {
+                            textView.setText(gameInfos.getCurrentPlayer());
+                            TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
-                        if (gameInfos.getCurrentPlayer() == Player.player1.getValue()) {
-                            textView.setTextColor(getResources().getColor(R.color.palette_pink));
-                            currentPlayerView.setText("Player 1 turn");
+                            if (gameInfos.getCurrentPlayer().equals(Player.player1.getValue())) {
+                                textView.setTextColor(getResources().getColor(R.color.palette_pink));
+                                currentPlayerView.setText("Player 1 turn");
 
-                        } else {
-                            textView.setTextColor(getResources().getColor(R.color.palette_blue));
-                            currentPlayerView.setText("Player 2 turn");
+                            } else {
+                                textView.setTextColor(getResources().getColor(R.color.palette_blue));
+                                currentPlayerView.setText("Player 2 turn");
+                            }
+                            gameInfos.setNextPlayer();
                         }
-                        gameInfos.setNextPlayer();
+                        else{
+                            TextView currentPlayerView = findViewById(R.id.currentPlayerView);
+                            gameInfos.setNextPlayer();
+                            String winner = null;
+                            if (gameInfos.getCurrentPlayer().equals("X"))
+                                winner = "Player 1";
+                            else
+                                winner = "Player 2";
+                            currentPlayerView.setText(winner + " wins!");
+                        }
+                        isGameWon = gameInfos.isGameWon(textViews, size);
                     }
                 });
+
             }
         }
     }
