@@ -6,8 +6,20 @@ public class GameInfoSingleton {
 
     public static final GameInfoSingleton instance = new GameInfoSingleton();
 
-    private GridSize gridSize = GridSize.FIVE;
+    private GridSize gridSize = GridSize.THREE;
     private Player currentPlayer = Player.player1 ;
+    private String winner = null;
+
+    public void setWinner(String player) {
+        if (winner == null) {
+            winner = player;
+        }
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
     public static GameInfoSingleton getInstance(){
 
         return instance;

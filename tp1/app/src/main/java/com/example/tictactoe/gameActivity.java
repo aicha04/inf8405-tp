@@ -17,19 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class gameActivity extends AppCompatActivity {
-<<<<<<< HEAD
-    GridLayout gridLayout;
-    TextView[][] textViews;
-    GameInfoSingleton gameInfos;
-    boolean isGameWon;
-=======
+
     private GridLayout gridLayout;
     private TextView[][] textViews;
     private GameInfoSingleton gameInfos;
     private String emptyGrid = "P";
     private static int GRID_PADDIND = 40;
     private static int GRID_TEXT_SIZE = 45;
->>>>>>> main
+    private boolean isGameWon;
 
 
     @Override
@@ -51,18 +46,14 @@ public class gameActivity extends AppCompatActivity {
         });
     }
 
-    void setUpTextViews(int size){
+    void setUpTextViews(int size) {
         textViews = new TextView[size][size];
 
         Typeface face = ResourcesCompat.getFont(this, R.font.baloo);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 textViews[i][j] = new TextView(gameActivity.this);
-<<<<<<< HEAD
-                textViews[i][j].setText("Q"); // TODO: Je mets Q pour suivre le nombre de O mit par le player 2
-=======
                 textViews[i][j].setText(emptyGrid);
->>>>>>> main
                 textViews[i][j].setTypeface(face);
                 textViews[i][j].setTextSize(GRID_TEXT_SIZE);
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
@@ -74,63 +65,39 @@ public class gameActivity extends AppCompatActivity {
                 setOnTextViewClickActions(textViews[i][j]);
             }
         }
-<<<<<<< HEAD
-        isGameWon = false;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                TextView textView = textViews[i][j];
-                textView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!isGameWon) {
-                            textView.setText(gameInfos.getCurrentPlayer());
-                            TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
-                            if (gameInfos.getCurrentPlayer().equals(Player.player1.getValue())) {
-                                textView.setTextColor(getResources().getColor(R.color.palette_pink));
-                                currentPlayerView.setText("Player 1 turn");
-
-                            } else {
-                                textView.setTextColor(getResources().getColor(R.color.palette_blue));
-                                currentPlayerView.setText("Player 2 turn");
-                            }
-                            gameInfos.setNextPlayer();
-                        }
-                        else{
-                            TextView currentPlayerView = findViewById(R.id.currentPlayerView);
-                            gameInfos.setNextPlayer();
-                            String winner = null;
-                            if (gameInfos.getCurrentPlayer().equals("X"))
-                                winner = "Player 1";
-                            else
-                                winner = "Player 2";
-                            currentPlayerView.setText(winner + " wins!");
-                        }
-                        isGameWon = gameInfos.isGameWon(textViews, size);
-                    }
-                });
-
-=======
     }
 
-    void setOnTextViewClickActions(TextView textView){
+    void setOnTextViewClickActions(TextView textView) {
 
         textView.setOnClickListener(view -> {
             if (textView.getText() != emptyGrid) {
-               displayToast("This position is already taken");
+                displayToast("This position is already taken");
             } else {
-                textView.setText(gameInfos.getCurrentPlayer());
-                TextView currentPlayerView = findViewById(R.id.currentPlayerView);
+                if (!isGameWon) {
+                    textView.setText(gameInfos.getCurrentPlayer());
+                    TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
-                if (gameInfos.getCurrentPlayer() == Player.player1.getValue()) {
-                    textView.setTextColor(getResources().getColor(R.color.palette_pink));
-                    currentPlayerView.setText("Player 1 turn");
+                    if (gameInfos.getCurrentPlayer() == Player.player1.getValue()) {
+                        textView.setTextColor(getResources().getColor(R.color.palette_pink));
+                        currentPlayerView.setText("Player 1 turn");
+
+                    } else {
+                        textView.setTextColor(getResources().getColor(R.color.palette_blue));
+                        currentPlayerView.setText("Player 2 turn");
+                    }
+                    gameInfos.setNextPlayer();
 
                 } else {
-                    textView.setTextColor(getResources().getColor(R.color.palette_blue));
-                    currentPlayerView.setText("Player 2 turn");
+                    TextView currentPlayerView = findViewById(R.id.currentPlayerView);
+                    gameInfos.setNextPlayer();
+                    if (gameInfos.getCurrentPlayer().equals("X"))
+                        gameInfos.setWinner("Player 1");
+                    else if (gameInfos.getCurrentPlayer().equals("O"))
+                        gameInfos.setWinner("Player 2");
+                    currentPlayerView.setText(gameInfos.getWinner() + " wins!");
                 }
-                gameInfos.setNextPlayer();
+                isGameWon = gameInfos.isGameWon(textViews, gameInfos.getGridSize());
             }
         });
     }
@@ -145,24 +112,24 @@ public class gameActivity extends AppCompatActivity {
         setUpTextViews(size);
     }
 
-    void resetGrid(){
-        for (int i=0; i< textViews.length; i++){
-            for (int j=0; j < textViews.length; j++){
+    void resetGrid() {
+        for (int i = 0; i < textViews.length; i++) {
+            for (int j = 0; j < textViews.length; j++) {
                 textViews[i][j].setText(emptyGrid);
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
->>>>>>> main
             }
         }
     }
 
-    void displayToast(String text){
+    void displayToast(String text) {
         System.out.println("Heree");
         try {
             Toast toast = Toast.makeText(getBaseContext(), text, Toast.LENGTH_SHORT);
             toast.show();
-        }catch (Exception error){
+        } catch (Exception error) {
             System.out.println(error);
         }
     }
 
 }
+
