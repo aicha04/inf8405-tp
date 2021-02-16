@@ -262,7 +262,9 @@ public class gameActivity extends AppCompatActivity {
             editor.commit();
 
         }
-        currentPlayerView.setText(winner.getName() + " wins!");
+        //currentPlayerView.setText(winner.getName() + " wins!");
+        Intent intent = new Intent(gameActivity.this, winnerActivity.class);
+        startActivity(intent);
     }
 
     void resetScore(){
