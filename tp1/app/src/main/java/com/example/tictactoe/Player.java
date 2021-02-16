@@ -1,15 +1,27 @@
 package com.example.tictactoe;
 
-public enum Player {
-    player1("X"),
-    player2("O");
+public class Player {
+    private String sign;
+    private String name;
+    private int score;
 
-    private String value;
-    Player(String value) {
-        this.value = value;
+     public Player(String sign, String name, int score){
+       this.score = score;
+       this.name = name;
+       this.sign = sign;
+   }
+
+    public int  getScore() {
+        return this.score;
+    }
+    public String  getSign() {
+        return this.sign;
+    }
+    public String  getName() {
+        return this.name;
     }
 
-    public String  getValue() {
-        return this.value;
+    public void  incrementScore(int incrementValue) {
+         this.score+=50;
     }
 }
