@@ -11,15 +11,16 @@ import android.widget.ImageView;
 
 
 public class SplashScreenActivity extends AppCompatActivity {
-    int SPLASH_SCREEN_TIME = 10;
-    private ImageView container;
+    int SPLASH_SCREEN_TIME = 4000;
+    int currentTime = 0;
+    int TIME_INTERVAL = 5000;
     private AnimationDrawable animationDrawable;
     private  MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        container = findViewById(R.id.container);
+        ImageView container = findViewById(R.id.container);
         container.setBackgroundResource(R.drawable.splash_animation);
         animationDrawable = (AnimationDrawable) container.getBackground();
 
@@ -40,7 +41,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         try{
             animationDrawable.start();
-            checkAnimationStatus(SPLASH_SCREEN_TIME, animationDrawable);
+            checkAnimationStatus(TIME_INTERVAL, animationDrawable);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -59,19 +60,18 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                if (animationDrawable.getCurrent() != animationDrawable.getFrame(animationDrawable.getNumberOfFrames() - 1))
-                    checkAnimationStatus(time, animationDrawable);
-                else {
-                    mediaPlayer.pause();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                    //create intent to start main activity
-                    Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
-                    startActivity(i);
+                currentTime += 1;
 
-                    // close this activity
-                    finish();
-                }
+                mediaPlayer.pause();
+                mediaPlayer.release();
+                mediaPlayer = null;
+                //create intent to start main activity
+                Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
+                startActivity(i);
+
+                // close this activity
+                finish();
+
             }
         }, time);
 

@@ -201,47 +201,36 @@
         android:drawable="@drawable/frame66"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame67"
+        android:drawable="@drawable/frame9"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame68"
+        android:drawable="@drawable/frame9"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame69"
+        android:drawable="@drawable/frame8"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame70"
+        android:drawable="@drawable/frame7"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame71"
+        android:drawable="@drawable/frame6"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame72"
+        android:drawable="@drawable/frame5"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame73"
+        android:drawable="@drawable/frame4"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame74"
+        android:drawable="@drawable/frame3"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame75"
+        android:drawable="@drawable/frame2"
         android:duration="50" />
     <item
-        android:drawable="@drawable/frame76"
+        android:drawable="@drawable/frame1"
         android:duration="50" />
-    <item
-        android:drawable="@drawable/frame77"
-        android:duration="50" />
-    <item
-        android:drawable="@drawable/frame78"
-        android:duration="50" />
-    <item
-        android:drawable="@drawable/frame79"
-        android:duration="50" />
-    <item
-        android:drawable="@drawable/frame80"
-        android:duration="50" />
+
 
 
 </animation-list>
