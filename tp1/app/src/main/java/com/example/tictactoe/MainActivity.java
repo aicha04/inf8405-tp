@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         Button exitButton = findViewById(R.id.exit_button);
 
         playButton.setOnClickListener(v -> {
-            Intent gameAct = new Intent(MainActivity.this, gameActivity.class);
+            Intent gameAct = new Intent(MainActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
         });
 
