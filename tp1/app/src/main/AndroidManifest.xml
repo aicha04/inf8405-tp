@@ -12,7 +12,7 @@
         <activity android:name=".winnerActivity"></activity>
         <activity android:name=".GridOptionsActivity" />
         <activity android:name=".aboutActivity" />
-        <activity android:name=".endActivity" />
+        <activity android:name=".EndActivity" />
         <activity android:name=".gameActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
