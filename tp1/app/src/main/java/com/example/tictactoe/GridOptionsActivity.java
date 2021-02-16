@@ -29,20 +29,14 @@ public class GridOptionsActivity extends AppCompatActivity {
 
         threeButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.THREE);
-            Toast toast = Toast.makeText(getBaseContext(), "three", Toast.LENGTH_SHORT);
-            toast.show();
         });
 
         fourButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FOUR);
-            Toast toast = Toast.makeText(getBaseContext(), "four", Toast.LENGTH_SHORT);
-            toast.show();
         });
 
         fiveButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FIVE);
-            Toast toast = Toast.makeText(getBaseContext(), "five", Toast.LENGTH_SHORT);
-            toast.show();
         });
     }
 }
