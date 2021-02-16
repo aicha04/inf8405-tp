@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TicTacToe">
         <activity android:name=".aboutActivity"></activity>
-        <activity android:name=".endActivity" />
+        <activity android:name=".EndActivity" />
         <activity android:name=".gameActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

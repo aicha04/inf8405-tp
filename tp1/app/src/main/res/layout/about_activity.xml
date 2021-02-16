@@ -13,7 +13,7 @@
         android:layout_height="406dp"
         android:layout_marginTop="268dp"
         android:fontFamily="@font/baloo"
-        android:text=" Équipe \n Gloria SOHOU\n Aicha MILOUDI \n Maude PRÉVILLE\n Badr  Eddine EL BERDAI "
+        android:text=" Équipe GR01_03: \n Gloria Aubierge SOHOU\n Aicha MILOUDI \n Maude PRÉVILLE\n Badr  Eddine EL BERDAI "
         android:textColor="@color/palette_dark_blue"
         android:textColorHighlight="#FFFFFF"
         android:textSize="30sp"

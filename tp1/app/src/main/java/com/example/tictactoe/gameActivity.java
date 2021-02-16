@@ -46,19 +46,20 @@ public class gameActivity extends AppCompatActivity {
                 TextView view = findViewById(R.id.player2Score);
                 int player2Score = sharedPreferences.getInt(constants.sharedPlayer2Score, 0);
                 view.setText(constants.PLAYER2_NAME + ": " + Integer.toString(player2Score));
-                gameInfos.setPlayer1Score(player2Score);
+                gameInfos.setPlayer2Score(player2Score);
             }
         }else{
             sharedPreferences = getApplicationContext().getSharedPreferences(constants.sharedPreferencesName, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(constants.sharedPlayer1Score, 0);
-            editor.putInt(constants.sharedPlayer2Score, 0);
+            int score = 0;
+            editor.putInt(constants.sharedPlayer1Score, score);
+            editor.putInt(constants.sharedPlayer2Score, score);
             editor.commit();
         }
 
 
         Button resetButton = findViewById(R.id.reset_button);
-        resetButton.setOnClickListener(v -> resetGrid());
+        resetButton.setOnClickListener(v -> resetScore());
 
         Button menuButton = findViewById(R.id.menu_button);
         menuButton.setOnClickListener(v -> {
@@ -264,6 +265,20 @@ public class gameActivity extends AppCompatActivity {
         currentPlayerView.setText(winner.getName() + " wins!");
     }
 
+    void resetScore(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        int score = 0;
+
+        editor.putInt(constants.sharedPlayer1Score, score);
+        editor.putInt(constants.sharedPlayer2Score, score);
+        editor.commit();
+
+        TextView view = findViewById(R.id.player1Score);
+        view.setText(constants.PLAYER1_NAME + ": " + Integer.toString(score));
+
+        TextView view1 = findViewById(R.id.player2Score);
+        view1.setText(constants.PLAYER2_NAME + ": " + Integer.toString(score));
+    }
 }
 
 
