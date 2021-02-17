@@ -97,13 +97,15 @@
         android:id="@+id/grid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="172dp"
+        android:layout_marginStart="145dp"
         android:layout_marginTop="270dp"
         android:layout_marginEnd="145dp"
         android:layout_marginBottom="248dp"
         app:layout_constraintBottom_toTopOf="@+id/currentPlayerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/view"></GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

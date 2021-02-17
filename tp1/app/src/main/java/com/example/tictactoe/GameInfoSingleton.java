@@ -6,7 +6,7 @@ public class GameInfoSingleton {
     private Constants constants = new Constants();
     private Player player1 = new Player(constants.XSIGN, constants.PLAYER1_NAME, 0);
     private Player player2 = new Player(constants.OSIGN, constants.PLAYER2_NAME, 0);
-    private GridSize gridSize = GridSize.FOUR;
+    private GridSize gridSize = GridSize.FIVE;
     private Player currentPlayer = player1 ;
     private String winner = null;
 
