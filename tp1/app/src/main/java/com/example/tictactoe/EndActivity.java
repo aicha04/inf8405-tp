@@ -18,7 +18,7 @@ public class EndActivity extends AppCompatActivity {
         Button restartButton = findViewById(R.id.restartButton);
 
         newGameButton.setOnClickListener(v -> {
-            Intent gameAct = new Intent(EndActivity.this, MainActivity.class);
+            Intent gameAct = new Intent(EndActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
         });
 
