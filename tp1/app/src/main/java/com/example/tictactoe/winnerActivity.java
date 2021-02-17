@@ -28,7 +28,8 @@ public class winnerActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(winnerActivity.this, EndActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
+                overridePendingTransition(0, android.R.anim.fade_out);
             }
         }, 3000);
 
