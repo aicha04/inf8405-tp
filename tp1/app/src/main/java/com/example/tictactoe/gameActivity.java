@@ -10,10 +10,13 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer;
 
 import java.io.File;
 
@@ -32,6 +35,7 @@ public class gameActivity extends AppCompatActivity {
 
         gameInfos = GameInfoSingleton.getInstance();
         setUpGrid();
+
 
         File file = new File(constants.sharedPreferencesPath);
         if(file.exists()){
@@ -91,9 +95,16 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
+        final MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+        final MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
 
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
+                if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME))
+                    player1_sound.start();
+                else
+                    player2_sound.start();
+
                 if (!textView.getText().toString().equals(constants.EMPTY_GRID)) {
                     displayToast(constants.POSITION_TAKEN_TOAST);
 
