@@ -6,7 +6,7 @@ public class GameInfoSingleton {
     private Constants constants = new Constants();
     private Player player1 = new Player(constants.XSIGN, constants.PLAYER1_NAME, 0);
     private Player player2 = new Player(constants.OSIGN, constants.PLAYER2_NAME, 0);
-    private GridSize gridSize = GridSize.FOUR;
+    private GridSize gridSize = GridSize.FIVE;
     private Player currentPlayer = player1 ;
     private String winner = null;
 
@@ -16,10 +16,10 @@ public class GameInfoSingleton {
     public void setWinner(String winnerSign) {
         if (winnerSign.equals(constants.XSIGN)) {
             winner = constants.PLAYER1_NAME;
-            player1.incrementScore(50);
+            player1.incrementScore();
         }else{
             winner = constants.PLAYER2_NAME;
-            player1.incrementScore(50);
+            player2.incrementScore();
         }
     }
 
@@ -55,6 +55,14 @@ public class GameInfoSingleton {
         }else{
             return player2;
         }
+    }
+
+    void setPlayer1Score(int score){
+        player1.setScore(score);
+    }
+
+    void setPlayer2Score(int score){
+        player2.setScore(score);
     }
 
 }

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TicTacToe</string>
+    <string name="pick_a_grid">Pick a grid</string>
+    <string name="_3x3">3x3</string>
+    <string name="_4x4">4x4</string>
+    <string name="_5x5">5x5</string>
+    <string name="start">Start</string>
 
 </resources>

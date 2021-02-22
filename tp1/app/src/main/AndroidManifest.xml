@@ -9,6 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TicTacToe">
+        <activity android:name=".winnerActivity"></activity>
+        <activity android:name=".GridOptionsActivity" />
+        <activity android:name=".aboutActivity" />
+        <activity android:name=".EndActivity" />
+        <activity android:name=".gameActivity" />
+        <activity android:name=".MainActivity"/>
         <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,11 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".aboutActivity" />
-        <activity android:name=".endActivity" />
-        <activity android:name=".gameActivity" />
-        <activity android:name=".MainActivity">
-        </activity>
+
 
         <meta-data
             android:name="preloaded_fonts"

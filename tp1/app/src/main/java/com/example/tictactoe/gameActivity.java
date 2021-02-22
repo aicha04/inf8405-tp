@@ -3,16 +3,25 @@ package com.example.tictactoe;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import android.content.Context;
 import android.content.Intent;
+
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer;
+
+import java.io.File;
 
 public class gameActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
     private GridLayout gridLayout;
     private TextView[][] textViews;
     private GameInfoSingleton gameInfos;
@@ -27,8 +36,34 @@ public class gameActivity extends AppCompatActivity {
         gameInfos = GameInfoSingleton.getInstance();
         setUpGrid();
 
+
+        File file = new File(constants.sharedPreferencesPath);
+        if(file.exists()){
+            sharedPreferences = getSharedPreferences(constants.sharedPreferencesName, Context.MODE_PRIVATE);
+            if(sharedPreferences.contains(constants.sharedPlayer1Score)){
+                TextView view = findViewById(R.id.player1Score);
+                int player1Score = sharedPreferences.getInt(constants.sharedPlayer1Score, 0);
+                view.setText(constants.PLAYER1_NAME + ": " + Integer.toString(player1Score));
+                gameInfos.setPlayer1Score(player1Score);
+            }
+            if(sharedPreferences.contains(constants.sharedPlayer2Score)){
+                TextView view = findViewById(R.id.player2Score);
+                int player2Score = sharedPreferences.getInt(constants.sharedPlayer2Score, 0);
+                view.setText(constants.PLAYER2_NAME + ": " + Integer.toString(player2Score));
+                gameInfos.setPlayer2Score(player2Score);
+            }
+        }else{
+            sharedPreferences = getApplicationContext().getSharedPreferences(constants.sharedPreferencesName, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            int score = 0;
+            editor.putInt(constants.sharedPlayer1Score, score);
+            editor.putInt(constants.sharedPlayer2Score, score);
+            editor.commit();
+        }
+
+
         Button resetButton = findViewById(R.id.reset_button);
-        resetButton.setOnClickListener(v -> resetGrid());
+        resetButton.setOnClickListener(v -> resetScore());
 
         Button menuButton = findViewById(R.id.menu_button);
         menuButton.setOnClickListener(v -> {
@@ -36,13 +71,12 @@ public class gameActivity extends AppCompatActivity {
             Intent mainAct = new Intent(gameActivity.this, MainActivity.class);
             startActivity(mainAct);
         });
-        printGrid();
     }
 
     void setUpTextViews(int size) {
         textViews = new TextView[size][size];
 
-        Typeface face = ResourcesCompat.getFont(this, R.font.baloo);
+        Typeface face = ResourcesCompat.getFont(this, R.font.archivo);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 textViews[i][j] = new TextView(gameActivity.this);
@@ -61,11 +95,18 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
+        final MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+        final MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
 
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
-                if (textView.getText() != constants.EMPTY_GRID) {
-                    displayToast("This position is already taken");
+                if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME))
+                    player1_sound.start();
+                else
+                    player2_sound.start();
+
+                if (!textView.getText().toString().equals(constants.EMPTY_GRID)) {
+                    displayToast(constants.POSITION_TAKEN_TOAST);
 
                 } else {
                     textView.setText(gameInfos.getCurrentPlayer().getSign());
@@ -75,6 +116,7 @@ public class gameActivity extends AppCompatActivity {
                         textView.setTextColor(getResources().getColor(R.color.palette_pink));
                     } else {
                         textView.setTextColor(getResources().getColor(R.color.palette_blue));
+                        textView.setTextSize(constants.GRID_TEXT_SIZE-3);
                     }
                     isGameWon = wonVertical() || wonHorizontal() || wonDiagonal();
                     if (!isGameWon) {
@@ -117,7 +159,6 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void displayToast(String text) {
-        System.out.println("Heree");
         try {
             Toast toast = Toast.makeText(getBaseContext(), text, Toast.LENGTH_SHORT);
             toast.show();
@@ -215,20 +256,42 @@ public class gameActivity extends AppCompatActivity {
 
     public void setWinner(String winnerSign){
         gameInfos.setWinner(winnerSign);
-
         TextView currentPlayerView = findViewById(R.id.currentPlayerView);
         Player winner = gameInfos.getPlayerNameBySign(winnerSign);
+        int winnerScore = winner.getScore();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if(winner.getName().equals(constants.PLAYER1_NAME)){
             TextView view = findViewById(R.id.player1Score);
-            view.setText(constants.PLAYER1_NAME + ":" + Integer.toString(winner.getScore()));
+            view.setText(constants.PLAYER1_NAME + ": " + Integer.toString(winnerScore));
+            editor.putInt(constants.sharedPlayer1Score,winnerScore);
+            editor.commit();
         }else{
             TextView view = findViewById(R.id.player2Score);
-            view.setText(constants.PLAYER2_NAME + Integer.toString(winner.getScore()));
+            view.setText(constants.PLAYER2_NAME + ": " + Integer.toString(winnerScore));
+            editor.putInt(constants.sharedPlayer2Score,winnerScore);
+            editor.commit();
 
         }
-        currentPlayerView.setText(winner.getName() + " wins!");
+        //currentPlayerView.setText(winner.getName() + " wins!");
+        Intent intent = new Intent(gameActivity.this, winnerActivity.class);
+        startActivity(intent);
     }
 
+    void resetScore(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        int score = 0;
+
+        editor.putInt(constants.sharedPlayer1Score, score);
+        editor.putInt(constants.sharedPlayer2Score, score);
+        editor.commit();
+
+        TextView view = findViewById(R.id.player1Score);
+        view.setText(constants.PLAYER1_NAME + ": " + Integer.toString(score));
+
+        TextView view1 = findViewById(R.id.player2Score);
+        view1.setText(constants.PLAYER2_NAME + ": " + Integer.toString(score));
+    }
 }
 
 
