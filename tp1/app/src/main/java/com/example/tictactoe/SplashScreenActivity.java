@@ -65,7 +65,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-
+                animationDrawable.stop();
                 mediaPlayer.pause();
                 mediaPlayer.release();
                 mediaPlayer = null;
