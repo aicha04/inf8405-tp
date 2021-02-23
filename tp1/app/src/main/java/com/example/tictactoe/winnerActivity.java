@@ -11,16 +11,25 @@ import java.util.TimerTask;
 
 public class winnerActivity extends AppCompatActivity {
 
-    Timer timer;
+    private Timer timer;
+    private GameInfoSingleton gameInfos = GameInfoSingleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.winner_activity);
 
-        TextView textView = (TextView) findViewById(R.id.congratsTextView);
-        String winner = GameInfoSingleton.getInstance().getWinner();
-        textView.setText("Congrats " + winner + ",");
+        if(gameInfos.wasTieGame()){
+            TextView congratsTextView = (TextView) findViewById(R.id.congratsTextView);
+            congratsTextView.setText("It\'s was a tie game !");
+
+            TextView winTextView = (TextView) findViewById(R.id.winTextView);
+            winTextView.setText("");
+        }else {
+            TextView textView = (TextView) findViewById(R.id.congratsTextView);
+            String winner = gameInfos.getWinner();
+            textView.setText("Congrats " + winner + ",");
+        }
 
         timer = new Timer();
         timer.schedule(new TimerTask() {

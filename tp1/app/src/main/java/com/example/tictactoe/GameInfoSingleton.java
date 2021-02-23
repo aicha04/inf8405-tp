@@ -9,6 +9,7 @@ public class GameInfoSingleton {
     private GridSize gridSize = GridSize.FIVE;
     private Player currentPlayer = player1 ;
     private String winner = null;
+    private boolean wasTieGame = false;
 
     private GameInfoSingleton() {
     }
@@ -65,4 +66,6 @@ public class GameInfoSingleton {
         player2.setScore(score);
     }
 
+    boolean wasTieGame(){ return this.wasTieGame; }
+    void setTieGame(boolean wasTieGame){ this.wasTieGame = wasTieGame; }
 }
