@@ -27,7 +27,8 @@ public class gameActivity extends AppCompatActivity {
     private GameInfoSingleton gameInfos;
     private boolean isGameWon = false;
     private Constants constants = new Constants();
-
+    private MediaPlayer player1_sound;
+    private MediaPlayer player2_sound;
 
 //    @param savedInstanceState: a copy of the
 //    @param  name the location of the image, relative to the url argument
@@ -41,7 +42,6 @@ public class gameActivity extends AppCompatActivity {
 
         gameInfos = GameInfoSingleton.getInstance();
         setUpGrid();
-
 
         File file = new File(constants.sharedPreferencesPath);
         if(file.exists()){
@@ -80,6 +80,10 @@ public class gameActivity extends AppCompatActivity {
             Intent mainAct = new Intent(gameActivity.this, MainActivity.class);
             startActivity(mainAct);
         });
+
+         player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+         player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
+
     }
 
     void setUpTextViews(int size) {
@@ -104,25 +108,20 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
-        MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
-        MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
-
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
-                if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME))
-                    player1_sound.start();
-                else
-                    player2_sound.start();
-
                 if (!textView.getText().toString().equals(constants.EMPTY_GRID)) {
                     displayToast(constants.POSITION_TAKEN_TOAST);
 
                 } else {
+                    playSound();
                     textView.setText(gameInfos.getCurrentPlayer().getSign());
                     TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
                     if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME)) {
                         textView.setTextColor(getResources().getColor(R.color.palette_pink));
+
+
                     } else {
                         textView.setTextColor(getResources().getColor(R.color.palette_blue));
                         textView.setTextSize(constants.GRID_TEXT_SIZE-3);
@@ -134,27 +133,23 @@ public class gameActivity extends AppCompatActivity {
                     }
                 }
             }
-            resetMedia(player1_sound, player2_sound);
-            });
+        });
     }
 
-    void resetMedia(MediaPlayer player1_sound, MediaPlayer player2_sound) {
-        if(player1_sound.isPlaying()) {
-            player1_sound.pause();
-            player1_sound.release();
-            player1_sound = null;
-        } else
-            player1_sound.start();
-
-        if(player2_sound.isPlaying()) {
-            player2_sound.pause();
-            player2_sound.release();
-            player2_sound = null;
+    void playSound() {
+        String PlayerName = gameInfos.getCurrentPlayer().getName();
+        if (player1_sound.isPlaying()) {
+            player1_sound.reset();
         }
-        else
+        if (player2_sound.isPlaying()) {
+            player2_sound.reset();
+        }
+        if(PlayerName.equals(constants.PLAYER1_NAME)){
+            player1_sound.start();
+        }else{
             player2_sound.start();
+        }
     }
-
 
     void setUpGrid() {
         int size = this.gameInfos.getGridSize();
