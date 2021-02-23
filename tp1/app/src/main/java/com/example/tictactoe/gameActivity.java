@@ -31,10 +31,10 @@ public class gameActivity extends AppCompatActivity {
     private MediaPlayer player2_sound;
     private int nTakenCases = 0;
 
-//    @param savedInstanceState: a copy of the
-//    @param  name the location of the image, relative to the url argument
-//    @return the image at the specified URL
-//    @see Image
+//    @param savedInstanceState: a copy of the last saved instance state
+//    @return void
+//    @method called at the start of a game to set it up
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +74,7 @@ public class gameActivity extends AppCompatActivity {
         resetButton.setOnClickListener(v -> {
             resetScore();
             resetGrid();
+            resetMedia();
         });
 
         Button menuButton = findViewById(R.id.menu_button);
@@ -112,12 +113,13 @@ public class gameActivity extends AppCompatActivity {
     void setOnTextViewClickActions(TextView textView) {
 
         textView.setOnClickListener(view -> {
+            startMedia();
             if(!isGameWon) {
+                playMedia();
                 if (!textView.getText().toString().equals(constants.EMPTY_GRID)) {
                     displayToast(constants.POSITION_TAKEN_TOAST);
 
                 } else {
-                    playSound();
                     nTakenCases+=1;
 
                     textView.setText(gameInfos.getCurrentPlayer().getSign());
@@ -146,28 +148,38 @@ public class gameActivity extends AppCompatActivity {
         });
     }
 
-    void playSound() {
-        String PlayerName = gameInfos.getCurrentPlayer().getName();
-        resetAllMedia();
+    void startMedia() {
+        if (player1_sound == null || player1_sound == null) {
+            player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+            player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
+        }
+    }
+    void playMedia() {
         try {
-            if (PlayerName.equals(constants.PLAYER1_NAME)) {
+            if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME))
                 player1_sound.start();
-            } else {
+            else
                 player2_sound.start();
-            }
         }
         catch (Error error){
             throw error;
         }
     }
 
-
-    void resetAllMedia(){
-        if (player1_sound.isPlaying()) {
+    void resetMedia() {
+        if (player1_sound != null) {
             player1_sound.stop();
+            player1_sound.reset();
+            player1_sound.release();
+            player1_sound = null;
+            System.out.println(("player1_sound = null"));
         }
-        if (player2_sound.isPlaying()) {
+        if (player2_sound != null) {
             player2_sound.stop();
+            player2_sound.reset();
+            player2_sound.release();
+            player2_sound = null;
+            System.out.println(("player2_sound = null"));
         }
     }
 
@@ -295,6 +307,7 @@ public class gameActivity extends AppCompatActivity {
     }
 
     public void setWinner(String winnerSign){
+        resetMedia();
         gameInfos.setTieGame(false);
         gameInfos.setWinner(winnerSign);
 
