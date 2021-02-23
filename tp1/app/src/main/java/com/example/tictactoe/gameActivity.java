@@ -29,6 +29,7 @@ public class gameActivity extends AppCompatActivity {
     private Constants constants = new Constants();
     private MediaPlayer player1_sound;
     private MediaPlayer player2_sound;
+    private int nTakenCases = 0;
 
 //    @param savedInstanceState: a copy of the
 //    @param  name the location of the image, relative to the url argument
@@ -41,6 +42,7 @@ public class gameActivity extends AppCompatActivity {
         setContentView(R.layout.game_activity);
 
         gameInfos = GameInfoSingleton.getInstance();
+        gameInfos.setTieGame(false);
         setUpGrid();
 
         File file = new File(constants.sharedPreferencesPath);
@@ -116,12 +118,13 @@ public class gameActivity extends AppCompatActivity {
 
                 } else {
                     playSound();
+                    nTakenCases+=1;
+
                     textView.setText(gameInfos.getCurrentPlayer().getSign());
                     TextView currentPlayerView = findViewById(R.id.currentPlayerView);
 
                     if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME)) {
                         textView.setTextColor(getResources().getColor(R.color.palette_pink));
-
 
                     } else {
                         textView.setTextColor(getResources().getColor(R.color.palette_blue));
@@ -129,8 +132,14 @@ public class gameActivity extends AppCompatActivity {
                     }
                     isGameWon = wonVertical() || wonHorizontal() || wonDiagonal();
                     if (!isGameWon) {
-                        gameInfos.setNextPlayer();
-                        currentPlayerView.setText(gameInfos.getCurrentPlayer().getName() + " turn");
+                        if (isGridFull()){
+                            gameInfos.setTieGame(true);
+                            Intent intent = new Intent(gameActivity.this, winnerActivity.class);
+                            startActivity(intent);
+                        }else{
+                            gameInfos.setNextPlayer();
+                            currentPlayerView.setText(gameInfos.getCurrentPlayer().getName() + " turn");
+                        }
                     }
                 }
             }
@@ -140,10 +149,17 @@ public class gameActivity extends AppCompatActivity {
     void playSound() {
         String PlayerName = gameInfos.getCurrentPlayer().getName();
         resetAllMedia();
-        if(PlayerName.equals(constants.PLAYER1_NAME)){
-            player1_sound.start();
-        }else{
-            player2_sound.start();
+        try {
+            if (PlayerName.equals(constants.PLAYER1_NAME)) {
+                player1_sound.seekTo(0);
+                player1_sound.start();
+            } else {
+                player2_sound.seekTo(0);
+                player2_sound.start();
+            }
+        }
+        catch (Error error){
+            throw error;
         }
     }
 
@@ -168,6 +184,7 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void resetGrid() {
+        nTakenCases=0;
         int size = gameInfos.getGridSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -175,6 +192,12 @@ public class gameActivity extends AppCompatActivity {
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
             }
         }
+    }
+
+    boolean isGridFull(){
+        int size = this.gameInfos.getGridSize();
+        return nTakenCases == size*size;
+
     }
 
     void displayToast(String text) {
@@ -274,8 +297,9 @@ public class gameActivity extends AppCompatActivity {
     }
 
     public void setWinner(String winnerSign){
+        gameInfos.setTieGame(false);
         gameInfos.setWinner(winnerSign);
-        TextView currentPlayerView = findViewById(R.id.currentPlayerView);
+
         Player winner = gameInfos.getPlayerNameBySign(winnerSign);
         int winnerScore = winner.getScore();
 
@@ -283,16 +307,15 @@ public class gameActivity extends AppCompatActivity {
         if(winner.getName().equals(constants.PLAYER1_NAME)){
             TextView view = findViewById(R.id.player1Score);
             view.setText(constants.PLAYER1_NAME + ": " + Integer.toString(winnerScore));
-            editor.putInt(constants.sharedPlayer1Score,winnerScore);
+            editor.putInt(constants.sharedPlayer1Score, winnerScore);
             editor.commit();
         }else{
             TextView view = findViewById(R.id.player2Score);
             view.setText(constants.PLAYER2_NAME + ": " + Integer.toString(winnerScore));
-            editor.putInt(constants.sharedPlayer2Score,winnerScore);
+            editor.putInt(constants.sharedPlayer2Score, winnerScore);
             editor.commit();
-
         }
-        //currentPlayerView.setText(winner.getName() + " wins!");
+
         Intent intent = new Intent(gameActivity.this, winnerActivity.class);
         startActivity(intent);
     }
