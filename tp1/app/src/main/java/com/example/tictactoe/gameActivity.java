@@ -28,6 +28,12 @@ public class gameActivity extends AppCompatActivity {
     private boolean isGameWon = false;
     private Constants constants = new Constants();
 
+
+//    @param savedInstanceState: a copy of the
+//    @param  name the location of the image, relative to the url argument
+//    @return the image at the specified URL
+//    @see Image
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +101,8 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
-        final MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
-        final MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
+        MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+        MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
 
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
@@ -125,8 +131,27 @@ public class gameActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+            resetMedia(player1_sound, player2_sound);
+            });
     }
+
+    void resetMedia(MediaPlayer player1_sound, MediaPlayer player2_sound) {
+        if(player1_sound.isPlaying()) {
+            player1_sound.pause();
+            player1_sound.release();
+            player1_sound = null;
+        } else
+            player1_sound.start();
+
+        if(player2_sound.isPlaying()) {
+            player2_sound.pause();
+            player2_sound.release();
+            player2_sound = null;
+        }
+        else
+            player2_sound.start();
+    }
+
 
     void setUpGrid() {
         int size = this.gameInfos.getGridSize();
