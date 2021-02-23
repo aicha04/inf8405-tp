@@ -63,7 +63,10 @@ public class gameActivity extends AppCompatActivity {
 
 
         Button resetButton = findViewById(R.id.reset_button);
-        resetButton.setOnClickListener(v -> resetScore());
+        resetButton.setOnClickListener(v -> {
+            resetScore();
+            resetGrid();
+        });
 
         Button menuButton = findViewById(R.id.menu_button);
         menuButton.setOnClickListener(v -> {

@@ -29,14 +29,23 @@ public class GridOptionsActivity extends AppCompatActivity {
 
         threeButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.THREE);
+            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
+            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
         });
 
         fourButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FOUR);
+            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
+            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
         });
 
         fiveButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FIVE);
+            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
         });
     }
 }
