@@ -151,10 +151,8 @@ public class gameActivity extends AppCompatActivity {
         resetAllMedia();
         try {
             if (PlayerName.equals(constants.PLAYER1_NAME)) {
-                player1_sound.seekTo(0);
                 player1_sound.start();
             } else {
-                player2_sound.seekTo(0);
                 player2_sound.start();
             }
         }
@@ -166,10 +164,10 @@ public class gameActivity extends AppCompatActivity {
 
     void resetAllMedia(){
         if (player1_sound.isPlaying()) {
-            player1_sound.reset();
+            player1_sound.stop();
         }
         if (player2_sound.isPlaying()) {
-            player2_sound.reset();
+            player2_sound.stop();
         }
     }
 
