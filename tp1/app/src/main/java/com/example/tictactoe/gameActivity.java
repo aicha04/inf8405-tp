@@ -108,6 +108,7 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
+
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
                 if (!textView.getText().toString().equals(constants.EMPTY_GRID)) {
@@ -138,16 +139,21 @@ public class gameActivity extends AppCompatActivity {
 
     void playSound() {
         String PlayerName = gameInfos.getCurrentPlayer().getName();
+        resetAllMedia();
+        if(PlayerName.equals(constants.PLAYER1_NAME)){
+            player1_sound.start();
+        }else{
+            player2_sound.start();
+        }
+    }
+
+
+    void resetAllMedia(){
         if (player1_sound.isPlaying()) {
             player1_sound.reset();
         }
         if (player2_sound.isPlaying()) {
             player2_sound.reset();
-        }
-        if(PlayerName.equals(constants.PLAYER1_NAME)){
-            player1_sound.start();
-        }else{
-            player2_sound.start();
         }
     }
 
@@ -169,16 +175,6 @@ public class gameActivity extends AppCompatActivity {
                 textViews[i][j].setTextColor(getResources().getColor(R.color.white));
             }
         }
-    }
-
-    void printGrid() {
-        int size = gameInfos.getGridSize();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(textViews[i][j].getText());
-            }
-        }
-
     }
 
     void displayToast(String text) {
