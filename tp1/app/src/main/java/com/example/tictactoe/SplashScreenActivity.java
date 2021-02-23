@@ -12,19 +12,19 @@ import android.widget.ImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
     int SPLASH_SCREEN_TIME = 4000;
-    int currentTime = 0;
-    int TIME_INTERVAL = 5000;
     private AnimationDrawable animationDrawable;
     private  MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        ImageView container = findViewById(R.id.container);
-        container.setBackgroundResource(R.drawable.splash_animation);
-        animationDrawable = (AnimationDrawable) container.getBackground();
 
         try{
+            // create animation
+            ImageView container = findViewById(R.id.container);
+            container.setBackgroundResource(R.drawable.splash_animation);
+            animationDrawable = (AnimationDrawable) container.getBackground();
+            // create mediaplayer to play audio
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.splash_screen_audio);
             mediaPlayer.start();
 
@@ -40,8 +40,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onResume();
 
         try{
+            // start animation
             animationDrawable.start();
-            checkAnimationStatus(TIME_INTERVAL, animationDrawable);
+            startTimer(SPLASH_SCREEN_TIME);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -53,14 +54,17 @@ public class SplashScreenActivity extends AppCompatActivity {
             finish();
         }
     }
-
-    private void checkAnimationStatus(final int time, AnimationDrawable animationDrawable) {
+    /**
+     * Starts splash screen timer
+     * @param  time  specifies splash screen total duration
+     * @return
+     */
+    private void startTimer(final int time) {
 
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                currentTime += 1;
 
                 mediaPlayer.pause();
                 mediaPlayer.release();
