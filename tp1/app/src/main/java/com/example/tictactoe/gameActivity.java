@@ -27,6 +27,8 @@ public class gameActivity extends AppCompatActivity {
     private GameInfoSingleton gameInfos;
     private boolean isGameWon = false;
     private Constants constants = new Constants();
+    private MediaPlayer player1_sound;
+    private MediaPlayer player2_sound;
 
 
 //    @param savedInstanceState: a copy of the
@@ -104,8 +106,8 @@ public class gameActivity extends AppCompatActivity {
     }
 
     void setOnTextViewClickActions(TextView textView) {
-        MediaPlayer player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
-        MediaPlayer player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
+        player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
+        player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
 
         textView.setOnClickListener(view -> {
             if(!isGameWon) {
@@ -134,25 +136,44 @@ public class gameActivity extends AppCompatActivity {
                     }
                 }
             }
-            resetMedia(player1_sound, player2_sound);
+            if (isGameWon)
+                resetMedia();
             });
     }
 
-    void resetMedia(MediaPlayer player1_sound, MediaPlayer player2_sound) {
+    void resetMedia() {
         if(player1_sound.isPlaying()) {
-            player1_sound.pause();
+            System.out.println(("player1_sound.isPlaying()"));
+            player1_sound.stop();
+            System.out.println(("player1_sound.stop()"));
+        }
+            player1_sound.reset();
+            System.out.println(("player1_sound.reset()"));
             player1_sound.release();
+            System.out.println(("player1_sound.release()"));
             player1_sound = null;
-        } else
-            player1_sound.start();
+            System.out.println(("player1_sound = null;"));
+        // } else {
+            // player1_sound.start();
+            // System.out.println(("player1_sound.start()"));
+        // }
 
         if(player2_sound.isPlaying()) {
-            player2_sound.pause();
-            player2_sound.release();
-            player2_sound = null;
+            System.out.println(("player2_sound.isPlaying()"));
+            player2_sound.stop();
+            System.out.println(("player1_sound.stop()"));
         }
-        else
-            player2_sound.start();
+            player2_sound.reset();
+            System.out.println(("player2_sound.reset()"));
+            player2_sound.release();
+            System.out.println(("player2_sound.release()"));
+            player2_sound = null;
+            System.out.println(("player2_sound = null"));
+        // }
+        // else {
+            // player2_sound.start();
+            // System.out.println(("player1_sound.start()"));
+        // }
     }
 
 
