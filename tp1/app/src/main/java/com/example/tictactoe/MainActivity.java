@@ -1,3 +1,6 @@
+/** Represents the main wiew activity
+ * @author Team GR01_03
+ */
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         exitButton.setOnClickListener(v ->{
-            finish();
             System.exit(0);
+            finish();
         } );
     }
 }

@@ -1,3 +1,6 @@
+/** Represents the Winner view activity
+ * @author Team GR01_03
+ */
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +22,7 @@ public class winnerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.winner_activity);
 
+        //Display depends on if it was a tie game(match null) or not
         if(gameInfos.wasTieGame()){
             TextView congratsTextView = (TextView) findViewById(R.id.congratsTextView);
             congratsTextView.setText("It\'s was a tie game !");
