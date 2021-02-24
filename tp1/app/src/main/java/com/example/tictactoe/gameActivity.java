@@ -108,7 +108,7 @@ public class gameActivity extends AppCompatActivity {
         TextView player1View = findViewById(R.id.player1Score);
         player1View.setText(constants.PLAYER1_NAME + ": " + Integer.toString(gameInfos.getPlayer1Score()));
         TextView player2View = findViewById(R.id.player2Score);
-        player2View.setText(constants.PLAYER2_NAME + ": " + Integer.toString(gameInfos.getPlayer1Score()));
+        player2View.setText(constants.PLAYER2_NAME + ": " + Integer.toString(gameInfos.getPlayer2Score()));
     }
 
     /** Set click listeners actions on menu button and reset button
