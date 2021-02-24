@@ -35,6 +35,7 @@ public class winnerActivity extends AppCompatActivity {
             textView.setText("Congrats " + winner + ",");
         }
 
+        //Start 3 seconds timer
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override

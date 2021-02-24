@@ -33,15 +33,15 @@ public class GridOptionsActivity extends AppCompatActivity {
             startActivity(gameAct);
             finish();
         });
-        setGridSelctionListeners();
+        setGridSelectionListeners();
 
     }
 
-    /** Update gameInfos signleton when user choose a grid size
-     * Change button backgroun when user clicks
+    /** Update gameInfos singleton when user choose a grid size
+     * Change button background when user clicks
      * @author Team GR01_03
      */
-    void setGridSelctionListeners() {
+    void setGridSelectionListeners() {
         Button threeButton = findViewById(R.id.three_by_three_button);
         Button fourButton = findViewById(R.id.four_by_four_button);
         Button fiveButton = findViewById(R.id.five_by_five_button);
