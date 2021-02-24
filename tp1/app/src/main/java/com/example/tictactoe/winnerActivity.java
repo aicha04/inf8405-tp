@@ -21,7 +21,7 @@ public class winnerActivity extends AppCompatActivity {
 
         if(gameInfos.wasTieGame()){
             TextView congratsTextView = (TextView) findViewById(R.id.congratsTextView);
-            congratsTextView.setText("It\'s was a tie game !");
+            congratsTextView.setText("It\'s a tie game !");
 
             TextView winTextView = (TextView) findViewById(R.id.winTextView);
             winTextView.setText("");
@@ -38,7 +38,6 @@ public class winnerActivity extends AppCompatActivity {
                 Intent intent = new Intent(winnerActivity.this, EndActivity.class);
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0, android.R.anim.fade_out);
             }
         }, 3000);
 

@@ -12,6 +12,7 @@ public class EndActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0, android.R.anim.fade_out);
         setContentView(R.layout.end_activity);
 
         Button newGameButton = findViewById(R.id.newGameButton);
