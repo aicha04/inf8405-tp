@@ -1,3 +1,6 @@
+/** Represents the main wiew activity
+ * @author Team GR01_03
+ */
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,16 +24,18 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(MainActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         aboutButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(MainActivity.this, aboutActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         exitButton.setOnClickListener(v ->{
-            finish();
             System.exit(0);
+            finish();
         } );
     }
 }

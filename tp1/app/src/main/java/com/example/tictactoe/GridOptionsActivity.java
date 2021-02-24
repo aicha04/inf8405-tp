@@ -1,51 +1,76 @@
+/** Represents the grid options view activity
+ * @author Team GR01_03
+ */
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
 public class GridOptionsActivity extends AppCompatActivity {
     private GameInfoSingleton gameInfos;
+    private Drawable selectedBackground;
+    private Drawable notSelectedBackground;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_options_activity);
 
-        gameInfos = GameInfoSingleton.getInstance();
+         gameInfos = GameInfoSingleton.getInstance();
+         selectedBackground = this.getResources().getDrawable(R.drawable.rounded_corner_selected);
+         notSelectedBackground = this.getResources().getDrawable(R.drawable.rounded_corner);
+
 
         Button startButton = findViewById(R.id.start_button);
+        startButton.setOnClickListener(v -> {
+            Intent gameAct = new Intent(GridOptionsActivity.this, gameActivity.class);
+            startActivity(gameAct);
+            finish();
+        });
+        setGridSelctionListeners();
+
+    }
+
+    /** Update gameInfos signleton when user choose a grid size
+     * Change button backgroun when user clicks
+     * @author Team GR01_03
+     */
+    void setGridSelctionListeners() {
         Button threeButton = findViewById(R.id.three_by_three_button);
         Button fourButton = findViewById(R.id.four_by_four_button);
         Button fiveButton = findViewById(R.id.five_by_five_button);
 
-        startButton.setOnClickListener(v -> {
-            Intent gameAct = new Intent(GridOptionsActivity.this, gameActivity.class);
-            startActivity(gameAct);
-        });
-
         threeButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.THREE);
-            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
-            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
-            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+
+            //Change background when users clicks
+            threeButton.setBackground(selectedBackground);
+            fourButton.setBackground(notSelectedBackground);
+            fiveButton.setBackground(notSelectedBackground);
         });
 
         fourButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FOUR);
-            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
-            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
-            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
+
+            //Change background when users clicks
+            threeButton.setBackground(notSelectedBackground);
+            fourButton.setBackground(selectedBackground);
+            fiveButton.setBackground(notSelectedBackground);
         });
 
         fiveButton.setOnClickListener(v -> {
             this.gameInfos.setGridSize(GridSize.FIVE);
-            threeButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
-            fourButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner));
-            fiveButton.setBackground(this.getResources().getDrawable(R.drawable.rounded_corner_selected));
+
+            //Change background when users clicks
+            threeButton.setBackground(notSelectedBackground);
+            fourButton.setBackground(notSelectedBackground);
+            fiveButton.setBackground(selectedBackground);
         });
     }
 }

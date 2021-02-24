@@ -1,3 +1,8 @@
+
+/** Represents an enum for all grid size
+ * @author Team GR01_03
+ */
+
 package com.example.tictactoe;
 
 public enum GridSize{

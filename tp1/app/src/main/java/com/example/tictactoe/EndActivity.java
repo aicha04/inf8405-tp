@@ -1,3 +1,7 @@
+/** Represents the GameEnd view activity
+ * @author Team GR01_03
+ */
+
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,11 +25,13 @@ public class EndActivity extends AppCompatActivity {
         newGameButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(EndActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         restartButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(EndActivity.this, gameActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
     }
