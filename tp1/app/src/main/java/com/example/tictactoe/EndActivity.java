@@ -24,11 +24,13 @@ public class EndActivity extends AppCompatActivity {
         newGameButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(EndActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         restartButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(EndActivity.this, gameActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
     }

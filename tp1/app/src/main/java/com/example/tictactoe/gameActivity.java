@@ -90,7 +90,7 @@ public class gameActivity extends AppCompatActivity {
             }
         }else{
             sharedPreferences = getApplicationContext().getSharedPreferences(
-                    constants.SHAREDPREFERENCESNAME, gameActivity.this.MODE_PRIVATE);
+                    constants.SHAREDPREFERENCESNAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             int score = 0;
             editor.putInt(constants.SHAREDPLAYER1SCORE, score);
@@ -421,8 +421,10 @@ public class gameActivity extends AppCompatActivity {
      * @return -
      */
     void resetScore(){
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         int score = 0;
+        gameInfos.setPlayer1Score(score);
+        gameInfos.setPlayer2Score(score);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putInt(constants.SHAREDPLAYER1SCORE, score);
         editor.putInt(constants.SHAREDPLAYER2SCORE, score);
