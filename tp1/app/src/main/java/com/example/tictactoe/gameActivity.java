@@ -191,6 +191,7 @@ public class gameActivity extends AppCompatActivity {
                             gameInfos.setTieGame(true);
                             Intent intent = new Intent(gameActivity.this, winnerActivity.class);
                             startActivity(intent);
+                            finish();
                         }else{
                             gameInfos.setNextPlayer();
                             currentPlayerView.setText(currentPlayer.getName() + " turn");
@@ -411,6 +412,7 @@ public class gameActivity extends AppCompatActivity {
 
         Intent intent = new Intent(gameActivity.this, winnerActivity.class);
         startActivity(intent);
+        finish();
     }
 
     /** Reset the score

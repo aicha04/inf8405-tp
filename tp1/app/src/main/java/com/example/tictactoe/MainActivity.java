@@ -24,11 +24,13 @@ public class MainActivity extends AppCompatActivity {
         playButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(MainActivity.this, GridOptionsActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         aboutButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(MainActivity.this, aboutActivity.class);
             startActivity(gameAct);
+            finish();
         });
 
         exitButton.setOnClickListener(v ->{

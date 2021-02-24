@@ -31,6 +31,7 @@ public class GridOptionsActivity extends AppCompatActivity {
         startButton.setOnClickListener(v -> {
             Intent gameAct = new Intent(GridOptionsActivity.this, gameActivity.class);
             startActivity(gameAct);
+            finish();
         });
         setGridSelctionListeners();
 
