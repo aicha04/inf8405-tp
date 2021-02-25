@@ -202,12 +202,23 @@ public class gameActivity extends AppCompatActivity {
         });
     }
 
+
+    /** create the sound objects for player 1 and 2 if they are set to NULL
+     * @param -
+     * @return -
+     */
     void startMedia() {
         if (player1_sound == null || player1_sound == null) {
             player1_sound = MediaPlayer.create(this, R.raw.player1_sound);
             player2_sound = MediaPlayer.create(this, R.raw.player2_sound);
         }
     }
+
+
+    /** Plays the sound associated to the current player
+     * @param -
+     * @return -
+     */
     void playMedia() {
         try {
             if (gameInfos.getCurrentPlayer().getName().equals(constants.PLAYER1_NAME))
@@ -220,6 +231,11 @@ public class gameActivity extends AppCompatActivity {
         }
     }
 
+
+    /** Release the ressources used by the sound objects when the game is over
+     * @param -
+     * @return -
+     */
     void resetMedia() {
         if (player1_sound != null) {
             player1_sound.stop();
