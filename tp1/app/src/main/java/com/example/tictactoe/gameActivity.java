@@ -42,7 +42,7 @@ public class gameActivity extends AppCompatActivity {
         setUpGrid();
 
         //Set up shared preferences database to store and retrieve the players scores
-        setUpSetPreferences();
+        setUpPreferences();
 
         // Display PlayesScores
         displayScores();
@@ -75,7 +75,7 @@ public class gameActivity extends AppCompatActivity {
      * @param -
      * @return -
      */
-    void setUpSetPreferences(){
+    void setUpPreferences(){
         File file = new File(constants.SHAREDPREFERENCESPATH);
         if(file.exists()){
             sharedPreferences = getSharedPreferences(constants.SHAREDPREFERENCESNAME,
