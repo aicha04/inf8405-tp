@@ -2,13 +2,21 @@ package com.example.tp2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -17,11 +25,20 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+
+    private SharedPreferences sharedPreferences;
+    private Constants constants = new Constants();
+    private  UserSingleton userSingleton = UserSingleton.getInstance();
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +80,13 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
+
+
+        setUpSharedPreferences();
+        setDatabaseListener();
+        userSingleton.addDevice(new Device("ID11", "TOBBB", "TABBBB"));
     }
+
 
     @Override
     public void onResume() {
@@ -115,4 +138,50 @@ public class MainActivity extends AppCompatActivity{
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
+
+    /** Retrieve players previous scores through sharedpreferences and
+     *  update the gameInfos singleton with the values
+     *  Create a shared preferences database for players scores for the first use of the application
+     * @param -
+     * @return -
+     */
+    void setUpSharedPreferences(){
+        File file = new File(constants.SHARED_PREFERENCESPATH);
+        if(file.exists()){
+            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCESNAME, MainActivity.this.MODE_PRIVATE);
+            if(sharedPreferences.contains(constants.SHARED_USERID)){
+                 userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USERID, ""));
+            }
+        }else{
+            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCESNAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            String userUId =  UUID.randomUUID().toString();
+            userSingleton.setUserUId(userUId);
+            editor.putString(constants.SHARED_USERID, userUId);
+            editor.commit();
+        }
+    }
+
+    void setDatabaseListener(){
+        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).addListenerForSingleValueEvent((new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                //userSingleton.resetUserDevicesLocally();
+                for(DataSnapshot shot:  snapshot.getChildren()) {
+                    for (DataSnapshot val : shot.getChildren()) {
+                        Device device = val.getValue(Device.class);
+                        System.out.println("UPDATE" + device.id);
+                        userSingleton.addDevice(device);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        }));
+    }
+
 }
