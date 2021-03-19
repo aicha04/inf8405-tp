@@ -140,18 +140,18 @@ public class MainActivity extends AppCompatActivity{
      * @return -
      */
     void setUpSharedPreferences(){
-        File file = new File(constants.SHARED_PREFERENCESPATH);
+        File file = new File(constants.SHARED_PREFERENCES_PATH);
         if(file.exists()){
-            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCESNAME, MainActivity.this.MODE_PRIVATE);
-            if(sharedPreferences.contains(constants.SHARED_USERID)){
-                 userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USERID, ""));
+            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MainActivity.this.MODE_PRIVATE);
+            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
+                 userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
             }
         }else{
-            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCESNAME, MODE_PRIVATE);
+            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             String userUId =  UUID.randomUUID().toString();
             userSingleton.setUserUId(userUId);
-            editor.putString(constants.SHARED_USERID, userUId);
+            editor.putString(constants.SHARED_USER_ID, userUId);
             editor.commit();
         }
     }
@@ -167,11 +167,13 @@ public class MainActivity extends AppCompatActivity{
                 System.out.println( task.getException());
             }
             else {
+                userSingleton.resetUserDevicesLocally();
                 DataSnapshot snapshot = task.getResult();
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);
                         System.out.println("UPDATE" + device.id);
+                        userSingleton.addDevice(device);
                     }
                 }
             }

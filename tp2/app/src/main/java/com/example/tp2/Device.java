@@ -13,7 +13,5 @@ public class Device {
         this.classCategory = classCategory;
     }
 
-    public Device(){
-
-    }
+    public Device(){ }
 }
