@@ -35,6 +35,7 @@ public class UserSingleton {
     }
 
     void addDevice(Device device) {
+        devices.add(device);
         databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").push().setValue(device);
     }
 

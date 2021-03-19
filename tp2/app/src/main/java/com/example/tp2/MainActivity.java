@@ -7,16 +7,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -37,8 +32,6 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences sharedPreferences;
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,9 +75,10 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
+        //Get user id
         setUpSharedPreferences();
-        setDatabaseListener();
-        userSingleton.addDevice(new Device("ID11", "TOBBB", "TABBBB"));
+        fetchUserDevices();
+        //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
     }
 
 
@@ -139,9 +133,9 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    /** Retrieve players previous scores through sharedpreferences and
-     *  update the gameInfos singleton with the values
-     *  Create a shared preferences database for players scores for the first use of the application
+    /** Retrieve user id through shared preferences and
+     *  update the userInfoSingleton singleton id with the value
+     *  Create a shared preferences database for this user for the first use of the application
      * @param -
      * @return -
      */
@@ -162,26 +156,26 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    void setDatabaseListener(){
-        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).addListenerForSingleValueEvent((new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //userSingleton.resetUserDevicesLocally();
+
+    /** Retrieve user saved devices from firebase database
+     * @param -
+     * @return -
+     */
+    void fetchUserDevices(){
+        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                System.out.println( task.getException());
+            }
+            else {
+                DataSnapshot snapshot = task.getResult();
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);
                         System.out.println("UPDATE" + device.id);
-                        userSingleton.addDevice(device);
                     }
                 }
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-
-        }));
+        });
     }
 
 }
