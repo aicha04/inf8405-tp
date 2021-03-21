@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:drawable="@drawable/rounded_corner_with_border" />
-    <item android:state_selected="true" android:drawable="@drawable/rounded_corner_with_border" />
-    <item android:state_pressed="true" android:drawable="@drawable/rounded_corner_with_border" />
-    <item android:state_checked="false" android:drawable="@drawable/rounded_corner" />
+    <item android:state_selected="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <corners  android:radius="35dp"/>
+            <solid android:color="@color/palette_blue"></solid>
+        </shape>
+    </item>
+    <item android:state_selected="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <corners android:radius="35dp"/>
+            <solid android:color="@color/palette_blue"></solid>
+            <stroke android:width="10dp" android:color="@color/palette_pink" />
+        </shape>
+    </item>
 </selector>

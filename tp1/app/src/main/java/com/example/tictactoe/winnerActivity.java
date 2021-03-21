@@ -1,3 +1,6 @@
+/** Represents the Winner view activity
+ * @author Team GR01_03
+ */
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,17 +14,28 @@ import java.util.TimerTask;
 
 public class winnerActivity extends AppCompatActivity {
 
-    Timer timer;
+    private Timer timer;
+    private GameInfoSingleton gameInfos = GameInfoSingleton.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.winner_activity);
 
-        TextView textView = (TextView) findViewById(R.id.congratsTextView);
-        String winner = GameInfoSingleton.getInstance().getWinner();
-        textView.setText("Congrats " + winner + ",");
+        //Display depends on if it was a tie game(match null) or not
+        if(gameInfos.wasTieGame()){
+            TextView congratsTextView = (TextView) findViewById(R.id.congratsTextView);
+            congratsTextView.setText("It\'s a tie game !");
 
+            TextView winTextView = (TextView) findViewById(R.id.winTextView);
+            winTextView.setText("");
+        }else {
+            TextView textView = (TextView) findViewById(R.id.congratsTextView);
+            String winner = gameInfos.getWinner();
+            textView.setText("Congrats " + winner + ",");
+        }
+
+        //Start 3 seconds timer
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override

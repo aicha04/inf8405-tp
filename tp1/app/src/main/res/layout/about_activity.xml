@@ -9,16 +9,35 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="360dp"
-        android:layout_height="406dp"
-        android:layout_marginTop="268dp"
+        android:layout_width="352dp"
+        android:layout_height="276dp"
+        android:layout_marginTop="240dp"
         android:fontFamily="@font/baloo"
         android:text=" Équipe GR01_03: \n Gloria Aubierge SOHOU\n Aicha MILOUDI \n Maude PRÉVILLE\n Badr  Eddine EL BERDAI "
         android:textColor="@color/palette_dark_blue"
         android:textColorHighlight="#FFFFFF"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.686"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="165dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="120dp"
+        android:background="@drawable/rounded"
+        android:fontFamily="@font/baloo"
+        android:text="Menu"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textColorLink="#FFFFFF"
+        android:textSize="30sp"
+        app:backgroundTint="@color/palette_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
