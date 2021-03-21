@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -63,8 +64,18 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-    }
+        createListFragment();
 
+    }
+    private void  createListFragment(){
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+// Replace the contents of the container with the new fragment
+        ft.add(R.id.fragment_container, new ItemFragment());
+// or ft.replace(R.id.your_placeholder, new FooFragment());
+// Complete the changes added above
+        ft.commit();
+    }
     @Override
     public void onResume() {
         super.onResume();
