@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.tp2.Devices.DeviceContent.DeviceItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ import java.util.List;
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DeviceItem> mValues;
+    private final ArrayList<Device> mValues;
 
-    public MyItemRecyclerViewAdapter(List<DeviceItem> items) {
+    public MyItemRecyclerViewAdapter(ArrayList<Device> items) {
         mValues = items;
     }
 
@@ -34,7 +35,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).deviceName);
+        holder.mContentView.setText(mValues.get(position).classCategory);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DeviceItem mItem;
+        public Device mItem;
 
         public ViewHolder(View view) {
             super(view);
