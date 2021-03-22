@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">tp2</string>
+    <string name="discover_devices">Discover Devices</string>
+    <string name="deviceIndexError">Index unavailable</string>
+    <string name="deviceAddressError">Address unavailable</string>
+    <string name="deviceClassError">Class unavailable</string>
+    <string name="deviceMajorClassError">Major class unavailable</string>
+    <string name="deviceNameError">Name unavailable</string>
+    <string name="deviceTypeError">Type unavailable</string>
     <color name="DarkBlue">#023047</color>
 </resources>
