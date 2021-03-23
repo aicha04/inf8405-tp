@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity{
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                discoverDevices(view);
+                discoverNewDevices(view);
             }
         });
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    public void discoverDevices(View view) {
+    public void discoverNewDevices(View view) {
         if (!bluetoothAdapter.isDiscovering()) {
             requestBTPermissions();
             bluetoothAdapter.startDiscovery();

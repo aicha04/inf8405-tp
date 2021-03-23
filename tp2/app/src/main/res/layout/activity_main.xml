@@ -13,26 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent" />
     </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2" />
+        android:layout_weight="2" >
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <FrameLayout
-        android:layout_weight="1"
-        android:id="@+id/frameDiscovery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    <Button
-        android:id="@+id/discoverNewDevices"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="42dp"
-        android:onClick="discoverNewDevices"
-        android:text="@string/discover_devices" />
-    </FrameLayout>
+        <Button
+            android:id="@+id/discoverNewDevices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="discoverNewDevices"
+            android:layout_alignParentBottom="true"
+            android:text="@string/discover_devices" />
+    </RelativeLayout>
 </LinearLayout>
