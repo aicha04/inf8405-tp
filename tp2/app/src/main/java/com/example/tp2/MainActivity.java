@@ -256,10 +256,13 @@ public class MainActivity extends AppCompatActivity{
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Device deviceDB;
+                deviceDB = new Device(device.getName(), "blabla", String.valueOf(device.getBluetoothClass().getDeviceClass()));
+                userSingleton.addDevice(deviceDB);
                 pairedDevices.add(device);
                 Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + ": " + device.getBluetoothClass().getDeviceClass()); // TODO: Ajouter ca aussi à la listView
-                deviceListAdapter = new DeviceList(context, R.layout.device_list_view, pairedDevices); // TODO: Est ce que R.layout.device_list_view = deviceUuid?
-                pairedDevicesView.setAdapter(deviceListAdapter);
+                // deviceListAdapter = new DeviceList(context, R.layout.device_list_view, pairedDevices); // TODO: Est ce que R.layout.device_list_view = deviceUuid?
+                // pairedDevicesView.setAdapter(deviceListAdapter);
             } else {
                 Log.d(TAG, "onReceive: Didn't find a device!");
             }
