@@ -2,6 +2,7 @@ package com.example.tp2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -29,7 +32,6 @@ public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
 
-    private SharedPreferences sharedPreferences;
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
@@ -75,10 +77,8 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
-        //Get user id
-        setUpSharedPreferences();
-        fetchUserDevices();
-        //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
+        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
+        System.out.println(userSingleton.getDevices().size());
     }
 
 
@@ -132,52 +132,4 @@ public class MainActivity extends AppCompatActivity{
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
-
-    /** Retrieve user id through shared preferences and
-     *  update the userInfoSingleton singleton id with the value
-     *  Create a shared preferences database for this user for the first use of the application
-     * @param -
-     * @return -
-     */
-    void setUpSharedPreferences(){
-        File file = new File(constants.SHARED_PREFERENCES_PATH);
-        if(file.exists()){
-            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MainActivity.this.MODE_PRIVATE);
-            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
-                 userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
-            }
-        }else{
-            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            String userUId =  UUID.randomUUID().toString();
-            userSingleton.setUserUId(userUId);
-            editor.putString(constants.SHARED_USER_ID, userUId);
-            editor.commit();
-        }
-    }
-
-
-    /** Retrieve user saved devices from firebase database
-     * @param -
-     * @return -
-     */
-    void fetchUserDevices(){
-        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                System.out.println( task.getException());
-            }
-            else {
-                userSingleton.resetUserDevicesLocally();
-                DataSnapshot snapshot = task.getResult();
-                for(DataSnapshot shot:  snapshot.getChildren()) {
-                    for (DataSnapshot val : shot.getChildren()) {
-                        Device device = val.getValue(Device.class);
-                        System.out.println("UPDATE" + device.id);
-                        userSingleton.addDevice(device);
-                    }
-                }
-            }
-        });
-    }
-
 }
