@@ -78,15 +78,20 @@ public class MainActivity extends AppCompatActivity{
         });
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
 //        System.out.println(userSingleton.getDevices().size());
-        createListFragment();
+        swapToListFragment();
     }
-    private void  createListFragment(){
+    public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-// Replace the contents of the container with the new fragment
-        ft.add(R.id.fragment_container, new ItemFragment());
-// or ft.replace(R.id.your_placeholder, new FooFragment());
-// Complete the changes added above
+        ft.replace(R.id.fragment_container, new ItemFragment());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+    public void swapToDeviceInfoFragment(String itemInfo){
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
+        ft.addToBackStack(null);
         ft.commit();
     }
     @Override

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tp2.Devices.DeviceContent.DeviceItem;
 
@@ -19,16 +20,32 @@ import java.util.List;
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private final ArrayList<Device> mValues;
+    private final RecyclerView recyclerView;
 
-    public MyItemRecyclerViewAdapter(ArrayList<Device> items) {
+    public MyItemRecyclerViewAdapter(ArrayList<Device> items, RecyclerView recyclerView) {
         mValues = items;
+        this.recyclerView = recyclerView;
     }
-
+    private final View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickItem(v);
+        }
+    };
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
+        view.setOnClickListener(onClickListener);
         return new ViewHolder(view);
+    }
+
+    public void onClickItem(final View view) {
+        int itemPosition = recyclerView.getChildLayoutPosition(view);
+        String itemInfo = mValues.get(itemPosition).id + "\n" + mValues.get(itemPosition).classCategory;
+        if (view.getContext() instanceof MainActivity) {
+            ((MainActivity)view.getContext()).swapToDeviceInfoFragment(itemInfo);
+        }
     }
 
     @Override
@@ -61,4 +78,5 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
+
 }
