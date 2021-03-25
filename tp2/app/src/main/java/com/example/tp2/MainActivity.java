@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -77,11 +78,19 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
+        //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
 //        System.out.println(userSingleton.getDevices().size());
+        createListFragment();
     }
-
-
+    private void  createListFragment(){
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+// Replace the contents of the container with the new fragment
+        ft.add(R.id.fragment_container, new ItemFragment());
+// or ft.replace(R.id.your_placeholder, new FooFragment());
+// Complete the changes added above
+        ft.commit();
+    }
     @Override
     public void onResume() {
         super.onResume();
