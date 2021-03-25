@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
-        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-        System.out.println(userSingleton.getDevices().size());
+//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
+//        System.out.println(userSingleton.getDevices().size());
     }
 
 
