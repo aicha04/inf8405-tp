@@ -76,9 +76,7 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-
-
-        //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
+//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
 //        System.out.println(userSingleton.getDevices().size());
         createListFragment();
     }
