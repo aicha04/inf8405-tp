@@ -247,6 +247,227 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     };
+    private String translateDeviceTypeCode(int code) {
+        String deviceTypeName = "";
+        switch (code) {
+            case 0 :
+                deviceTypeName = "DEVICE_TYPE_UNKNOWN";
+                break;
+            case 1 :
+                deviceTypeName = "DEVICE_TYPE_CLASSIC";
+                break;
+            case 2 :
+                deviceTypeName = "DEVICE_TYPE_LE";
+                break;
+            case 3 :
+                deviceTypeName = "DEVICE_TYPE_DUAL";
+                break;
+            default:
+                deviceTypeName = String.valueOf(code);
+        }
+        return deviceTypeName;
+    }
+
+    private String translateMajorClassCode(int code) {
+        String majorClassName = "";
+        switch (code) {
+            case 1024 :
+                majorClassName = "AUDIO_VIDEO";
+                break;
+            case 256 :
+                majorClassName = "COMPUTER";
+                break;
+            case 2304 :
+                majorClassName = "HEALTH";
+                break;
+            case 1536 :
+                majorClassName = "IMAGING";
+                break;
+            case 0 :
+                majorClassName = "MISC";
+                break;
+            case 768 :
+                majorClassName = "NETWORKING";
+                break;
+            case 1280 :
+                majorClassName = "PERIPHERAL";
+                break;
+            case 512 :
+                majorClassName = "PHONE";
+                break;
+            case 2048 :
+                majorClassName = "TOY";
+                break;
+            case 7936 :
+                majorClassName = "UNCATEGORIZED";
+                break;
+            case 1792 :
+                majorClassName = "WEARABLE";
+                break;
+            default:
+                majorClassName = String.valueOf(code);
+        }
+        return majorClassName;
+    }
+
+    private String translateClassCode(int code) {
+        String className = "";
+        switch (code) {
+            case 1076 :
+                className = "AUDIO_VIDEO_CAMCORDER";
+                break;
+            case 1056 :
+                className = "AUDIO_VIDEO_CAR_AUDIO";
+                break;
+            case 1032 :
+                className = "AUDIO_VIDEO_HANDSFREE";
+                break;
+            case 1048 :
+                className = "AUDIO_VIDEO_HEADPHONES";
+                break;
+            case 1064 :
+                className = "AUDIO_VIDEO_HIFI_AUDIO";
+                break;
+            case 1044 :
+                className = "AUDIO_VIDEO_LOUDSPEAKER";
+                break;
+            case 1040 :
+                className = "AUDIO_VIDEO_MICROPHONE";
+                break;
+            case 1052 :
+                className = "AUDIO_VIDEO_PORTABLE_AUDIO";
+                break;
+            case 1060 :
+                className = "AUDIO_VIDEO_SET_TOP_BOX";
+                break;
+            case 1024 :
+                className = "AUDIO_VIDEO_UNCATEGORIZED";
+                break;
+            case 1068 :
+                className = "AUDIO_VIDEO_VCR";
+                break;
+            case 1072 :
+                className = "AUDIO_VIDEO_VIDEO_CAMERA";
+                break;
+            case 1088 :
+                className = "AUDIO_VIDEO_VIDEO_CONFERENCING";
+                break;
+            case 1084 :
+                className = "AUDIO_VIDEO_VIDEO_DISPLAY_AND_LOUDSPEAKER";
+                break;
+            case 1096 :
+                className = "AUDIO_VIDEO_VIDEO_GAMING_TOY";
+                break;
+            case 1080 :
+                className = "AUDIO_VIDEO_VIDEO_MONITOR";
+                break;
+            case 1028 :
+                className = "AUDIO_VIDEO_WEARABLE_HEADSET";
+                break;
+            case 260 :
+                className = "COMPUTER_DESKTOP";
+                break;
+            case 272 :
+                className = "COMPUTER_HANDHELD_PC_PDA";
+                break;
+            case 268 :
+                className = "COMPUTER_LAPTOP";
+                break;
+            case 276 :
+                className = "COMPUTER_PALM_SIZE_PC_PDA";
+                break;
+            case 264 :
+                className = "COMPUTER_SERVER";
+                break;
+            case 256 :
+                className = "COMPUTER_UNCATEGORIZED";
+                break;
+            case 280 :
+                className = "COMPUTER_WEARABLE";
+                break;
+            case 2308 :
+                className = "HEALTH_BLOOD_PRESSURE";
+                break;
+            case 2332 :
+                className = "HEALTH_DATA_DISPLAY";
+                break;
+            case 2320 :
+                className = "HEALTH_GLUCOSE";
+                break;
+            case 2324 :
+                className = "HEALTH_PULSE_OXIMETER";
+                break;
+            case 2328 :
+                className = "HEALTH_PULSE_RATE";
+                break;
+            case 2312 :
+                className = "HEALTH_THERMOMETER";
+                break;
+            case 2304 :
+                className = "HEALTH_UNCATEGORIZED";
+                break;
+            case 2316 :
+                className = "HEALTH_WEIGHING";
+                break;
+            case 516 :
+                className = "PHONE_CELLULAR";
+                break;
+            case 520 :
+                className = "PHONE_CORDLESS";
+                break;
+            case 523 :
+                className = "PHONE_ISDN";
+                break;
+            case 528 :
+                className = "PHONE_MODEM_OR_GATEWAY";
+                break;
+            case 524 :
+                className = "PHONE_SMART";
+                break;
+            case 512 :
+                className = "PHONE_UNCATEGORIZED";
+                break;
+            case 2064 :
+                className = "TOY_CONTROLLER";
+                break;
+            case 2060 :
+                className = "TOY_DOLL_ACTION_FIGURE";
+                break;
+            case 2068 :
+                className = "TOY_GAME";
+                break;
+            case 2052 :
+                className = "TOY_ROBOT";
+                break;
+            case 2048 :
+                className = "TOY_UNCATEGORIZED";
+                break;
+            case 1812 :
+                className = "WEARABLE_GLASSES";
+                break;
+            case 1808 :
+                className = "WEARABLE_HELMET";
+                break;
+            case 1804 :
+                className = "WEARABLE_JACKET";
+                break;
+            case 1800 :
+                className = "WEARABLE_PAGER";
+                break;
+            case 1792 :
+                className = "WEARABLE_UNCATEGORIZED";
+                break;
+            case 1796 :
+                className = "WEARABLE_WRIST_WATCH";
+                break;
+            case 7936 :
+                className = "UNCATEGORIZED"; // TODO: Ce code existe uniquement en MajorClass
+                break;
+            default:
+                className = String.valueOf(code);
+        }
+        return className;
+    }
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
         @Override
@@ -256,13 +477,15 @@ public class MainActivity extends AppCompatActivity{
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Device deviceDB;
-                deviceDB = new Device(device.getName(), "blabla", String.valueOf(device.getBluetoothClass().getDeviceClass()));
-                userSingleton.addDevice(deviceDB);
-                pairedDevices.add(device);
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + ": " + device.getBluetoothClass().getDeviceClass()); // TODO: Ajouter ca aussi à la listView
-                // deviceListAdapter = new DeviceList(context, R.layout.device_list_view, pairedDevices); // TODO: Est ce que R.layout.device_list_view = deviceUuid?
-                // pairedDevicesView.setAdapter(deviceListAdapter);
+                if (!pairedDevices.contains(device)) {
+                    Device deviceDB = new Device(device.getAddress(), "blabla", translateClassCode(device.getBluetoothClass().getDeviceClass())); // Position à changer avec la fonction de Maude
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!" + deviceDB.id);
+                    userSingleton.addDevice(deviceDB); // TODO: Où est ce qu'on vérifie que l'objet n'est pas déjà dans la BD?
+                    pairedDevices.add(device);
+                    Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress() + ": " + translateDeviceTypeCode(device.getType()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass())); // TODO: Ajouter MajorClass DeviceType à DeviceDB
+                    // deviceListAdapter = new DeviceList(context, R.layout.device_list_view, pairedDevices); // TODO: Est ce que R.layout.device_list_view = deviceUuid?
+                    // pairedDevicesView.setAdapter(deviceListAdapter);
+                }
             } else {
                 Log.d(TAG, "onReceive: Didn't find a device!");
             }
@@ -360,7 +583,7 @@ public class MainActivity extends AppCompatActivity{
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);
-                        System.out.println("UPDATE" + device.id);
+                        // System.out.println("UPDATE: " + device.id); TODO: Trop de shits dans la DB
                         userSingleton.addDevice(device);
                     }
                 }
