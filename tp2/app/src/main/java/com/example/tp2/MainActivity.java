@@ -4,8 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -17,17 +21,26 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private IMapController mapController = null;
+    private MyLocationNewOverlay mLocationOverlay = null;
+
+    private Button locationButton;
 
     private SharedPreferences sharedPreferences;
     private Constants constants = new Constants();
@@ -54,18 +67,10 @@ public class MainActivity extends AppCompatActivity{
 
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
-
-        //map.setBuiltInZoomControls(true);// activation du zoom
-
-        IMapController mapController = map.getController();
-        mapController.setZoom(9.5);
-        GeoPoint startPoint = new GeoPoint(45.508888, -73.561668);
-        mapController.setCenter(startPoint);
-
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(startPoint);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(startMarker);
+        // default zoom buttons
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
+        // zoom with 2 fingers
+        map.setMultiTouchControls(true);
 
         requestPermissionsIfNecessary(new String[] {
                 // if you need to show the current location, uncomment the line below
@@ -74,11 +79,93 @@ public class MainActivity extends AppCompatActivity{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
+        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
+        mLocationOverlay.enableMyLocation();
+        mLocationOverlay.enableFollowLocation();
+        map.getOverlays().add(mLocationOverlay);
+
+        mapController = map.getController();
+        if(isGPSEnabled()) {
+            mapController.setZoom(15.0);
+        } else {
+            mapController.setZoom(10.0);
+            GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
+            mapController.setCenter(startPoint);
+        }
+
+        locationButton = findViewById(R.id.locationButton);
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+                boolean isGPSEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                if (isGPSEnabled) {
+                    double latitude = mLocationOverlay.getMyLocationProvider().getLastKnownLocation().getLatitude();
+                    double longitude = mLocationOverlay.getMyLocationProvider().getLastKnownLocation().getLongitude();
+
+                    GeoPoint startPoint = new GeoPoint(latitude, longitude);
+                    Marker startMarker = new Marker(map);
+                    startMarker.setPosition(startPoint);
+                    startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    map.getOverlays().add(startMarker);
+                    Toast.makeText(getApplicationContext(), Double.toString(latitude), Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "GPS Disabled", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+        showMultipleIcons();
 
         //Get user id
         setUpSharedPreferences();
         fetchUserDevices();
         //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
+    }
+    /** Retrieve user current location (latitude, longitude)
+     * @param -
+     * @return User current location
+     */
+    private ArrayList<Double> getCurrentLocation() {
+        ArrayList<Double> position = new ArrayList<Double>();
+        position.add(mLocationOverlay.getMyLocationProvider().getLastKnownLocation().getLatitude());
+        position.add(mLocationOverlay.getMyLocationProvider().getLastKnownLocation().getLongitude());
+        return position;
+    }
+
+    /** Check if GPS is activated
+     * @param -
+     * @return True if GPS is activated. False otherwise.
+     */
+    private boolean isGPSEnabled() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    private void showMultipleIcons() {
+        //your items
+        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+        items.add(new OverlayItem("Montreal", "Montreal", new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE)));
+        items.add(new OverlayItem("Laval", "Laval", new GeoPoint(45.612499, -73.707092)));
+
+        //the overlay
+        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        //do something
+                        Toast.makeText(getApplicationContext(), "TAP", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        return false;
+                    }
+                }, getApplicationContext());
+        mOverlay.setFocusItemsOnTap(true);
+
+        map.getOverlays().add(mOverlay);
     }
 
 
