@@ -3,14 +3,23 @@ package com.example.tp2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
 
+import com.google.firebase.database.DataSnapshot;
+
+import java.io.File;
+import java.util.UUID;
+
 public class SplashScreenActivity extends AppCompatActivity {
     int SPLASH_SCREEN_TIME = 3000;
+    private SharedPreferences sharedPreferences;
+    private  UserSingleton userSingleton = UserSingleton.getInstance();
+    private Constants constants = new Constants();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +29,9 @@ public class SplashScreenActivity extends AppCompatActivity {
             // create animation
             ImageView container = findViewById(R.id.container);
             container.setImageResource(R.drawable.splash_screen);
+            //Get user id
+            setUpSharedPreferences();
+            fetchUserDevices();
 
         }catch(Exception e){
             e.printStackTrace();
@@ -69,4 +81,58 @@ public class SplashScreenActivity extends AppCompatActivity {
         }, time);
 
     }
+
+    /** Retrieve user saved devices from firebase database
+     * @param -
+     * @return -
+     */
+    void fetchUserDevices(){
+        userSingleton.resetUserDevicesLocally();
+        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                System.out.println( task.getException());
+            }
+            else {
+                DataSnapshot snapshot = task.getResult();
+                for(DataSnapshot shot:  snapshot.getChildren()) {
+                    for (DataSnapshot val : shot.getChildren()) {
+                        Device device = val.getValue(Device.class);
+                        userSingleton.addDevice(device);
+                    }
+                }
+            }
+        });
+    }
+
+    void addNewDevice(Device device){
+        userSingleton.addDevice(device);
+        userSingleton.getDatabaseRef().child(UserSingleton.getInstance().getUserUId()).child("devices").push().setValue(device);
+    }
+
+
+
+    /** Retrieve user id through shared preferences and
+     *  update the userInfoSingleton singleton id with the value
+     *  Create a shared preferences database for this user for the first use of the application
+     * @param -
+     * @return -
+     */
+    void setUpSharedPreferences(){
+        File file = new File(constants.SHARED_PREFERENCES_PATH);
+        if(file.exists()){
+            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, SplashScreenActivity.this.MODE_PRIVATE);
+            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
+                userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
+            }
+        }else{
+            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            String userUId =  UUID.randomUUID().toString();
+            userSingleton.setUserUId(userUId);
+            editor.putString(constants.SHARED_USER_ID, userUId);
+            editor.commit();
+        }
+    }
+
+
 }

@@ -3,6 +3,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -23,6 +24,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -47,7 +50,6 @@ public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
 
-    private SharedPreferences sharedPreferences;
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
@@ -119,22 +121,22 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-
-
-        //Get user id
-        setUpSharedPreferences();
-        fetchUserDevices();
-        //userSingleton.addDevice(new Device("ID14", "TOBBB", "TABBBB"));
-        createListFragment();
-
+//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
+//        System.out.println(userSingleton.getDevices().size());
+        swapToListFragment();
     }
-    private void  createListFragment(){
+    public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-// Replace the contents of the container with the new fragment
-        ft.add(R.id.fragment_container, new ItemFragment());
-// or ft.replace(R.id.your_placeholder, new FooFragment());
-// Complete the changes added above
+        ft.replace(R.id.fragment_container, new ItemFragment());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+    public void swapToDeviceInfoFragment(String itemInfo){
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
+        ft.addToBackStack(null);
         ft.commit();
     }
     @Override
