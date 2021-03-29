@@ -41,9 +41,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     public void onClickItem(final View view) {
         int itemPosition = recyclerView.getChildLayoutPosition(view);
-        String itemInfo = mValues.get(itemPosition).id + "\n" + mValues.get(itemPosition).classCategory;
+
         if (view.getContext() instanceof MainActivity) {
-            ((MainActivity)view.getContext()).swapToDeviceInfoFragment(itemInfo);
+            ((MainActivity)view.getContext()).swapToDeviceInfoFragment(itemPosition);
         }
     }
 

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-//        System.out.println(userSingleton.getDevices().size());
+        System.out.println(userSingleton.getDevices().size());
         swapToListFragment();
     }
     public void  swapToListFragment(){
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
-    public void swapToDeviceInfoFragment(String itemInfo){
+    public void swapToDeviceInfoFragment(int deviceIndex){
+        String itemInfo = userSingleton.getDevices().get(deviceIndex).id + "\n" + userSingleton.getDevices().get(deviceIndex).classCategory;
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
