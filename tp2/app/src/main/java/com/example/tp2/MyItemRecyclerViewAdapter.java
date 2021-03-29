@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tp2.Devices.DeviceContent.DeviceItem;
+// import com.example.tp2.Devices.DeviceContent.DeviceItem;
 
 import java.util.ArrayList;
 import java.util.List;

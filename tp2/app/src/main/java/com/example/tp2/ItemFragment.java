@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.tp2.Devices.DeviceContent;
+// import com.example.tp2.Devices.DeviceContent;
 
 /**
  * A fragment representing a list of Items.

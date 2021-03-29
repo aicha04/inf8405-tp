@@ -64,17 +64,22 @@ public class MainActivity extends AppCompatActivity{
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         createMap();
-
-        makeDiscoverable();
-        System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
-        try {
-            TimeUnit.SECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (this.isGPSEnabled()) {
+            makeDiscoverable();
+            System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            discoverNewDevices();
+            System.out.println("discoverNewDevices");
         }
-        discoverNewDevices();
-        System.out.println("discoverNewDevices");
-
+        else {
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
+        }
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
 //        System.out.println(userSingleton.getDevices().size());
         swapToListFragment();
@@ -332,11 +337,11 @@ public class MainActivity extends AppCompatActivity{
                 if (!pairedDevices.contains(device)) {
                     GeoPoint location = getCurrentLocation();
                     addMarker(location);
-                    String position = location.getLatitude() + "," + location.getLatitude();
+                    String position = location.getLatitude() + ", " + location.getLatitude();
                     Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
-                    userSingleton.addDevice(deviceDB);
+                    userSingleton.addNewDeviceToDb(deviceDB);
                     pairedDevices.add(device);
-                    Log.d(TAG, "discoverDevicesReceiver!!!!!!!!!: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                    Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
                 }
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
