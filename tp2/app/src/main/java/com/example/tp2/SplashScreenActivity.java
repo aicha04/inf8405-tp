@@ -31,8 +31,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             container.setImageResource(R.drawable.splash_screen);
             //Get user id
             setUpSharedPreferences();
-            fetchUserDevices();
-
+            userSingleton.fetchUserDevices();
         }catch(Exception e){
             e.printStackTrace();
             Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
@@ -82,35 +81,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-    /** Retrieve user saved devices from firebase database
-     * @param -
-     * @return -
-     */
-    void fetchUserDevices(){
-        userSingleton.resetUserDevicesLocally();
-        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                System.out.println( task.getException());
-            }
-            else {
-                DataSnapshot snapshot = task.getResult();
-                for(DataSnapshot shot:  snapshot.getChildren()) {
-                    for (DataSnapshot val : shot.getChildren()) {
-                        Device device = val.getValue(Device.class);
-                        userSingleton.addDevice(device);
-                    }
-                }
-            }
-        });
-    }
-
-    void addNewDevice(Device device){
-        userSingleton.addDevice(device);
-        userSingleton.getDatabaseRef().child(UserSingleton.getInstance().getUserUId()).child("devices").push().setValue(device);
-    }
-
-
-
     /** Retrieve user id through shared preferences and
      *  update the userInfoSingleton singleton id with the value
      *  Create a shared preferences database for this user for the first use of the application
@@ -133,6 +103,5 @@ public class SplashScreenActivity extends AppCompatActivity {
             editor.commit();
         }
     }
-
 
 }
