@@ -42,10 +42,6 @@ public class UserSingleton {
         this.devices = devices;
     }
 
-    void addDevice(Device device) {
-        devices.add(device);
-    }
-
     public void setUserUId(String userUId) {
         this.userUId = userUId;
     }
@@ -69,7 +65,7 @@ public class UserSingleton {
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);
-                        this.addDevice(device);
+                        devices.add(device);
                     }
                 }
             }
@@ -77,8 +73,12 @@ public class UserSingleton {
     }
 
     void addNewDeviceToDb(Device device){
-        this.addDevice(device);
+        devices.add(device);
         databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").push().setValue(device);
+    }
+
+    void resetDb(String id){
+        databaseRef.child(id).child("devices").removeValue();
     }
 
 
