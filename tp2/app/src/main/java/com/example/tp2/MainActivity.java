@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,8 +31,11 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,8 +47,11 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
     private BluetoothAdapter bluetoothAdapter;
     public ArrayList<BluetoothDevice> pairedDevices;
+
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private IMapController mapController = null;
+    private MyLocationNewOverlay mLocationOverlay = null;
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
@@ -57,6 +63,8 @@ public class MainActivity extends AppCompatActivity{
         pairedDevices = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        createMap();
+
         makeDiscoverable();
         System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
         try {
@@ -67,7 +75,16 @@ public class MainActivity extends AppCompatActivity{
         discoverNewDevices();
         System.out.println("discoverNewDevices");
 
+//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
+//        System.out.println(userSingleton.getDevices().size());
+        swapToListFragment();
+    }
 
+    /** Set up map and its parameters
+     * @param -
+     * @return -
+     */
+    private void createMap() {
         //handle permissions first, before map is created. not depicted here
 
         //load/initialize the osmdroid configuration, this can be done
@@ -86,17 +103,10 @@ public class MainActivity extends AppCompatActivity{
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        //map.setBuiltInZoomControls(true);// activation du zoom
-
-        IMapController mapController = map.getController();
-        mapController.setZoom(9.5);
-        GeoPoint startPoint = new GeoPoint(45.508888, -73.561668);
-        mapController.setCenter(startPoint);
-
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(startPoint);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(startMarker);
+        // default zoom buttons
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
+        // zoom with 2 fingers
+        map.setMultiTouchControls(true);
 
         requestPermissionsIfNecessary(new String[] {
                 // if you need to show the current location, uncomment the line below
@@ -104,10 +114,50 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-//        System.out.println(userSingleton.getDevices().size());
-        swapToListFragment();
+
+        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
+        mLocationOverlay.enableMyLocation();
+        mLocationOverlay.enableFollowLocation();
+        map.getOverlays().add(mLocationOverlay);
+
+        mapController = map.getController();
+        if(isGPSEnabled()) {
+            mapController.setZoom(15.0);
+        } else {
+            mapController.setZoom(10.0);
+            GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
+            mapController.setCenter(startPoint);
+        }
     }
+
+    /** Retrieve user current location
+     * @param -
+     * @return User current location
+     */
+    private GeoPoint getCurrentLocation() {
+        return new GeoPoint(mLocationOverlay.getMyLocation());
+    }
+
+    /** Add marker at the given location
+     * @param location
+     * @return -
+     */
+    private void addMarker(GeoPoint location) {
+        Marker startMarker = new Marker(map);
+        startMarker.setPosition(location);
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        map.getOverlays().add(startMarker);
+    }
+
+    /** Check if GPS is activated
+     * @param -
+     * @return True if GPS is activated. False otherwise.
+     */
+    private boolean isGPSEnabled() {
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -115,6 +165,7 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
     public void swapToDeviceInfoFragment(String itemInfo){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -122,6 +173,7 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -278,7 +330,10 @@ public class MainActivity extends AppCompatActivity{
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!pairedDevices.contains(device)) {
-                    Device deviceDB = new Device(device.getAddress(), "blabla", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+                    GeoPoint location = getCurrentLocation();
+                    addMarker(location);
+                    String position = location.getLatitude() + "," + location.getLatitude();
+                    Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
                     userSingleton.addDevice(deviceDB);
                     pairedDevices.add(device);
                     Log.d(TAG, "discoverDevicesReceiver!!!!!!!!!: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
@@ -581,53 +636,6 @@ public class MainActivity extends AppCompatActivity{
         } else {
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
         }
-    }
-
-    /** Retrieve user id through shared preferences and
-     *  update the userInfoSingleton singleton id with the value
-     *  Create a shared preferences database for this user for the first use of the application
-     * @param -
-     * @return -
-     */
-//    void setUpSharedPreferences(){
-//        File file = new File(constants.SHARED_PREFERENCES_PATH);
-//        if(file.exists()){
-//            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MainActivity.this.MODE_PRIVATE);
-//            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
-//                 userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
-//            }
-//        }else{
-//            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//            String userUId =  UUID.randomUUID().toString();
-//            userSingleton.setUserUId(userUId);
-//            editor.putString(constants.SHARED_USER_ID, userUId);
-//            editor.commit();
-//        }
-//    }
-
-
-    /** Retrieve user saved devices from firebase database
-     * @param -
-     * @return -
-     */
-    void fetchUserDevices(){
-        userSingleton.getDatabaseRef().child(userSingleton.getUserUId()).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                System.out.println( task.getException());
-            }
-            else {
-                userSingleton.resetUserDevicesLocally();
-                DataSnapshot snapshot = task.getResult();
-                for(DataSnapshot shot:  snapshot.getChildren()) {
-                    for (DataSnapshot val : shot.getChildren()) {
-                        Device device = val.getValue(Device.class);
-                        System.out.println("UPDATE: " + device.id);
-                        userSingleton.addDevice(device);
-                    }
-                }
-            }
-        });
     }
 
     @Override
