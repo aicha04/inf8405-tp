@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity{
         pairedDevices = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        enableBluetooth();
-        System.out.println("enableDisableBluetooth"); // TODO: À changer pour faire des fonctions asynchrones
+        makeDiscoverable();
+        System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
         try {
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
@@ -149,42 +149,43 @@ public class MainActivity extends AppCompatActivity{
      * @param -
      * @return -
      */
-    public void enableBluetooth() {
+    public void makeDiscoverable() {
         if (bluetoothAdapter == null) {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_SHORT;
             Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
         } else {
             if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivity(enableBtIntent);
-                Log.d(TAG, "enableBluetooth: Enabling Bluetooth.");
+                // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                // startActivity(enableBtIntent);
+                // Log.d(TAG, "makeDiscoverable: Enabling Bluetooth.");
                 // IntentFilter enableBTFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
                 // registerReceiver(enableBluetoothReceiver, enableBTFilter);
                 Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                 discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // 300 seconds is the maximum for security reasons
                 startActivity(discoverableIntent);
-                Log.d(TAG, "enableBluetooth: Making device discoverable for 300 seconds.");
+                Log.d(TAG, "1 - makeDiscoverable: Making device discoverable for 300 seconds.");
                 IntentFilter makeDiscoverableFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
                 registerReceiver(makeDiscoverableReceiver, makeDiscoverableFilter);
             } else {
+                Log.d(TAG, "makeDiscoverable: Rebooting Bluetooth.");
                 bluetoothAdapter.disable();
-                Log.d(TAG, "enableBluetooth: Disabling Bluetooth.");
+                // Log.d(TAG, "enableBluetooth: Disabling Bluetooth.");
                 // IntentFilter enableBTFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
                 // registerReceiver(enableBluetoothReceiver, enableBTFilter);
                 // Rebooting Bluetooth
                 // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 // startActivity(enableBtIntent);
-                Log.d(TAG, "enableBluetooth: Enabling Bluetooth.");
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE); // TODO: l'activité rentre ici
                 discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // 300 seconds is the maximum for security reasons
                 startActivity(discoverableIntent);
-                Log.d(TAG, "enableBluetooth: Making device discoverable for 300 seconds.");
+                Log.d(TAG, "2 - makeDiscoverable: Making device discoverable for 300 seconds.");
                 IntentFilter makeDiscoverableFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
                 registerReceiver(makeDiscoverableReceiver, makeDiscoverableFilter);
             }
         }
     }
+
     /** Will look for any device with Bluetooth capabilities in the area
      * Will request permission to use Bluetooth to operating system when necessary
      * Will reboot discovery if it is already on
@@ -249,20 +250,20 @@ public class MainActivity extends AppCompatActivity{
                 int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
                 switch (mode) {
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(TAG, "bluetoothAdapter: Discoverability Enabled.");
+                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Enabled.");
                         break;
                     //Device not in discoverable mode
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(TAG, "bluetoothAdapter: Discoverability Disabled. Able to receive connections.");
+                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Disabled. Able to receive connections.");
                         break;
                     case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(TAG, "bluetoothAdapter: Discoverability Disabled. Not able to receive connections.");
+                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Disabled. Not able to receive connections.");
                         break;
                     case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(TAG, "bluetoothAdapter: Connecting...");
+                        Log.d(TAG, "makeDiscoverableReceiver: Connecting...");
                         break;
                     case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(TAG, "bluetoothAdapter: Connected.");
+                        Log.d(TAG, "makeDiscoverableReceiver: Connected.");
                         break;
                 }
             }
@@ -273,20 +274,21 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            Log.d(TAG, "onReceive: ACTION FOUND.");
+            Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!pairedDevices.contains(device)) {
-                    Device deviceDB = new Device(device.getAddress(), "blabla", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName()); // Position à changer avec la fonction de Maude
+                    Device deviceDB = new Device(device.getAddress(), "blabla", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
                     userSingleton.addDevice(deviceDB);
                     pairedDevices.add(device);
-                    Log.d(TAG, "onReceive!!!!!!!!!: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName()); // TODO: Ajouter MajorClass DeviceType à DeviceDB
+                    Log.d(TAG, "discoverDevicesReceiver!!!!!!!!!: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
                 }
             } else {
-                Log.d(TAG, "onReceive: Didn't find a device!");
+                Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
             }
         }
     };
+
     /** Will translate the integer code returned by Bluetooth adapter into a readable device type
      *  If code does not map to any known device type, it is returned as is
      * @param - int code
@@ -516,7 +518,7 @@ public class MainActivity extends AppCompatActivity{
                 className = "WEARABLE_WRIST_WATCH";
                 break;
             case 7936 :
-                className = "UNCATEGORIZED"; // TODO: Ce code existe uniquement en MajorClass
+                className = "UNCATEGORIZED";
                 break;
             default:
                 className = String.valueOf(code);
@@ -620,7 +622,7 @@ public class MainActivity extends AppCompatActivity{
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);
-                        // System.out.println("UPDATE: " + device.id); TODO: Trop de devices dans la DB
+                        System.out.println("UPDATE: " + device.id);
                         userSingleton.addDevice(device);
                     }
                 }
