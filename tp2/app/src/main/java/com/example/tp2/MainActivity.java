@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity{
 
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
         mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
+//        mLocationOverlay.enableFollowLocation();
         map.getOverlays().add(mLocationOverlay);
 
         mapController = map.getController();
@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity{
         ArrayList<Device> devices = userSingleton.getDevices();
         boolean deviceExists = false;
         for(int i = 0; i < devices.size(); i++){
-            if(devices.get(i).id == device.getAddress() && devices.get(i).position== device.getAddress()){
+            if(devices.get(i).id.equals(device.getAddress())){
                 deviceExists = true;
             }
         }
