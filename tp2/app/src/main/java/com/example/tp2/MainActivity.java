@@ -46,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
     private BluetoothAdapter bluetoothAdapter;
-    public ArrayList<BluetoothDevice> pairedDevices;
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pairedDevices = new ArrayList<>();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         createMap();
@@ -334,13 +332,15 @@ public class MainActivity extends AppCompatActivity{
             Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (!pairedDevices.contains(device)) {
+                if (!deviceExists(device)) {
+
                     GeoPoint location = getCurrentLocation();
                     addMarker(location);
                     String position = location.getLatitude() + ", " + location.getLatitude();
                     Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+
+
                     userSingleton.addNewDeviceToDb(deviceDB);
-                    pairedDevices.add(device);
                     Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
                 }
             } else {
@@ -348,7 +348,16 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     };
-
+    private boolean deviceExists(BluetoothDevice device){
+        ArrayList<Device> devices = userSingleton.getDevices();
+        boolean deviceExists = false;
+        for(int i = 0; i < devices.size(); i++){
+            if(devices.get(i).id == device.getAddress() && devices.get(i).position== device.getAddress()){
+                deviceExists = true;
+            }
+        }
+        return deviceExists;
+    }
     /** Will translate the integer code returned by Bluetooth adapter into a readable device type
      *  If code does not map to any known device type, it is returned as is
      * @param - int code
