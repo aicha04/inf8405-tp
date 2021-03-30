@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -65,33 +66,43 @@ public class MainActivity extends AppCompatActivity{
         GeoPoint startPoint = new GeoPoint(45.508888, -73.561668);
         mapController.setCenter(startPoint);
 
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(startPoint);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(startMarker);
-
         requestPermissionsIfNecessary(new String[] {
                 // if you need to show the current location, uncomment the line below
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-        System.out.println(userSingleton.getDevices().size());
+
+//        userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
+//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
+//        System.out.println(userSingleton.getDevices().size());
         swapToListFragment();
+
+        for (int i=0; i < userSingleton.getDevices().size(); i++) {
+            Device device = userSingleton.getDevices().get(i);
+            String[] latlon = device.position.split(",");
+            if (latlon.length == 2) {
+                GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
+                addMarker(location, i);
+            } else {
+                Log.d("latlon array length", String.valueOf(latlon.length));
+            }
+        }
     }
 
-    public void addMarker(GeoPoint location, String id) {
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(location);
-        startMarker.setTitle(id);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
-            boolean onMarkerClick(Marker marker, MapView mapView) {
-                swapToDeviceInfoFragment(2);
+    private void addMarker(GeoPoint location, int deviceIndex) {
+        Marker newMarker = new Marker(map);
+        newMarker.setPosition(location);
+        newMarker.setTitle(String.valueOf(deviceIndex));
+        newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        newMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                swapToDeviceInfoFragment(deviceIndex);
+                return true;
             }
         });
-        map.getOverlays().add(startMarker);
+        map.getOverlays().add(newMarker);
     }
 
     public void  swapToListFragment(){
