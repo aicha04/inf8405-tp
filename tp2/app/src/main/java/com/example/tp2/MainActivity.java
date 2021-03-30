@@ -40,6 +40,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.io.File;
 import java.util.ArrayList;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -335,13 +336,15 @@ public class MainActivity extends AppCompatActivity{
                 if (!deviceExists(device)) {
 
                     GeoPoint location = getCurrentLocation();
-                    addMarker(location);
-                    String position = location.getLatitude() + ", " + location.getLatitude();
-                    Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
 
-
-                    userSingleton.addNewDeviceToDb(deviceDB);
-                    Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                    if (location != null) {
+                        addMarker(location);
+                        String position = location.getLatitude() + ", " + location.getLatitude();
+                        Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+                        
+                        userSingleton.addNewDeviceToDb(deviceDB);
+                        Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                    }
                 }
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
