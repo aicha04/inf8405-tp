@@ -80,6 +80,20 @@ public class MainActivity extends AppCompatActivity{
         System.out.println(userSingleton.getDevices().size());
         swapToListFragment();
     }
+
+    public void addMarker(GeoPoint location, String id) {
+        Marker startMarker = new Marker(map);
+        startMarker.setPosition(location);
+        startMarker.setTitle(id);
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        startMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            boolean onMarkerClick(Marker marker, MapView mapView) {
+                swapToDeviceInfoFragment(2);
+            }
+        });
+        map.getOverlays().add(startMarker);
+    }
+
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
