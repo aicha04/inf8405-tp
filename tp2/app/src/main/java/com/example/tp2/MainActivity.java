@@ -46,11 +46,13 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
+    private static final int PERMISSION_CODE = 2;
+    private static final int REQUEST_ENABLE_BT = 3;
     private BluetoothAdapter bluetoothAdapter;
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
-    private IMapController mapController = null;
+//    private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
 
     private Constants constants = new Constants();
@@ -60,28 +62,72 @@ public class MainActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
         createMap();
-        if (this.isGPSEnabled()) {
-            makeDiscoverable();
-            System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
-            try {
-                TimeUnit.SECONDS.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+            Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
-            discoverNewDevices();
-            System.out.println("discoverNewDevices");
+            discoverDevices();
+
         }
-        else {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
-        }
+
+//        discoverNewDevices();
+
+//        if (this.isGPSEnabled()) {
+//            makeDiscoverable();
+//            System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
+//            try {
+//                TimeUnit.SECONDS.sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            discoverNewDevices();
+//            System.out.println("discoverNewDevices");
+//        }
+//        else {
+//            Context context = getApplicationContext();
+//            int duration = Toast.LENGTH_SHORT;
+//            Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
+//        }
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-//        System.out.println(userSingleton.getDevices().size());
+        System.out.println(userSingleton.getDevices().size());
         swapToListFragment();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                discoverDevices();
+            }
+            else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Enable Bluetooth in your settings", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void discoverDevices() {
+        if (!bluetoothAdapter.isDiscovering()) {
+            Log.d(TAG, "not discovering");
+            requestBTPermissions();
+            bluetoothAdapter.startDiscovery();
+            Log.d(TAG, "discoverNewDevices: Looking for new devices.");
+            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+            discoverDevicesIntent = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+        }
+        Log.d(TAG, "discovering");
     }
 
     /** Set up map and its parameters
@@ -119,19 +165,19 @@ public class MainActivity extends AppCompatActivity{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
-        mLocationOverlay.enableMyLocation();
+//        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
+//        mLocationOverlay.enableMyLocation();
 //        mLocationOverlay.enableFollowLocation();
-        map.getOverlays().add(mLocationOverlay);
+//        map.getOverlays().add(mLocationOverlay);
 
-        mapController = map.getController();
-        if(isGPSEnabled()) {
-            mapController.setZoom(15.0);
-        } else {
+        IMapController mapController = map.getController();
+//        if(isGPSEnabled()) {
+//            mapController.setZoom(15.0);
+//        } else {
             mapController.setZoom(10.0);
             GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
             mapController.setCenter(startPoint);
-        }
+ //       }
     }
 
     /** Retrieve user current location
@@ -335,27 +381,33 @@ public class MainActivity extends AppCompatActivity{
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!deviceExists(device)) {
 
-                    GeoPoint location = getCurrentLocation();
+//                    GeoPoint location = getCurrentLocation();
 
-                    if (location != null) {
-                        addMarker(location);
-                        String position = location.getLatitude() + ", " + location.getLatitude();
-                        Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+//                    if (location != null) {
+//                        addMarker(location);
+//                        String position = location.getLatitude() + ", " + location.getLatitude();
+                        Device deviceDB = new Device(device.getAddress(), "position", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
                         
                         userSingleton.addNewDeviceToDb(deviceDB);
+                        Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
                         Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
-                    }
+ //                   }
                 }
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.v(TAG,"Entered the Finished ");
+                bluetoothAdapter.startDiscovery();
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
             }
         }
     };
     private boolean deviceExists(BluetoothDevice device){
+        Log.d(TAG, "check if device exists");
         ArrayList<Device> devices = userSingleton.getDevices();
         boolean deviceExists = false;
         for(int i = 0; i < devices.size(); i++){
             if(devices.get(i).id.equals(device.getAddress())){
+                Log.d(TAG, "device exists");
                 deviceExists = true;
             }
         }
@@ -635,20 +687,13 @@ public class MainActivity extends AppCompatActivity{
      * @return -
      */
     private void requestBTPermissions() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            Log.d(TAG, "checkBTPermissions: Checking permissions. SDK version >= LOLLIPOP.");
-            int permissionCheck = 0;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-            }
-            if (permissionCheck != 0) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_CODE);
             }
         } else {
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
@@ -660,7 +705,7 @@ public class MainActivity extends AppCompatActivity{
         Log.d(TAG, "onDestroy: called.");
         super.onDestroy();
         // unregisterReceiver(enableBluetoothReceiver);
-        unregisterReceiver(makeDiscoverableReceiver);
+        //unregisterReceiver(makeDiscoverableReceiver);
         unregisterReceiver(discoverDevicesReceiver);
     }
 }
