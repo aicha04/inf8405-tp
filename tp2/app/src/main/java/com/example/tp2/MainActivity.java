@@ -70,15 +70,13 @@ public class MainActivity extends AppCompatActivity{
             // Device doesn't support Bluetooth
             Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
         } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            if (bluetoothAdapter.isEnabled()) {
+                bluetoothAdapter.disable();
             }
-            discoverDevices();
-
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-//        discoverNewDevices();
 
 //        if (this.isGPSEnabled()) {
 //            makeDiscoverable();
@@ -661,6 +659,17 @@ public class MainActivity extends AppCompatActivity{
                     this,
                     permissionsToRequest.toArray(new String[0]),
                     REQUEST_PERMISSIONS_REQUEST_CODE);
+//        } else {
+//            switch (requestCode) {
+//                case REQUEST_PERMISSIONS_REQUEST_CODE:
+//                    Log.d(TAG, String.valueOf(grantResults.length));
+//                    if (grantResults.length > 0 &&
+//                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                        // Permission is granted. Continue the action or workflow
+//                        // in your app.
+//                    }
+//                    discoverDevices();
+//            }
         }
     }
 
