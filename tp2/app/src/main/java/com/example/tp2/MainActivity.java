@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
-//        userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
+          //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
 //        System.out.println(userSingleton.getDevices().size());
         swapToListFragment();

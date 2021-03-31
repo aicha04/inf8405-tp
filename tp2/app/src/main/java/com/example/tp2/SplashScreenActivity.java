@@ -32,6 +32,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             //Get user id
             setUpSharedPreferences();
             userSingleton.fetchUserDevices();
+
         }catch(Exception e){
             e.printStackTrace();
             Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
