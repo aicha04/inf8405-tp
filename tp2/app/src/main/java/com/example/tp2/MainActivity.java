@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
           //userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
-          userSingleton.addToFavorites(0);
+          //userSingleton.addToFavorites(0);
 
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
 //        System.out.println(userSingleton.getDevices().size());
