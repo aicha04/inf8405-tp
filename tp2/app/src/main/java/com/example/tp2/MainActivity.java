@@ -69,6 +69,21 @@ public class MainActivity extends AppCompatActivity{
 
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
         System.out.println(userSingleton.getDevices().size());
+
+        //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
+//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
+//        System.out.println(userSingleton.getDevices().size());
+
+        for (int i=0; i < userSingleton.getDevices().size(); i++) {
+            Device device = userSingleton.getDevices().get(i);
+            String[] latlon = device.position.split(",");
+            if (latlon.length == 2) {
+                GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
+                addMarker(location, i);
+            } else {
+                Log.d("latlon array length", String.valueOf(latlon.length));
+            }
+        }
         swapToListFragment();
     }
 
@@ -176,20 +191,6 @@ public class MainActivity extends AppCompatActivity{
         mLocationOverlay.enableMyLocation();
         map.getOverlays().add(mLocationOverlay);
 
-          //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
-//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
-//        System.out.println(userSingleton.getDevices().size());
-
-        for (int i=0; i < userSingleton.getDevices().size(); i++) {
-            Device device = userSingleton.getDevices().get(i);
-            String[] latlon = device.position.split(",");
-            if (latlon.length == 2) {
-                GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
-                addMarker(location, i);
-            } else {
-                Log.d("latlon array length", String.valueOf(latlon.length));
-            }
-        }
     }
     /** Retrieve user current location
      * @param -
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity{
                         GeoPoint location = getCurrentLocation();
 
                         if (location != null) {
-                            addMarker(location);
+                            addMarker(location, userSingleton.getDevices().size());
                             String position = location.getLatitude() + ", " + location.getLatitude();
                             Device deviceDB = new Device(device.getAddress(), "position", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
 
