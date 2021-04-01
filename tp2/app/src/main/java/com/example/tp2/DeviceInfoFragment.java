@@ -19,8 +19,6 @@ import android.widget.Toast;
  * create an instance of this fragment.
  */
 public class DeviceInfoFragment extends Fragment {
-    String removeFavoriteStr = "REMOVE FROM FAVORIS";
-    String addToFavorisStr = "ADD TO FAVORIS";
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -86,7 +84,6 @@ public class DeviceInfoFragment extends Fragment {
         favorite_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Put real device attribute is favorite
                 Device device =  userSingleton.getDevices().get(deviceIndex);
                 if (device.isFavorite == 0) {
                     Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG).show();
@@ -102,7 +99,8 @@ public class DeviceInfoFragment extends Fragment {
     }
 
     void updateFavoriteButton(Button favorite_button){
-        //Put real device attribute is favorite
+        String removeFavoriteStr = "REMOVE FROM FAVORIS";
+        String addToFavorisStr = "ADD TO FAVORIS";
         Device device =  userSingleton.getDevices().get(deviceIndex);
         if (device.isFavorite == 1) {
             favorite_button.setText(removeFavoriteStr);

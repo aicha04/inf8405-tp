@@ -68,8 +68,6 @@ public class UserSingleton {
 
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
-                        String key = val.getKey();
-                        System.out.println(key);
                         Device device = val.getValue(Device.class);
                         devices.add(device);
                     }

@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity{
     private void addMarker(GeoPoint location, int deviceIndex) {
         Marker newMarker = new Marker(map);
         newMarker.setPosition(location);
-        newMarker.setTitle(userSingleton.getDevices().get(deviceIndex).position);
+        newMarker.setTitle(String.valueOf(deviceIndex));
         newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         newMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             @Override
