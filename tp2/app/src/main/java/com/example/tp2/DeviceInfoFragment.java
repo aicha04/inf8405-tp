@@ -21,17 +21,17 @@ import android.widget.Toast;
 public class DeviceInfoFragment extends Fragment {
     String removeFavoriteStr = "REMOVE FROM FAVORIS";
     String addToFavorisStr = "ADD TO FAVORIS";
+    private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_DEVICEINFO = "param1";
 
     // TODO: Rename and change types of parameters
-    private String deviceInfo;
-    private int isFavorite = 0;
+    private static int deviceIndex;
 
-    public DeviceInfoFragment(String deviceInfo) {
-        this.deviceInfo = deviceInfo;
+    public DeviceInfoFragment(int deviceIndex) {
+        this.deviceIndex = deviceIndex;
     }
 
     /**
@@ -44,7 +44,7 @@ public class DeviceInfoFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static DeviceInfoFragment newInstance(String deviceInfo) {
-        DeviceInfoFragment fragment = new DeviceInfoFragment(deviceInfo);
+        DeviceInfoFragment fragment = new DeviceInfoFragment(deviceIndex);
         Bundle args = new Bundle();
 //      args.putString(ARG_DEVICEINFO, deviceInfo);
         fragment.setArguments(args);
@@ -75,7 +75,7 @@ public class DeviceInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_device_info, container, false);
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
-        deviceInfoView.setText(this.deviceInfo);
+        deviceInfoView.setText(userSingleton.getDevices().get(deviceIndex).toString());
 
         Button back_button = (Button) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
@@ -87,12 +87,13 @@ public class DeviceInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //Put real device attribute is favorite
-                if (isFavorite == 0) {
+                Device device =  userSingleton.getDevices().get(deviceIndex);
+                if (device.isFavorite == 0) {
                     Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG).show();
-                    isFavorite = 1;
+                    device.addToFavorite();
                 } else {
                     Toast.makeText(getActivity(),"Device removed from favoris", Toast.LENGTH_LONG).show();
-                    isFavorite = 0;
+                   device.removeFromFavorite();
                 }
                 updateFavoriteButton(favorite_button);
             }
@@ -102,7 +103,8 @@ public class DeviceInfoFragment extends Fragment {
 
     void updateFavoriteButton(Button favorite_button){
         //Put real device attribute is favorite
-        if (isFavorite == 1) {
+        Device device =  userSingleton.getDevices().get(deviceIndex);
+        if (device.isFavorite == 1) {
             favorite_button.setText(removeFavoriteStr);
         } else {
             favorite_button.setText(addToFavorisStr);

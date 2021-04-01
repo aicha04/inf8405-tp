@@ -4,8 +4,8 @@ public class Device {
     public String id;
     public String position;
     public String classCategory;
-    public int isFavorite;
-    public String dbKey="";
+    public int isFavorite = 0;
+    public String dbKey = "";
     //Add any useful infos
 
 
@@ -32,5 +32,9 @@ public class Device {
 
     public String getDbKey() {
         return dbKey;
+    }
+
+    public  String toString(){
+        return this.id + "\n" + this.classCategory;
     }
 }

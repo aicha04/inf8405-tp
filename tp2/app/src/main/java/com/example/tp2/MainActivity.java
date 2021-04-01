@@ -72,9 +72,10 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
+      // userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
+        //  userSingleton.addToFavorites(0);
+       // userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
 
-          //userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
-          //userSingleton.addToFavorites(0);
 
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
 //        System.out.println(userSingleton.getDevices().size());
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity{
     private void addMarker(GeoPoint location, int deviceIndex) {
         Marker newMarker = new Marker(map);
         newMarker.setPosition(location);
-        newMarker.setTitle(String.valueOf(deviceIndex));
+        newMarker.setTitle(userSingleton.getDevices().get(deviceIndex).position);
         newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         newMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             @Override
@@ -115,10 +116,9 @@ public class MainActivity extends AppCompatActivity{
         ft.commit();
     }
     public void swapToDeviceInfoFragment(int deviceIndex){
-        String itemInfo = userSingleton.getDevices().get(deviceIndex).id + "\n" + userSingleton.getDevices().get(deviceIndex).classCategory;
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
+        ft.replace(R.id.fragment_container, new DeviceInfoFragment(deviceIndex));
         ft.addToBackStack(null);
         ft.commit();
     }
