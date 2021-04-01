@@ -176,19 +176,29 @@ public class MainActivity extends AppCompatActivity{
         });
 
         mapController = map.getController();
-        if(isGPSEnabled()) {
-            Log.d("OnCreate", "GPS Enabled");
-            mapController.setZoom(15.0);
-        } else {
-            mapController.setZoom(10.0);
-            GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
-            mapController.setCenter(startPoint);
-            mapController.animateTo(startPoint);
-        }
+        mapController.setZoom(10.0);
+        GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
+        mapController.setCenter(startPoint);
+        mapController.animateTo(startPoint);
 
         mGpsMyLocationProvider = new GpsMyLocationProvider(ctx);
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
         mLocationOverlay.enableMyLocation();
+        mLocationOverlay.runOnFirstFix(new Runnable() {
+            @Override
+            public void run() {
+                final GeoPoint myLocation = mLocationOverlay.getMyLocation();
+                if (myLocation != null) {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mapController.setCenter(myLocation);
+                            mapController.animateTo(myLocation);
+                        }
+                    });
+                };
+            }
+        });
         map.getOverlays().add(mLocationOverlay);
 
     }
@@ -273,8 +283,8 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!deviceExists(device)) {
                         Log.d(TAG, "onReceive before getCurrentLocation");
@@ -283,7 +293,7 @@ public class MainActivity extends AppCompatActivity{
                         if (location != null) {
                             addMarker(location, userSingleton.getDevices().size());
                             String position = location.getLatitude() + ", " + location.getLatitude();
-                            Device deviceDB = new Device(device.getAddress(), "position", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+                            Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
 
                             userSingleton.addNewDeviceToDb(deviceDB);
                             // update list fragment
