@@ -87,10 +87,10 @@ public class DeviceInfoFragment extends Fragment {
                 Device device =  userSingleton.getDevices().get(deviceIndex);
                 if (device.isFavorite == 0) {
                     Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG).show();
-                    device.addToFavorite();
+                    userSingleton.addToFavorites(deviceIndex);
                 } else {
                     Toast.makeText(getActivity(),"Device removed from favoris", Toast.LENGTH_LONG).show();
-                   device.removeFromFavorite();
+                    userSingleton.removeFromFavorites(deviceIndex);
                 }
                 updateFavoriteButton(favorite_button);
             }

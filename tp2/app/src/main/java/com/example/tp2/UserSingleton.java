@@ -64,8 +64,6 @@ public class UserSingleton {
             }
             else {
                 DataSnapshot snapshot = task.getResult();
-                System.out.println(snapshot);
-
                 for(DataSnapshot shot:  snapshot.getChildren()) {
                     for (DataSnapshot val : shot.getChildren()) {
                         Device device = val.getValue(Device.class);

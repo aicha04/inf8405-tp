@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-      // userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
-        //  userSingleton.addToFavorites(0);
-       // userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
+     //  userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
+      //  userSingleton.addToFavorites(0);
+       //userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
 
 
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
