@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_centerInParent="true"
 
     android:orientation="vertical">
@@ -13,9 +13,7 @@
         android:id="@+id/item_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="24dp"
-        android:gravity="center_horizontal"
+        android:layout_marginStart="10dp"
         android:text="device name"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,26 +23,10 @@
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
+        android:layout_marginStart="10dp"
         android:text="device mac"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_number" />
-
-    <RatingBar
-        android:id="@+id/simpleRatingBar"
-        android:layout_width="55dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="4dp"
-        android:gravity="center_horizontal"
-        android:numStars="1"
-        android:stepSize="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toEndOf="@+id/item_number"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/view"
@@ -54,4 +36,15 @@
         android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@+id/content"
         tools:layout_editor_absoluteX="0dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="47dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.943"
+        app:layout_constraintStart_toEndOf="@+id/content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/emptystar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

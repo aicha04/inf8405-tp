@@ -28,6 +28,7 @@ public class DeviceInfoFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String deviceInfo;
+    private int isFavorite = 0;
 
     public DeviceInfoFragment(String deviceInfo) {
         this.deviceInfo = deviceInfo;
@@ -45,7 +46,7 @@ public class DeviceInfoFragment extends Fragment {
     public static DeviceInfoFragment newInstance(String deviceInfo) {
         DeviceInfoFragment fragment = new DeviceInfoFragment(deviceInfo);
         Bundle args = new Bundle();
-//        args.putString(ARG_DEVICEINFO, deviceInfo);
+//      args.putString(ARG_DEVICEINFO, deviceInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,25 +80,32 @@ public class DeviceInfoFragment extends Fragment {
         Button back_button = (Button) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
 
-        RatingBar simpleRatingBar = (RatingBar) view.findViewById(R.id.simpleRatingBar);
 
         Button favorite_button = (Button) view.findViewById(R.id.favorite);
-        favorite_button.setText(addToFavorisStr);
+        updateFavoriteButton(favorite_button);
         favorite_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (favorite_button.getText().equals(addToFavorisStr)) {
-                    favorite_button.setText(removeFavoriteStr);
-                    Toast toast = Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.RIGHT, 0, 0);
-                    toast.show();
-
+                //Put real device attribute is favorite
+                if (isFavorite == 0) {
+                    Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG).show();
+                    isFavorite = 1;
                 } else {
-                    favorite_button.setText(addToFavorisStr);
                     Toast.makeText(getActivity(),"Device removed from favoris", Toast.LENGTH_LONG).show();
+                    isFavorite = 0;
                 }
+                updateFavoriteButton(favorite_button);
             }
         });
         return view;
+    }
+
+    void updateFavoriteButton(Button favorite_button){
+        //Put real device attribute is favorite
+        if (isFavorite == 1) {
+            favorite_button.setText(removeFavoriteStr);
+        } else {
+            favorite_button.setText(addToFavorisStr);
+        }
     }
 }

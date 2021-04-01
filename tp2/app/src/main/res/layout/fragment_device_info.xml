@@ -6,15 +6,22 @@
     tools:context=".DeviceInfoFragment"
     android:orientation="vertical">
 
-
     <Button
         android:id="@+id/share"
-        android:layout_width="239dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_info"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="99dp"
         android:text="Share" />
+
+    <TextView
+        android:id="@+id/device_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/hello_blank_fragment" />
 
     <Button
         android:id="@+id/favorite"
@@ -22,24 +29,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/device_info"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="55dp"
-        android:text="Add to favoris" />
+        android:layout_marginTop="22dp"
+        android:text="ADD TO FAVORITES" />
 
     <Button
         android:id="@+id/back_button"
-        android:layout_width="239dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/device_info"
+        android:layout_below="@+id/share"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="49dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="205dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="125dp"
         android:text="Back" />
-
-    <TextView
-        android:id="@+id/device_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="50dp"
-        android:text="@string/hello_blank_fragment" />
-
 </RelativeLayout>
