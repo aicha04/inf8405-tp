@@ -99,8 +99,8 @@ public class DeviceInfoFragment extends Fragment {
     }
 
     void updateFavoriteButton(Button favorite_button){
-        String removeFavoriteStr = "REMOVE FROM FAVORIS";
-        String addToFavorisStr = "ADD TO FAVORIS";
+        String removeFavoriteStr = "REMOVE FROM FAVORITES";
+        String addToFavorisStr = "ADD TO FAVORITES";
         Device device =  userSingleton.getDevices().get(deviceIndex);
         if (device.isFavorite == 1) {
             favorite_button.setText(removeFavoriteStr);
