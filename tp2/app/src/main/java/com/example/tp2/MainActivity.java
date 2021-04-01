@@ -235,7 +235,13 @@ public class MainActivity extends AppCompatActivity{
         ft.commit();
     }
     public void swapToDeviceInfoFragment(int deviceIndex){
-        String itemInfo = userSingleton.getDevices().get(deviceIndex).id + "\n" + userSingleton.getDevices().get(deviceIndex).classCategory;
+        ArrayList<Device> devices = userSingleton.getDevices();
+        String mac = "Mac: " + devices.get(deviceIndex).id;
+        String category = "Category: " + devices.get(deviceIndex).classCategory;
+        String majorCategory = "Major Category: " + devices.get(deviceIndex).classMajorCategory;
+        String friendlyName = "Friendly Name: " + devices.get(deviceIndex).friendlyName;
+        String position  = "Position: " + devices.get(deviceIndex).position;
+        String itemInfo =  mac + "\n" + majorCategory + "\n" + category + "\n" + friendlyName + "\n" + position;
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
