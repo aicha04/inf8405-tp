@@ -3,6 +3,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -10,22 +11,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothDevice;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -37,12 +31,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
@@ -64,15 +53,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initBluetooth();
         createMap();
-        enableBluetooth();
 
 //        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
         System.out.println(userSingleton.getDevices().size());
 
         //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
-//        System.out.println(userSingleton.getDevices().size());
 
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
             Device device = userSingleton.getDevices().get(i);
@@ -87,22 +75,23 @@ public class MainActivity extends AppCompatActivity{
         swapToListFragment();
     }
 
-    /** Will create Bluetooth adapter and enable Bluetooth
+    /** Get Bluetooth adapter and register receiver
+     * Request permission to use Bluetooth to operating system when necessary
      * @param -
      * @return -
      */
-    private void enableBluetooth() {
+    private void initBluetooth() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
             Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
         } else {
-            if (bluetoothAdapter.isEnabled()) {
-                bluetoothAdapter.disable();
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            registerBroadcastReceiver();
         }
     }
 
@@ -112,31 +101,36 @@ public class MainActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         // check if the request code is same as what is passed
         if(requestCode == REQUEST_ENABLE_BT) {
-            if (resultCode == RESULT_OK) {
-                discoverDevices();
-            }
-            else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Enable Bluetooth in your settings", Toast.LENGTH_SHORT).show();
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Enable Bluetooth to discover devices", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    /** Will look for any device with Bluetooth capabilities in the area
-     * Will request permission to use Bluetooth to operating system when necessary
-     * Will start discovery if it isn't already on
-     * A new registerReceiver is created to look for new devices
+    /** Register receiver to be called when any intent matches one of the filters
+     * @param -
+     * @return -
+     */
+    private void registerBroadcastReceiver(){
+        IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+        discoverDevicesIntent = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+    }
+
+    /** Look for any device with Bluetooth capabilities in the area
+     * Start discovery if it isn't already on
      * @param -
      * @return -
      */
     public void discoverDevices() {
-        if (!bluetoothAdapter.isDiscovering()) {
-//            requestBTPermissions();
+        if (bluetoothAdapter.isEnabled() && isGPSEnabled()) {
             Log.d(TAG, "discoverDevices");
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
-            discoverDevicesIntent = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
-            bluetoothAdapter.startDiscovery();
+            if (!bluetoothAdapter.isDiscovering()) {
+                bluetoothAdapter.startDiscovery();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Enable Bluetooth and localization to discover devices", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -310,6 +304,7 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     };
+
     private boolean deviceExists(BluetoothDevice device){
         Log.d(TAG, "check if device exists");
         ArrayList<Device> devices = userSingleton.getDevices();
@@ -322,7 +317,8 @@ public class MainActivity extends AppCompatActivity{
         }
         return deviceExists;
     }
-    /** Will translate the integer code returned by Bluetooth adapter into a readable device type
+
+    /** Translate the integer code returned by Bluetooth adapter into a readable device type
      *  If code does not map to any known device type, it is returned as is
      * @param - int code
      * @return - String deviceTypeName
@@ -348,7 +344,7 @@ public class MainActivity extends AppCompatActivity{
         return deviceTypeName;
     }
 
-    /** Will translate the integer code returned by Bluetooth adapter into a readable major class
+    /** Translate the integer code returned by Bluetooth adapter into a readable major class
      *  If code does not map to any known major class, it is returned as is
      * @param - int code
      * @return - String majorClassName
@@ -561,30 +557,23 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        for (int i = 0; i < grantResults.length; i++) {
-            if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                permissionsToRequest.add(permissions[i]);
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE){
+            ArrayList<String> permissionsToRequest = new ArrayList<>();
+            for (int i = 0; i < grantResults.length; i++) {
+                if(grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    permissionsToRequest.add(permissions[i]);
+                } else if (grantResults[i] == PackageManager.PERMISSION_GRANTED && permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Log.d(TAG, "ACCESS_FINE_LOCATION permission granted");
+                    discoverDevices();
+                }
             }
-        }
-        if (permissionsToRequest.size() > 0) {
-            Log.d(TAG, "Inside onRequestPermissionsResult");
-            Log.d(TAG, String.valueOf(grantResults.length));
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-//        } else {
-//            switch (requestCode) {
-//                case REQUEST_PERMISSIONS_REQUEST_CODE:
-//                    Log.d(TAG, String.valueOf(grantResults.length));
-//                    if (grantResults.length > 0 &&
-//                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                        // Permission is granted. Continue the action or workflow
-//                        // in your app.
-//                    }
-//                    discoverDevices();
-//            }
+            if (permissionsToRequest.size() > 0) {
+                Log.d(TAG, "Ask permissions again: " + grantResults.length);
+                ActivityCompat.requestPermissions(
+                        this,
+                        permissionsToRequest.toArray(new String[0]),
+                        REQUEST_PERMISSIONS_REQUEST_CODE);
+            }
         }
     }
 
@@ -595,32 +584,16 @@ public class MainActivity extends AppCompatActivity{
                     != PackageManager.PERMISSION_GRANTED) {
                 // Permission is not granted
                 permissionsToRequest.add(permission);
+            } else if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // ACCESS_FINE_LOCATION Permission is granted
+                discoverDevices();
             }
         }
         if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
-    /** Will request permission to use Bluetooth to operating system when necessary
-     * All devices with Android Lollipop (version 5.0) and above need proper permissions before starting discovery of new devices
-     * @param -
-     * @return -
-     */
-    private void requestBTPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
                         this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSION_CODE);
-            }
-        } else {
-            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+                        permissionsToRequest.toArray(new String[0]),
+                        REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
 
