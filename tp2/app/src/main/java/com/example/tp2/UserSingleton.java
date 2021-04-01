@@ -7,6 +7,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserSingleton {
 
@@ -74,12 +76,34 @@ public class UserSingleton {
 
     void addNewDeviceToDb(Device device){
         devices.add(device);
-        databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").push().setValue(device);
+        DatabaseReference pushedPostRef = databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").push();
+        device.setDbKey(pushedPostRef.getKey());
+        pushedPostRef.setValue(device);
     }
 
     void resetDb(String id){
         databaseRef.child(id).child("devices").removeValue();
     }
 
+
+    void addToFavorites(int devicepos){
+       Device device = devices.get(devicepos);
+       device.addToFavorite();
+        if(!device.getDbKey().equals("")){
+            Map<String, Object> map = new HashMap<>();
+            map.put(device.getDbKey(), device);
+            databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").updateChildren(map);
+        }
+    }
+
+    void removeFromFavorites(int devicepos){
+        Device device = devices.get(devicepos);
+        device.removeFromFavorite();
+        if(!device.getDbKey().equals("")){
+            Map<String, Object> map = new HashMap<>();
+            map.put(device.getDbKey(), device);
+            databaseRef.child(UserSingleton.getInstance().getUserUId()).child("devices").updateChildren(map);
+        }
+    }
 
 }
