@@ -175,8 +175,22 @@ public class MainActivity extends AppCompatActivity{
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
         mLocationOverlay.enableMyLocation();
         map.getOverlays().add(mLocationOverlay);
-    }
 
+          //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
+//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
+//        System.out.println(userSingleton.getDevices().size());
+
+        for (int i=0; i < userSingleton.getDevices().size(); i++) {
+            Device device = userSingleton.getDevices().get(i);
+            String[] latlon = device.position.split(",");
+            if (latlon.length == 2) {
+                GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
+                addMarker(location, i);
+            } else {
+                Log.d("latlon array length", String.valueOf(latlon.length));
+            }
+        }
+    }
     /** Retrieve user current location
      * @param -
      * @return User current location
@@ -189,15 +203,19 @@ public class MainActivity extends AppCompatActivity{
         return mLocationOverlay.getMyLocation();
     }
 
-    /** Add marker at the given location
-     * @param location
-     * @return -
-     */
-    private void addMarker(GeoPoint location) {
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(location);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(startMarker);
+    private void addMarker(GeoPoint location, int deviceIndex) {
+        Marker newMarker = new Marker(map);
+        newMarker.setPosition(location);
+        newMarker.setTitle(String.valueOf(deviceIndex));
+        newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        newMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                swapToDeviceInfoFragment(deviceIndex);
+                return true;
+            }
+        });
+        map.getOverlays().add(newMarker);
     }
 
     /** Check if GPS is activated
@@ -208,7 +226,6 @@ public class MainActivity extends AppCompatActivity{
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -216,8 +233,8 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
-
-    public void swapToDeviceInfoFragment(String itemInfo){
+    public void swapToDeviceInfoFragment(int deviceIndex){
+        String itemInfo = userSingleton.getDevices().get(deviceIndex).id + "\n" + userSingleton.getDevices().get(deviceIndex).classCategory;
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
