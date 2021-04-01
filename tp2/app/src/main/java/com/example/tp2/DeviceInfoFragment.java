@@ -4,11 +4,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +19,8 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class DeviceInfoFragment extends Fragment {
+    String removeFavoriteStr = "REMOVE FROM FAVORIS";
+    String addToFavorisStr = "ADD TO FAVORIS";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -70,8 +75,29 @@ public class DeviceInfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_device_info, container, false);
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
         deviceInfoView.setText(this.deviceInfo);
-        Button button = (Button) view.findViewById(R.id.button_id);
-        button.setOnClickListener(onClickListener);
+
+        Button back_button = (Button) view.findViewById(R.id.back_button);
+        back_button.setOnClickListener(onClickListener);
+
+        RatingBar simpleRatingBar = (RatingBar) view.findViewById(R.id.simpleRatingBar);
+
+        Button favorite_button = (Button) view.findViewById(R.id.favorite);
+        favorite_button.setText(addToFavorisStr);
+        favorite_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (favorite_button.getText().equals(addToFavorisStr)) {
+                    favorite_button.setText(removeFavoriteStr);
+                    Toast toast = Toast.makeText(getActivity(),"Device added to favoris", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.RIGHT, 0, 0);
+                    toast.show();
+
+                } else {
+                    favorite_button.setText(addToFavorisStr);
+                    Toast.makeText(getActivity(),"Device removed from favoris", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         return view;
     }
 }
