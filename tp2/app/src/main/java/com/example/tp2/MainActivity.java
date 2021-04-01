@@ -262,6 +262,8 @@ public class MainActivity extends AppCompatActivity{
                             Device deviceDB = new Device(device.getAddress(), "position", translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
 
                             userSingleton.addNewDeviceToDb(deviceDB);
+                            // update list fragment
+                            swapToListFragment();
                             Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
                             Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
                         }
