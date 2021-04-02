@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity{
         //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
 
+        // Add markers on the map
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
             Device device = userSingleton.getDevices().get(i);
             String[] latlon = device.position.split(",");
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity{
                 Log.d("latlon array length", String.valueOf(latlon.length));
             }
         }
+
         swapToListFragment();
     }
 
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity{
         map.setMultiTouchControls(true);
 
         requestPermissionsIfNecessary(new String[] {
-                // if you need to show the current location, uncomment the line below
+                // need this permission to discover devices and to show the current location
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -196,6 +198,7 @@ public class MainActivity extends AppCompatActivity{
         map.getOverlays().add(mLocationOverlay);
 
     }
+
     /** Retrieve user current location
      * @param -
      * @return User current location
@@ -208,6 +211,11 @@ public class MainActivity extends AppCompatActivity{
         return mLocationOverlay.getMyLocation();
     }
 
+    /** Add marker at the given location for device with deviceIndex
+     * @param location
+     * @param deviceIndex
+     * @return -
+     */
     private void addMarker(GeoPoint location, int deviceIndex) {
         Marker newMarker = new Marker(map);
         newMarker.setPosition(location);
@@ -305,6 +313,10 @@ public class MainActivity extends AppCompatActivity{
         }
     };
 
+    /** Check if device already exists
+     * @param device
+     * @return true if device already exists, false otherwise
+     */
     private boolean deviceExists(BluetoothDevice device){
         Log.d(TAG, "check if device exists");
         ArrayList<Device> devices = userSingleton.getDevices();
@@ -577,6 +589,11 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    /** Request permissions when necessary
+     * If ACCESS_FINE_LOCATION permission already granted, start discovering devices
+     * @param permissions
+     * @return -
+     */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         for (String permission : permissions) {
