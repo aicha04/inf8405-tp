@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity{
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
         discoverDevices();
     }
+    
     @Override
     public void onRestart(){
         super.onRestart();
