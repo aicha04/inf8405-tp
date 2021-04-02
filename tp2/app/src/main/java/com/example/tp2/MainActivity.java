@@ -273,8 +273,7 @@ public class MainActivity extends AppCompatActivity{
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
-        //discoverDevices();
-        Log.d("onResume", String.valueOf(bluetoothAdapter.isDiscovering()));
+        discoverDevices();
     }
     
     @Override
@@ -290,18 +289,16 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onPause() {
-        Log.d(TAG, "OnPause");
         super.onPause();
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-        Log.d(TAG, "OnPause 2");
-//        if (bluetoothAdapter.isDiscovering()) {
-//            Log.d(TAG, "OnPause: stop discovery");
-//            bluetoothAdapter.cancelDiscovery();
-//        }
+        if (bluetoothAdapter.isDiscovering()) {
+            Log.d(TAG, "OnPause: stop discovery");
+            bluetoothAdapter.cancelDiscovery();
+        }
     }
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
