@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
-    private static final int PERMISSION_CODE = 2;
+    private static boolean isRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
     private BluetoothAdapter bluetoothAdapter;
 
@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
+        isRunning = true;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -280,6 +281,7 @@ public class MainActivity extends AppCompatActivity{
     public void onRestart(){
         super.onRestart();
         try {
+            Log.v(TAG,"onRestart ");
             refreshListFragment();
         }
         catch (Exception e){
@@ -290,6 +292,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onPause() {
         super.onPause();
+        isRunning = false;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -332,8 +335,11 @@ public class MainActivity extends AppCompatActivity{
                         }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.v(TAG,"Entered the Finished ");
-                bluetoothAdapter.startDiscovery();
+                Log.d(TAG,"Entered the Finished ");
+                if (isRunning) {
+                    Log.d(TAG,"Activity is running ");
+                    bluetoothAdapter.startDiscovery();
+                }
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
             }
