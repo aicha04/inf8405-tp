@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import org.osmdroid.api.IMapController;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         // Add markers on the map
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
             Device device = userSingleton.getDevices().get(i);
-            String[] latlon = device.position.split(", ");
+            String[] latlon = device.position.split(",");
             if (latlon.length == 2) {
                 GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
                 addMarker(location, i);
@@ -242,9 +243,18 @@ public class MainActivity extends AppCompatActivity{
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new ItemFragment());
+        ft.replace(R.id.fragment_container, new ItemFragment(), "FRAGMENT_LIST");
         ft.addToBackStack(null);
         ft.commit();
+    }
+    public void refreshListFragment(){
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if(currentFragment instanceof ItemFragment) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.detach(currentFragment);
+            ft.attach(currentFragment);
+            ft.commit();
+        }
     }
     public void swapToDeviceInfoFragment(int deviceIndex){
         // Begin the transaction
@@ -262,6 +272,12 @@ public class MainActivity extends AppCompatActivity{
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        discoverDevices();
+    }
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        refreshListFragment();
     }
 
     @Override
@@ -272,6 +288,7 @@ public class MainActivity extends AppCompatActivity{
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
+        bluetoothAdapter.cancelDiscovery();
     }
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
@@ -287,12 +304,19 @@ public class MainActivity extends AppCompatActivity{
 
                         if (location != null) {
                             addMarker(location, userSingleton.getDevices().size());
-                            String position = location.getLatitude() + ", " + location.getLatitude();
+                            String position = location.getLatitude() + "," + location.getLatitude();
                             Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName(), 0);
 
                             userSingleton.addNewDeviceToDb(deviceDB);
                             // update list fragment
-                            swapToListFragment();
+                            try {
+
+                                refreshListFragment();
+                            }
+                            catch (Exception e){
+                                System.out.println(e.getMessage());
+                            }
+
                             Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
                             Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
                         }
