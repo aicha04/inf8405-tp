@@ -21,6 +21,8 @@
         android:layout_width="200dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
+        android:textColor="?attr/textColor"
+        android:background="?attr/background"
         android:text="Add to favoris" />
     <Button
         android:id="@+id/share"
@@ -29,6 +31,8 @@
         android:layout_above="@+id/back_button"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
+        android:textColor="?attr/textColor"
+        android:background="?attr/background"
         android:text="Share" />
 
     <Button
@@ -38,6 +42,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:layout_alignParentBottom="true"
+        android:textColor="?attr/textColor"
+        android:background="?attr/background"
         android:text="Back" />
 
 </RelativeLayout>

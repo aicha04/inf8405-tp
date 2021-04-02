@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +26,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,12 +36,19 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private Button swapButton = null;
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+            setTheme(R.style.Theme_Tp2);
+        }else{
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+
         super.onCreate(savedInstanceState);
 
         //handle permissions first, before map is created. not depicted here
@@ -56,15 +66,18 @@ public class MainActivity extends AppCompatActivity{
         //inflate and create the map
         setContentView(R.layout.activity_main);
 
+        swapButton = (Button) findViewById(R.id.swapeTheme);
+        setSwapButtonListeners();
+
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
         //map.setBuiltInZoomControls(true);// activation du zoom
+        updateMapTheme();
 
         IMapController mapController = map.getController();
         mapController.setZoom(9.5);
         GeoPoint startPoint = new GeoPoint(45.508888, -73.561668);
         mapController.setCenter(startPoint);
-
 
         requestPermissionsIfNecessary(new String[] {
                 // if you need to show the current location, uncomment the line below
@@ -72,9 +85,9 @@ public class MainActivity extends AppCompatActivity{
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-     //  userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
-      //  userSingleton.addToFavorites(0);
-       //userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
+     userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
+      userSingleton.addToFavorites(0);
+       userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
 
 
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
@@ -171,5 +184,31 @@ public class MainActivity extends AppCompatActivity{
                     permissionsToRequest.toArray(new String[0]),
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+    }
+
+    private void updateMapTheme(){
+        if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+            map.getOverlayManager().getTilesOverlay().setColorFilter(TilesOverlay.INVERT_COLORS);
+        }else{
+            map.getOverlayManager().getTilesOverlay().setColorFilter(null);
+        }
+    }
+
+    private void setSwapButtonListeners(){
+        swapButton.setOnClickListener(v -> {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+                userSingleton.setCurrentTheme(constants.LIGHT_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+            }else {
+                userSingleton.setCurrentTheme(constants.DARK_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+            }
+            editor.commit();
+            finish();
+            startActivity(getIntent());
+        });
+
     }
 }

@@ -18,15 +18,29 @@ public class SplashScreenActivity extends AppCompatActivity {
     private Constants constants = new Constants();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         try{
-        setContentView(R.layout.activity_splash_screen);
+            //Get user id and stored theme(light or dark)
+            setUpSharedPreferences();
+
+            if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+                setTheme(R.style.Theme_Tp2);
+            }else{
+                setTheme(R.style.Theme_Tp2_dark);
+            }
+
+            setContentView(R.layout.activity_splash_screen);
+            super.onCreate(savedInstanceState);
 
             // create animation
             ImageView container = findViewById(R.id.container);
-            container.setImageResource(R.drawable.splash_screen);
-            //Get user id
-            setUpSharedPreferences();
+            if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+                container.setImageResource(R.drawable.splash_screen_light);
+            }else{
+                container.setImageResource(R.drawable.splash_screen);
+            }
+
+            //Fetch detected devices
             userSingleton.fetchUserDevices();
 
         }catch(Exception e){
