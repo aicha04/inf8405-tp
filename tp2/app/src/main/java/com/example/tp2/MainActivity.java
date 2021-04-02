@@ -2,6 +2,8 @@ package com.example.tp2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -27,6 +33,8 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity{
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+
+    private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     @Override
@@ -50,8 +58,6 @@ public class MainActivity extends AppCompatActivity{
 
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
-
-
         //map.setBuiltInZoomControls(true);// activation du zoom
 
         IMapController mapController = map.getController();
@@ -59,15 +65,16 @@ public class MainActivity extends AppCompatActivity{
         GeoPoint startPoint = new GeoPoint(45.508888, -73.561668);
         mapController.setCenter(startPoint);
 
+
         requestPermissionsIfNecessary(new String[] {
                 // if you need to show the current location, uncomment the line below
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
-        userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
-        userSingleton.addToFavorites(0);
-        userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
+     //  userSingleton.addNewDeviceToDb(new Device("36", "45.508888, -73.561668", "q", 0));
+      //  userSingleton.addToFavorites(0);
+       //userSingleton.addNewDeviceToDb(new Device("35", "45.508888, -73.561668", "q", 0));
 
 
 //        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
