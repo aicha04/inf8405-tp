@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity{
         if (bluetoothAdapter.isEnabled() && isGPSEnabled()) {
             Log.d(TAG, "discoverDevices");
             if (!bluetoothAdapter.isDiscovering()) {
+                Log.d(TAG, "start discovering");
                 bluetoothAdapter.startDiscovery();
             }
         } else {
@@ -272,24 +273,35 @@ public class MainActivity extends AppCompatActivity{
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
-        discoverDevices();
+        //discoverDevices();
+        Log.d("onResume", String.valueOf(bluetoothAdapter.isDiscovering()));
     }
     
     @Override
     public void onRestart(){
         super.onRestart();
-        refreshListFragment();
+        try {
+            refreshListFragment();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void onPause() {
+        Log.d(TAG, "OnPause");
         super.onPause();
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-        bluetoothAdapter.cancelDiscovery();
+        Log.d(TAG, "OnPause 2");
+//        if (bluetoothAdapter.isDiscovering()) {
+//            Log.d(TAG, "OnPause: stop discovery");
+//            bluetoothAdapter.cancelDiscovery();
+//        }
     }
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
@@ -305,7 +317,7 @@ public class MainActivity extends AppCompatActivity{
 
                         if (location != null) {
                             addMarker(location, userSingleton.getDevices().size());
-                            String position = location.getLatitude() + "," + location.getLatitude();
+                            String position = location.getLatitude() + "," + location.getLongitude();
                             Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName(), 0);
 
                             userSingleton.addNewDeviceToDb(deviceDB);
