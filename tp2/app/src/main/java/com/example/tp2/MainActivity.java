@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity{
         // Add markers on the map
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
             Device device = userSingleton.getDevices().get(i);
-            String[] latlon = device.position.split(",");
+            String[] latlon = device.position.split(", ");
             if (latlon.length == 2) {
                 GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
                 addMarker(location, i);
@@ -247,16 +247,9 @@ public class MainActivity extends AppCompatActivity{
         ft.commit();
     }
     public void swapToDeviceInfoFragment(int deviceIndex){
-        ArrayList<Device> devices = userSingleton.getDevices();
-        String mac = "Mac: " + devices.get(deviceIndex).id;
-        String category = "Category: " + devices.get(deviceIndex).classCategory;
-        String majorCategory = "Major Category: " + devices.get(deviceIndex).classMajorCategory;
-        String friendlyName = "Friendly Name: " + devices.get(deviceIndex).friendlyName;
-        String position  = "Position: " + devices.get(deviceIndex).position;
-        String itemInfo =  mac + "\n" + majorCategory + "\n" + category + "\n" + friendlyName + "\n" + position;
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
+        ft.replace(R.id.fragment_container, new DeviceInfoFragment(deviceIndex));
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -295,7 +288,7 @@ public class MainActivity extends AppCompatActivity{
                         if (location != null) {
                             addMarker(location, userSingleton.getDevices().size());
                             String position = location.getLatitude() + ", " + location.getLatitude();
-                            Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
+                            Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName(), 0);
 
                             userSingleton.addNewDeviceToDb(deviceDB);
                             // update list fragment
