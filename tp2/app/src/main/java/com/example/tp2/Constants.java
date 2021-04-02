@@ -8,4 +8,6 @@ public class Constants {
     public String DARK_THEME = "DARK";
     public String CURRENT_THEME = "CURRENT_THEME";
     public String DATABASE_NAME = "devices";
+
+    public float HEXADECIMAL_COLOR_MAX = 255.f;
 }
