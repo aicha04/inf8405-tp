@@ -55,8 +55,10 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         mValues = userSingleton.getDevices();
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).classCategory);
-
+        String friendlyName = "No name";
+        if(mValues.get(position).friendlyName !=null)
+            friendlyName = mValues.get(position).friendlyName;
+        holder.mContentView.setText(friendlyName);
         if(mValues.get(position).isFavorite == 1){
             holder.mImageView.setImageResource(R.drawable.star);
         }else{

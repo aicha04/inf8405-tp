@@ -1,43 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DeviceInfoFragment"
-    android:orientation="vertical">
+    >
 
     <TextView
         android:id="@+id/device_info"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="180dp"
         android:text="@string/hello_blank_fragment" />
 
     <Button
         android:id="@+id/favorite"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/share"
-        android:layout_width="200dp"
+        android:layout_above="@+id/container"
+        android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:text="Add to favoris" />
-    <Button
-        android:id="@+id/share"
-        android:layout_width="200dp"
+        android:text="Add to favorites" />
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/back_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:text="Share" />
+        android:layout_alignParentBottom="true">
+        <ImageButton
+            android:id="@+id/directions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/share"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/navigate"
+            />
+        <ImageButton
+            android:id="@+id/share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/back_button"
+            android:src="@drawable/share"/>
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:layout_alignParentBottom="true"
-        android:text="Back" />
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back" />
+    </RelativeLayout>
 
 </RelativeLayout>
