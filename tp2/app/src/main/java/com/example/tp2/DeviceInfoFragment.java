@@ -59,8 +59,10 @@ public class DeviceInfoFragment extends Fragment {
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
         String infoContent = setInfoContent();
         deviceInfoView.setText(infoContent);
+
         ImageButton back_button = (ImageButton) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
+
         Button favorite_button = (Button) view.findViewById(R.id.favorite);
         updateFavoriteButton(favorite_button);
         favorite_button.setOnClickListener(new View.OnClickListener() {
@@ -77,12 +79,13 @@ public class DeviceInfoFragment extends Fragment {
                 updateFavoriteButton(favorite_button);
             }
         });
+
         ImageButton directions_button = (ImageButton) view.findViewById(R.id.directions);
         directions_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(", ");
+                String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
                 String latitude = latlon[0];
                 String longitude = latlon[1];
                 Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
@@ -92,6 +95,24 @@ public class DeviceInfoFragment extends Fragment {
 
             }
         });
+
+        ImageButton share_button = (ImageButton) view.findViewById(R.id.share);
+        share_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String message = setInfoContent();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Device \n" + message);
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
+            }
+        });
+
         return view;
     }
     private String setInfoContent(){
