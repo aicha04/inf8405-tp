@@ -187,29 +187,17 @@ System.out.println(userSingleton.getDevices().size());
 
     private void updateMapTheme(){
         if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
-            //Source : https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org/osmdroid/views/overlay/TilesOverlay.java
             //Matrix to inverse colors
-            ColorMatrix negate = new ColorMatrix(new float[] {
-                    -1.0f, 0.0f, 0.0f, 0.0f, 255f, //red
-                    0.0f, -1.0f, 0.0f, 0.0f, 255f, //green
-                    0.0f, 0.0f, -1.0f, 0.0f, 255f, //blue
-                    0.0f, 0.0f, 0.0f, 1.0f, 0.0f //alpha
-            });
+            ColorMatrix negate = new ColorMatrix(constants.NEGATE_COLORS_MATRIX);
 
-            //Source: https://kazzkiq.github.io/svg-color-filter/
             //Matrix for black and white filter
-            ColorMatrix blackAndWhiteTintMatrix = new ColorMatrix(new float[] {
-                    0, 1, 0, 0, 0, //red
-                    0, 1, 0, 0, 0, //green
-                    0, 1, 0, 0, 0, //blue
-                    0, 1, 0, 1, 0, //alpha
-            });
+            ColorMatrix blackAndWhiteTintMatrix = new ColorMatrix(constants.BLACK_AND_WHITE_COLORS_MATRIX);
 
             //Apply black and white filter over negate inverted colors
-            blackAndWhiteTintMatrix.preConcat(negate);
+            negate.preConcat(blackAndWhiteTintMatrix);
 
             //Apply filter to map
-            map.getOverlayManager().getTilesOverlay().setColorFilter( new ColorMatrixColorFilter(blackAndWhiteTintMatrix));
+            map.getOverlayManager().getTilesOverlay().setColorFilter( new ColorMatrixColorFilter(negate));
         }else{
             //Set default colors
             map.getOverlayManager().getTilesOverlay().setColorFilter(null);

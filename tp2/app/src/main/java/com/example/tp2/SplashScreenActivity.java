@@ -35,7 +35,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             // create animation
             ImageView container = findViewById(R.id.container);
             if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
-                container.setImageResource(R.drawable.splash_screen_light);
+                container.setImageResource(R.drawable.light_splash_screen);
             }else{
                 container.setImageResource(R.drawable.splash_screen);
             }
