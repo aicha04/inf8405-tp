@@ -57,11 +57,7 @@ public class MainActivity extends AppCompatActivity{
         initBluetooth();
         createMap();
 
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-        System.out.println(userSingleton.getDevices().size());
-
-        //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
-//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
+        System.out.println("onCreate: " + userSingleton.getDevices().size());
 
         // Add markers on the map
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
@@ -277,17 +273,17 @@ public class MainActivity extends AppCompatActivity{
         discoverDevices();
     }
     
-    @Override
-    public void onRestart(){
-        super.onRestart();
-        try {
-            Log.v(TAG,"onRestart ");
-            refreshListFragment();
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
+//    @Override
+//    public void onRestart(){
+//        super.onRestart();
+//        try {
+//            Log.v(TAG,"onRestart ");
+//            refreshListFragment();
+//        }
+//        catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
     @Override
     public void onPause() {
