@@ -3,6 +3,17 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +33,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -29,6 +44,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -36,12 +52,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
-    private static final int PERMISSION_CODE = 2;
+    private static boolean isRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
     private BluetoothAdapter bluetoothAdapter;
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private Button swapButton = null;
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
     private GpsMyLocationProvider mGpsMyLocationProvider = null;
@@ -51,17 +68,17 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+            setTheme(R.style.Theme_Tp2);
+        }else{
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initBluetooth();
         createMap();
-
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-        System.out.println(userSingleton.getDevices().size());
-
-        //userSingleton.addNewDeviceToDb(new Device("33", "45.508888, -73.561668", "q"));
-//        userSingleton.addNewDeviceToDb(new Device("31", "45.507888, -73.560668", "w"));
 
         // Add markers on the map
         for (int i=0; i < userSingleton.getDevices().size(); i++) {
@@ -130,6 +147,7 @@ public class MainActivity extends AppCompatActivity{
         if (bluetoothAdapter.isEnabled() && isGPSEnabled()) {
             Log.d(TAG, "discoverDevices");
             if (!bluetoothAdapter.isDiscovering()) {
+                Log.d(TAG, "start discovering");
                 bluetoothAdapter.startDiscovery();
             }
         } else {
@@ -157,8 +175,13 @@ public class MainActivity extends AppCompatActivity{
         //inflate and create the map
         setContentView(R.layout.activity_main);
 
+        swapButton = (Button) findViewById(R.id.swapeTheme);
+        setSwapButtonListeners();
+
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(TileSourceFactory.MAPNIK); 
+        
+        updateMapTheme();
 
         // default zoom buttons
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -267,6 +290,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
+        isRunning = true;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -278,18 +302,28 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onRestart(){
         super.onRestart();
-        refreshListFragment();
+        try {
+            Log.v(TAG,"onRestart ");
+            refreshListFragment();
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        isRunning = false;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-        bluetoothAdapter.cancelDiscovery();
+        if (bluetoothAdapter.isDiscovering()) {
+            Log.d(TAG, "OnPause: stop discovery");
+            bluetoothAdapter.cancelDiscovery();
+        }
     }
 
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
@@ -305,7 +339,7 @@ public class MainActivity extends AppCompatActivity{
 
                         if (location != null) {
                             addMarker(location, userSingleton.getDevices().size());
-                            String position = location.getLatitude() + "," + location.getLatitude();
+                            String position = location.getLatitude() + "," + location.getLongitude();
                             Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName(), 0);
 
                             userSingleton.addNewDeviceToDb(deviceDB);
@@ -323,8 +357,11 @@ public class MainActivity extends AppCompatActivity{
                         }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                Log.v(TAG,"Entered the Finished ");
-                bluetoothAdapter.startDiscovery();
+                Log.d(TAG,"Entered the Finished ");
+                if (isRunning) {
+                    Log.d(TAG,"Activity is running ");
+                    bluetoothAdapter.startDiscovery();
+                }
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
             }
@@ -630,6 +667,45 @@ public class MainActivity extends AppCompatActivity{
                         permissionsToRequest.toArray(new String[0]),
                         REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+    }
+
+    private void updateMapTheme(){
+        if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+            //Matrix to inverse colors
+            ColorMatrix negate = new ColorMatrix(constants.NEGATE_COLORS_MATRIX);
+
+            //Matrix for black and white filter
+            ColorMatrix blackAndWhiteTintMatrix = new ColorMatrix(constants.BLACK_AND_WHITE_COLORS_MATRIX);
+
+            //Apply black and white filter over negate inverted colors
+            negate.preConcat(blackAndWhiteTintMatrix);
+
+            //Apply filter to map
+            map.getOverlayManager().getTilesOverlay().setColorFilter( new ColorMatrixColorFilter(negate));
+        }else{
+            //Set default colors
+            map.getOverlayManager().getTilesOverlay().setColorFilter(null);
+        }
+    }
+
+    private void setSwapButtonListeners() {
+        swapButton.setOnClickListener(v -> {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
+                userSingleton.setCurrentTheme(constants.LIGHT_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+                setTheme(R.style.Theme_Tp2);
+            } else {
+                userSingleton.setCurrentTheme(constants.DARK_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+                setTheme(R.style.Theme_Tp2_dark);
+            }
+            editor.commit();
+
+            finish();
+            startActivity(getIntent());
+        });
     }
 
     @Override
