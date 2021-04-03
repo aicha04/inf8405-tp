@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity{
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
     private GpsMyLocationProvider mGpsMyLocationProvider = null;
+    private static boolean isFirstCall = true;
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
@@ -137,6 +138,9 @@ public class MainActivity extends AppCompatActivity{
         registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
         discoverDevicesIntent = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+
+        IntentFilter BTStatusIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(BTStatusReceiver, BTStatusIntent);
     }
 
     /** If all conditions are met, look for any device with Bluetooth capabilities in the area
@@ -205,7 +209,18 @@ public class MainActivity extends AppCompatActivity{
         mapController.setCenter(startPoint);
         mapController.animateTo(startPoint);
 
-        mGpsMyLocationProvider = new GpsMyLocationProvider(ctx);
+        mGpsMyLocationProvider = new GpsMyLocationProvider(ctx) {
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d(TAG, "GPS ON");
+                if (isFirstCall) {
+                    discoverDevices();
+                    isFirstCall = false;
+                } else {
+                    isFirstCall = true;
+                }
+            }
+        };
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.runOnFirstFix(new Runnable() {
@@ -320,6 +335,28 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private final BroadcastReceiver BTStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.d(TAG, "Bluetooth OFF");
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        discoverDevices();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
+
     private final BroadcastReceiver discoverDevicesReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -380,7 +417,7 @@ public class MainActivity extends AppCompatActivity{
         boolean deviceExists = false;
         for(int i = 0; i < devices.size(); i++){
             if(devices.get(i).id.equals(device.getAddress())){
-                Log.d(TAG, "device exists");
+                Log.d(TAG, "device exists for " + device.getAddress());
                 deviceExists = true;
             }
         }
