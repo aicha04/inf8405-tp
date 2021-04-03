@@ -51,7 +51,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
-    private static boolean isRunning = false;
+    private static boolean isAppRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
     private BluetoothAdapter bluetoothAdapter;
 
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
-        isRunning = true;
+        isAppRunning = true;
         Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onPause() {
         super.onPause();
-        isRunning = false;
+        isAppRunning = false;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -349,7 +349,9 @@ public class MainActivity extends AppCompatActivity{
                         Log.d(TAG, "Bluetooth OFF");
                         break;
                     case BluetoothAdapter.STATE_ON:
-                        discoverDevices();
+                        if (isAppRunning) {
+                            discoverDevices();
+                        }
                         break;
                     default:
                         break;
@@ -398,7 +400,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.d(TAG,"Entered the Finished ");
-                if (isRunning) {
+                if (isAppRunning) {
                     Log.d(TAG,"Activity is running ");
                     discoverDevices();
                 }
