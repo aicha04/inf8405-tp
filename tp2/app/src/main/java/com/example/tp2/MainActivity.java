@@ -3,6 +3,17 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +32,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -28,6 +43,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -41,6 +57,7 @@ public class MainActivity extends AppCompatActivity{
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+    private Button swapButton = null;
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
     private GpsMyLocationProvider mGpsMyLocationProvider = null;
@@ -50,6 +67,12 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+            setTheme(R.style.Theme_Tp2);
+        }else{
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -156,8 +179,13 @@ public class MainActivity extends AppCompatActivity{
         //inflate and create the map
         setContentView(R.layout.activity_main);
 
+        swapButton = (Button) findViewById(R.id.swapeTheme);
+        setSwapButtonListeners();
+
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(TileSourceFactory.MAPNIK); 
+        
+        updateMapTheme();
 
         // default zoom buttons
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -648,10 +676,48 @@ public class MainActivity extends AppCompatActivity{
 
                 dialog.show();
             } else {
-                Log.d(TAG, "");
                 ActivityCompat.requestPermissions(this, permissionsToRequest.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
             }
         }
+    }
+
+    private void updateMapTheme(){
+        if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+            //Matrix to inverse colors
+            ColorMatrix negate = new ColorMatrix(constants.NEGATE_COLORS_MATRIX);
+
+            //Matrix for black and white filter
+            ColorMatrix blackAndWhiteTintMatrix = new ColorMatrix(constants.BLACK_AND_WHITE_COLORS_MATRIX);
+
+            //Apply black and white filter over negate inverted colors
+            negate.preConcat(blackAndWhiteTintMatrix);
+
+            //Apply filter to map
+            map.getOverlayManager().getTilesOverlay().setColorFilter( new ColorMatrixColorFilter(negate));
+        }else{
+            //Set default colors
+            map.getOverlayManager().getTilesOverlay().setColorFilter(null);
+        }
+    }
+
+    private void setSwapButtonListeners() {
+        swapButton.setOnClickListener(v -> {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
+                userSingleton.setCurrentTheme(constants.LIGHT_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+                setTheme(R.style.Theme_Tp2);
+            } else {
+                userSingleton.setCurrentTheme(constants.DARK_THEME);
+                editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+                setTheme(R.style.Theme_Tp2_dark);
+            }
+            editor.commit();
+
+            finish();
+            startActivity(getIntent());
+        });
     }
 
     @Override
