@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity{
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
     private GpsMyLocationProvider mGpsMyLocationProvider = null;
-    private static boolean isFirstCall = true;
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
@@ -212,15 +211,14 @@ public class MainActivity extends AppCompatActivity{
         mGpsMyLocationProvider = new GpsMyLocationProvider(ctx) {
             @Override
             public void onProviderEnabled(String provider) {
-                Log.d(TAG, "GPS ON");
-                if (isFirstCall) {
+                Log.d(TAG, "Provider enabled");
+                if (provider.equals("gps")) {
+                    Log.d(TAG, "GPS provider");
                     discoverDevices();
-                    isFirstCall = false;
-                } else {
-                    isFirstCall = true;
                 }
             }
         };
+
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
         mLocationOverlay.enableMyLocation();
         mLocationOverlay.runOnFirstFix(new Runnable() {
@@ -282,6 +280,7 @@ public class MainActivity extends AppCompatActivity{
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
+
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -289,6 +288,7 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
+
     public void refreshListFragment(){
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if(currentFragment instanceof ItemFragment) {
@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity{
             ft.commit();
         }
     }
+
     public void swapToDeviceInfoFragment(int deviceIndex){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -761,6 +762,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onDestroy() {
         Log.d(TAG, "onDestroy called.");
         super.onDestroy();
+        unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
     }
 }
