@@ -20,25 +20,17 @@ import android.widget.Toast;
  * A simple {@link Fragment} subclass.
  */
 public class DeviceInfoFragment extends Fragment {
-    private  UserSingleton userSingleton = UserSingleton.getInstance();
+    private final UserSingleton userSingleton = UserSingleton.getInstance();
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_DEVICEINFO = "param1";
-
-    // TODO: Rename and change types of parameters
     private static int deviceIndex;
 
     public DeviceInfoFragment(int deviceIndex) {
-        this.deviceIndex = deviceIndex;
+        DeviceInfoFragment.deviceIndex = deviceIndex;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            deviceInfo = getArguments().getString(ARG_DEVICEINFO);
-//        }
     }
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -59,7 +51,7 @@ public class DeviceInfoFragment extends Fragment {
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
         String infoContent = setInfoContent();
         deviceInfoView.setText(infoContent);
-
+        // Set listeners for buttons
         ImageButton back_button = (ImageButton) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
 
@@ -85,13 +77,17 @@ public class DeviceInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
-                String latitude = latlon[0];
-                String longitude = latlon[1];
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                startActivity(mapIntent);
+                if (((MainActivity)getActivity()).isGPSEnabled()) {
+                    String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
+                    String latitude = latlon[0];
+                    String longitude = latlon[1];
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                } else {
+                    Toast.makeText(((MainActivity)getActivity()).getApplicationContext(), "Enable localization to get directions", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
@@ -115,6 +111,10 @@ public class DeviceInfoFragment extends Fragment {
 
         return view;
     }
+    /**Returns content to put in {@link DeviceInfoFragment}
+     * @param  -
+     * @return {@link String} content to display
+     */
     private String setInfoContent(){
         Device device = userSingleton.getDevices().get(deviceIndex);
         String mac = "Mac: " + device.id;
@@ -125,14 +125,18 @@ public class DeviceInfoFragment extends Fragment {
         return mac + "\n" + friendlyName + "\n" + majorCategory + "\n" + category + "\n" + position;
 
     }
+    /**Update favorites button text
+     * @param  -
+     * @return -
+     */
     void updateFavoriteButton(Button favorite_button){
         String removeFavoriteStr = "REMOVE FROM FAVORITES";
-        String addToFavorisStr = "ADD TO FAVORITES";
+        String addToFavoriteStr = "ADD TO FAVORITES";
         Device device =  userSingleton.getDevices().get(deviceIndex);
         if (device.isFavorite == 1) {
             favorite_button.setText(removeFavoriteStr);
         } else {
-            favorite_button.setText(addToFavorisStr);
+            favorite_button.setText(addToFavoriteStr);
         }
     }
 }
