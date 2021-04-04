@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
         mapController = map.getController();
-        mapController.setZoom(10.0);
+        mapController.setZoom(12.0);
         GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
         mapController.setCenter(startPoint);
         mapController.animateTo(startPoint);
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity{
                         public void run() {
                             mapController.setCenter(myLocation);
                             mapController.animateTo(myLocation);
+                            mapController.setZoom(15.0);
                         }
                     });
                 };
