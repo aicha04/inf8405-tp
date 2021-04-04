@@ -14,6 +14,8 @@
         android:layout_marginTop="10dp"
         android:layout_width="180dp"
         android:textColor="?attr/textColor"
+        android:layout_above="@+id/favorite"
+        android:layout_alignParentTop="true"
         android:text="@string/hello_blank_fragment" />
 
     <Button
@@ -22,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/container"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="0dp"
+        android:textColor="@color/purple_700"
+        android:background="@color/purple_500"
         android:text="Add to favorites"
         android:textAllCaps="false"/>
     <RelativeLayout
@@ -37,6 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/share"
             android:layout_centerHorizontal="true"
+            android:textColor="@color/purple_700"
+            android:background="@color/purple_500"
+            android:layout_margin="5dp"
             android:src="@drawable/navigate"
             />
         <ImageButton
@@ -45,12 +51,18 @@
             android:layout_height="wrap_content"
             android:textAllCaps="false"
             android:layout_toEndOf="@+id/back_button"
+            android:textColor="@color/purple_700"
+            android:background="@color/purple_500"
+            android:layout_margin="5dp"
             android:src="@drawable/share"/>
 
         <ImageButton
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/purple_700"
+            android:background="@color/purple_500"
+            android:layout_margin="5dp"
             android:src="@drawable/back"
         />
     </RelativeLayout>

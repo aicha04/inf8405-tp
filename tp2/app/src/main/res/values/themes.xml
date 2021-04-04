@@ -16,6 +16,7 @@
         <item name="textColor">@color/lightBaseColor</item>
         <item name="background">@color/purple_100</item>
 
+
     </style>
 
     <!-- Base application theme. -->

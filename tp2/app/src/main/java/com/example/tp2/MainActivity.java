@@ -3,24 +3,16 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothDevice;
@@ -32,10 +24,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -43,7 +31,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -57,7 +44,7 @@ public class MainActivity extends AppCompatActivity{
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
-    private Button swapButton = null;
+
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
     private GpsMyLocationProvider mGpsMyLocationProvider = null;
@@ -182,9 +169,6 @@ public class MainActivity extends AppCompatActivity{
         //inflate and create the map
         setContentView(R.layout.activity_main);
 
-        swapButton = (Button) findViewById(R.id.swapeTheme);
-        setSwapButtonListeners();
-
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK); 
         
@@ -203,7 +187,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
         mapController = map.getController();
-        mapController.setZoom(10.0);
+        mapController.setZoom(15.0);
         GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
         mapController.setCenter(startPoint);
         mapController.animateTo(startPoint);
@@ -231,6 +215,7 @@ public class MainActivity extends AppCompatActivity{
                         public void run() {
                             mapController.setCenter(myLocation);
                             mapController.animateTo(myLocation);
+                            
                         }
                     });
                 };
@@ -284,14 +269,14 @@ public class MainActivity extends AppCompatActivity{
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new ItemFragment(), "FRAGMENT_LIST");
+        ft.replace(R.id.fragment_container, new ListFragment(), "FRAGMENT_LIST");
         ft.addToBackStack(null);
         ft.commit();
     }
 
     public void refreshListFragment(){
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if(currentFragment instanceof ItemFragment) {
+        if(currentFragment instanceof ListFragment) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.detach(currentFragment);
             ft.attach(currentFragment);
@@ -740,24 +725,24 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void setSwapButtonListeners() {
-        swapButton.setOnClickListener(v -> {
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
-                userSingleton.setCurrentTheme(constants.LIGHT_THEME);
-                editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
-                setTheme(R.style.Theme_Tp2);
-            } else {
-                userSingleton.setCurrentTheme(constants.DARK_THEME);
-                editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
-                setTheme(R.style.Theme_Tp2_dark);
-            }
-            editor.commit();
+    public void swapTheme() {
 
-            finish();
-            startActivity(getIntent());
-        });
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
+            userSingleton.setCurrentTheme(constants.LIGHT_THEME);
+            editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+            setTheme(R.style.Theme_Tp2);
+        } else {
+            userSingleton.setCurrentTheme(constants.DARK_THEME);
+            editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+        editor.commit();
+
+        finish();
+        startActivity(getIntent());
+
     }
 
     @Override
