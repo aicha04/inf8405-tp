@@ -49,15 +49,18 @@ public class ListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
     }
+
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onClickSwapButton();
         }
     };
+
     public void onClickSwapButton(){
         ((MainActivity)getActivity()).swapTheme();
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
