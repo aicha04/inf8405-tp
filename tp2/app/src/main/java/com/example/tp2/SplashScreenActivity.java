@@ -4,13 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
-
-import com.google.firebase.database.DataSnapshot;
 
 import java.io.File;
 import java.util.UUID;
@@ -22,16 +18,31 @@ public class SplashScreenActivity extends AppCompatActivity {
     private Constants constants = new Constants();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         try{
-        setContentView(R.layout.activity_splash_screen);
+            //Get user id and stored theme(light or dark)
+            setUpSharedPreferences();
+
+            if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+                setTheme(R.style.Theme_Tp2);
+            }else{
+                setTheme(R.style.Theme_Tp2_dark);
+            }
+
+            setContentView(R.layout.activity_splash_screen);
+            super.onCreate(savedInstanceState);
 
             // create animation
             ImageView container = findViewById(R.id.container);
-            container.setImageResource(R.drawable.splash_screen);
-            //Get user id
-            setUpSharedPreferences();
+            if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+                container.setImageResource(R.drawable.light_splash_screen);
+            }else{
+                container.setImageResource(R.drawable.splash_screen);
+            }
+
+            //Fetch detected devices
             userSingleton.fetchUserDevices();
+
         }catch(Exception e){
             e.printStackTrace();
             Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
@@ -92,14 +103,20 @@ public class SplashScreenActivity extends AppCompatActivity {
         if(file.exists()){
             sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, SplashScreenActivity.this.MODE_PRIVATE);
             if(sharedPreferences.contains(constants.SHARED_USER_ID)){
-                userSingleton.setUserUId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
+                userSingleton.setUserId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
+            }
+            if(sharedPreferences.contains(constants.CURRENT_THEME)){
+                userSingleton.setCurrentTheme(sharedPreferences.getString(constants.CURRENT_THEME, constants.LIGHT_THEME));
             }
         }else{
             sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
+
             String userUId =  UUID.randomUUID().toString();
-            userSingleton.setUserUId(userUId);
+            userSingleton.setUserId(userUId);
             editor.putString(constants.SHARED_USER_ID, userUId);
+
+            editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
             editor.commit();
         }
     }

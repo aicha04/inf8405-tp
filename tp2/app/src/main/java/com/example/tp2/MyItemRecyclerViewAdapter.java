@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,11 +18,13 @@ import java.util.List;
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final ArrayList<Device> mValues;
+    private ArrayList<Device> mValues;
     private final RecyclerView recyclerView;
 
+    private  UserSingleton userSingleton = UserSingleton.getInstance();
+
     public MyItemRecyclerViewAdapter(ArrayList<Device> items, RecyclerView recyclerView) {
-        mValues = items;
+        mValues = userSingleton.getDevices();
         this.recyclerView = recyclerView;
     }
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -40,28 +43,38 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     public void onClickItem(final View view) {
         int itemPosition = recyclerView.getChildLayoutPosition(view);
-        String itemInfo = mValues.get(itemPosition).id + "\n" + mValues.get(itemPosition).classCategory;
+
         if (view.getContext() instanceof MainActivity) {
-            ((MainActivity)view.getContext()).swapToDeviceInfoFragment(itemInfo);
+            ((MainActivity)view.getContext()).swapToDeviceInfoFragment(itemPosition);
         }
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        mValues = userSingleton.getDevices();
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).classCategory);
+        String friendlyName = "No name";
+        if(mValues.get(position).friendlyName !=null)
+            friendlyName = mValues.get(position).friendlyName;
+        holder.mContentView.setText(friendlyName);
+        if(mValues.get(position).isFavorite == 1){
+            holder.mImageView.setImageResource(R.drawable.star);
+        }else{
+            holder.mImageView.setImageResource(R.drawable.emptystar);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return userSingleton.getDevices().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final ImageView mImageView;
         public Device mItem;
 
         public ViewHolder(View view) {
@@ -69,6 +82,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mImageView = (ImageView) view.findViewById(R.id.imageView);
+
         }
 
         @Override

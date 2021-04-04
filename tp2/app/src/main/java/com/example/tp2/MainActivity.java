@@ -3,29 +3,26 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.os.Build;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
+import android.location.LocationManager;
 import android.widget.Toast;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothDevice;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -37,52 +34,119 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.File;
 import java.util.ArrayList;
-
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
+    private static boolean isAppRunning = false;
+    private static final int REQUEST_ENABLE_BT = 3;
     private BluetoothAdapter bluetoothAdapter;
-    public ArrayList<BluetoothDevice> pairedDevices;
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
+
     private IMapController mapController = null;
     private MyLocationNewOverlay mLocationOverlay = null;
+    private GpsMyLocationProvider mGpsMyLocationProvider = null;
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+            setTheme(R.style.Theme_Tp2);
+        }else{
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pairedDevices = new ArrayList<>();
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+        initBluetooth();
         createMap();
-        if (this.isGPSEnabled()) {
-            makeDiscoverable();
-            System.out.println("makeDiscoverable"); // TODO: À changer pour faire des fonctions asynchrones
-            try {
-                TimeUnit.SECONDS.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+        System.out.println("onCreate: " + userSingleton.getDevices().size());
+
+        // Add markers on the map
+        for (int i=0; i < userSingleton.getDevices().size(); i++) {
+            Device device = userSingleton.getDevices().get(i);
+            String[] latlon = device.position.split(",");
+            if (latlon.length == 2) {
+                GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
+                addMarker(location, i);
+            } else {
+                Log.d("latlon array length", String.valueOf(latlon.length));
             }
-            discoverNewDevices();
-            System.out.println("discoverNewDevices");
         }
-        else {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
-        }
-//        userSingleton.addNewDeviceToDb(new Device("ID22", "TO", "OO"));
-//        System.out.println(userSingleton.getDevices().size());
+
         swapToListFragment();
+    }
+
+    /** Get Bluetooth adapter and register receiver
+     * Request permission to use Bluetooth to operating system when necessary
+     * @param -
+     * @return -
+     */
+    private void initBluetooth() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            // Device doesn't support Bluetooth
+            Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            registerBroadcastReceiver();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed
+        if(requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Enable Bluetooth to discover devices", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /** Register receiver to be called when any intent matches one of the filters
+     * @param -
+     * @return -
+     */
+    private void registerBroadcastReceiver(){
+        IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+        discoverDevicesIntent = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
+
+        IntentFilter BTStatusIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(BTStatusReceiver, BTStatusIntent);
+    }
+
+    /** If all conditions are met, look for any device with Bluetooth capabilities in the area
+     * Start discovery if it isn't already on
+     * @param -
+     * @return -
+     */
+    public void discoverDevices() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (bluetoothAdapter.isEnabled() && isGPSEnabled()) {
+                Log.d(TAG, "discoverDevices");
+                if (!bluetoothAdapter.isDiscovering()) {
+                    Log.d(TAG, "start discovering");
+                    bluetoothAdapter.startDiscovery();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Enable Bluetooth and localization to discover devices", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     /** Set up map and its parameters
@@ -106,7 +170,9 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(TileSourceFactory.MAPNIK); 
+        
+        updateMapTheme();
 
         // default zoom buttons
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -114,25 +180,49 @@ public class MainActivity extends AppCompatActivity{
         map.setMultiTouchControls(true);
 
         requestPermissionsIfNecessary(new String[] {
-                // if you need to show the current location, uncomment the line below
+                // need this permission to discover devices and to show the current location
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 // WRITE_EXTERNAL_STORAGE is required in order to show the map
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
-        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
+        mapController = map.getController();
+        mapController.setZoom(15.0);
+        GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
+        mapController.setCenter(startPoint);
+        mapController.animateTo(startPoint);
+
+        mGpsMyLocationProvider = new GpsMyLocationProvider(ctx) {
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d(TAG, "Provider enabled");
+                if (provider.equals("gps")) {
+                    Log.d(TAG, "GPS provider");
+                    discoverDevices();
+                }
+            }
+        };
+
+        mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
         mLocationOverlay.enableMyLocation();
-        mLocationOverlay.enableFollowLocation();
+        mLocationOverlay.runOnFirstFix(new Runnable() {
+            @Override
+            public void run() {
+                final GeoPoint myLocation = mLocationOverlay.getMyLocation();
+                if (myLocation != null) {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mapController.setCenter(myLocation);
+                            mapController.animateTo(myLocation);
+                            
+                        }
+                    });
+                };
+            }
+        });
         map.getOverlays().add(mLocationOverlay);
 
-        mapController = map.getController();
-        if(isGPSEnabled()) {
-            mapController.setZoom(15.0);
-        } else {
-            mapController.setZoom(10.0);
-            GeoPoint startPoint = new GeoPoint(constants.DEFAULT_LATITUDE, constants.DEFAULT_LONGITUDE);
-            mapController.setCenter(startPoint);
-        }
     }
 
     /** Retrieve user current location
@@ -140,18 +230,31 @@ public class MainActivity extends AppCompatActivity{
      * @return User current location
      */
     private GeoPoint getCurrentLocation() {
-        return new GeoPoint(mLocationOverlay.getMyLocation());
+        if (mLocationOverlay == null || mGpsMyLocationProvider == null) {
+            Log.d(TAG, "locationOverlay or GpsMyLocationProvider is null");
+            return null;
+        }
+        return mLocationOverlay.getMyLocation();
     }
 
-    /** Add marker at the given location
+    /** Add marker at the given location for device with deviceIndex
      * @param location
+     * @param deviceIndex device position in the list
      * @return -
      */
-    private void addMarker(GeoPoint location) {
-        Marker startMarker = new Marker(map);
-        startMarker.setPosition(location);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        map.getOverlays().add(startMarker);
+    private void addMarker(GeoPoint location, int deviceIndex) {
+        Marker newMarker = new Marker(map);
+        newMarker.setPosition(location);
+        newMarker.setTitle(String.valueOf(deviceIndex));
+        newMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        newMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+                swapToDeviceInfoFragment(deviceIndex);
+                return true;
+            }
+        });
+        map.getOverlays().add(newMarker);
     }
 
     /** Check if GPS is activated
@@ -166,15 +269,25 @@ public class MainActivity extends AppCompatActivity{
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new ItemFragment());
+        ft.replace(R.id.fragment_container, new ListFragment(), "FRAGMENT_LIST");
         ft.addToBackStack(null);
         ft.commit();
     }
 
-    public void swapToDeviceInfoFragment(String itemInfo){
+    public void refreshListFragment(){
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if(currentFragment instanceof ListFragment) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.detach(currentFragment);
+            ft.attach(currentFragment);
+            ft.commit();
+        }
+    }
+
+    public void swapToDeviceInfoFragment(int deviceIndex){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, new DeviceInfoFragment(itemInfo));
+        ft.replace(R.id.fragment_container, new DeviceInfoFragment(deviceIndex));
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -182,145 +295,50 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public void onResume() {
         super.onResume();
+        isAppRunning = true;
+        Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        discoverDevices();
     }
-
+    
     @Override
     public void onPause() {
         super.onPause();
+        isAppRunning = false;
         //this will refresh the osmdroid configuration on resuming.
         //if you make changes to the configuration, use
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
-    }
-
-    /** Will ask device to enable Bluetooth capabilities to be used by the app
-     * Will inform user if the app is not able to set up Bluetooth correctly
-     * Will reboot Bluetooth adapter if it is already on
-     * Two new registerReceivers are created to enable Bluetooth and make the device discoverable for others
-     * @param -
-     * @return -
-     */
-    public void makeDiscoverable() {
-        if (bluetoothAdapter == null) {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context, "ERROR: Bluetooth is not enabled!", duration).show();
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                // startActivity(enableBtIntent);
-                // Log.d(TAG, "makeDiscoverable: Enabling Bluetooth.");
-                // IntentFilter enableBTFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                // registerReceiver(enableBluetoothReceiver, enableBTFilter);
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // 300 seconds is the maximum for security reasons
-                startActivity(discoverableIntent);
-                Log.d(TAG, "1 - makeDiscoverable: Making device discoverable for 300 seconds.");
-                IntentFilter makeDiscoverableFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                registerReceiver(makeDiscoverableReceiver, makeDiscoverableFilter);
-            } else {
-                Log.d(TAG, "makeDiscoverable: Rebooting Bluetooth.");
-                bluetoothAdapter.disable();
-                // Log.d(TAG, "enableBluetooth: Disabling Bluetooth.");
-                // IntentFilter enableBTFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                // registerReceiver(enableBluetoothReceiver, enableBTFilter);
-                // Rebooting Bluetooth
-                // Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                // startActivity(enableBtIntent);
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE); // TODO: l'activité rentre ici
-                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // 300 seconds is the maximum for security reasons
-                startActivity(discoverableIntent);
-                Log.d(TAG, "2 - makeDiscoverable: Making device discoverable for 300 seconds.");
-                IntentFilter makeDiscoverableFilter = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                registerReceiver(makeDiscoverableReceiver, makeDiscoverableFilter);
-            }
-        }
-    }
-
-    /** Will look for any device with Bluetooth capabilities in the area
-     * Will request permission to use Bluetooth to operating system when necessary
-     * Will reboot discovery if it is already on
-     * A new registerReceiver is created to look for new devices
-     * @param -
-     * @return -
-     */
-    public void discoverNewDevices() {
-        if (!bluetoothAdapter.isDiscovering()) {
-            requestBTPermissions();
-            bluetoothAdapter.startDiscovery();
-            Log.d(TAG, "discoverNewDevices: Looking for new devices.");
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
-        } else {
-            Log.d(TAG, "discoverNewDevices: Rebooting discovery.");
+        // False if BT not enabled
+        if (bluetoothAdapter.isDiscovering()) {
+            Log.d(TAG, "OnPause: stop discovery");
             bluetoothAdapter.cancelDiscovery();
-            requestBTPermissions();
-            bluetoothAdapter.startDiscovery();
-            IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
-            // Rebooting Bluetooth
-            requestBTPermissions();
-            bluetoothAdapter.startDiscovery();
-            Log.d(TAG, "discoverNewDevices: Looking for new devices.");
-            registerReceiver(discoverDevicesReceiver, discoverDevicesIntent);
         }
     }
 
-//    private final BroadcastReceiver enableBluetoothReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-////            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-////                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-////            }
-//            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-//                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-//                switch (state) {
-//                    case BluetoothAdapter.STATE_OFF:
-//                        Log.d(TAG, "bluetoothAdapter: STATE OFF");
-//                        break;
-//                    case BluetoothAdapter.STATE_TURNING_OFF:
-//                        Log.d(TAG, "bluetoothAdapter: STATE TURNING OFF");
-//                        break;
-//                    case BluetoothAdapter.STATE_ON:
-//                        Log.d(TAG, "bluetoothAdapter: STATE ON");
-//                        break;
-//                    case BluetoothAdapter.STATE_TURNING_ON:
-//                        Log.d(TAG, "bluetoothAdapter: STATE TURNING ON");
-//                        break;
-//                }
-//            }
-//        }
-//    };
-
-    private final BroadcastReceiver makeDiscoverableReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver BTStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
-                int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
-                switch (mode) {
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Enabled.");
+
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.d(TAG, "Bluetooth OFF");
                         break;
-                    //Device not in discoverable mode
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Disabled. Able to receive connections.");
+                    case BluetoothAdapter.STATE_ON:
+                        if (isAppRunning) {
+                            discoverDevices();
+                        }
                         break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(TAG, "makeDiscoverableReceiver: Discoverability Disabled. Not able to receive connections.");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(TAG, "makeDiscoverableReceiver: Connecting...");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(TAG, "makeDiscoverableReceiver: Connected.");
+                    default:
                         break;
                 }
             }
@@ -331,17 +349,45 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (!pairedDevices.contains(device)) {
-                    GeoPoint location = getCurrentLocation();
-                    addMarker(location);
-                    String position = location.getLatitude() + ", " + location.getLatitude();
-                    Device deviceDB = new Device(device.getAddress(), position, translateClassCode(device.getBluetoothClass().getDeviceClass()), translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()), translateDeviceTypeCode(device.getType()), device.getName());
-                    userSingleton.addNewDeviceToDb(deviceDB);
-                    pairedDevices.add(device);
-                    Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " + translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " + translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " + translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                if (!deviceExists(device)) {
+                        GeoPoint location = getCurrentLocation();
+
+                        if (location != null) {
+                            addMarker(location, userSingleton.getDevices().size());
+                            String position = location.getLatitude() + "," + location.getLongitude();
+                            Device deviceDB = new Device(device.getAddress(),
+                                                        position,
+                                                        translateClassCode(device.getBluetoothClass().getDeviceClass()),
+                                                        translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()),
+                                                        translateDeviceTypeCode(device.getType()),
+                                                        device.getName(),
+                                                        0);
+
+                            userSingleton.addNewDeviceToDb(deviceDB);
+                            // update list fragment
+                            try {
+
+                                refreshListFragment();
+                            }
+                            catch (Exception e){
+                                System.out.println(e.getMessage());
+                            }
+
+                            Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
+                            Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " +
+                                    translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " +
+                                    translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " +
+                                    translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                        }
+                }
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Log.d(TAG,"Entered the Finished ");
+                if (isAppRunning) {
+                    Log.d(TAG,"Activity is running ");
+                    discoverDevices();
                 }
             } else {
                 Log.d(TAG, "discoverDevicesReceiver: Didn't find any device!");
@@ -349,7 +395,24 @@ public class MainActivity extends AppCompatActivity{
         }
     };
 
-    /** Will translate the integer code returned by Bluetooth adapter into a readable device type
+    /** Check if device already exists
+     * @param device
+     * @return true if device already exists, false otherwise
+     */
+    private boolean deviceExists(BluetoothDevice device){
+        Log.d(TAG, "check if device exists");
+        ArrayList<Device> devices = userSingleton.getDevices();
+        boolean deviceExists = false;
+        for(int i = 0; i < devices.size(); i++){
+            if(devices.get(i).id.equals(device.getAddress())){
+                Log.d(TAG, "device exists for " + device.getAddress());
+                deviceExists = true;
+            }
+        }
+        return deviceExists;
+    }
+
+    /** Translate the integer code returned by Bluetooth adapter into a readable device type
      *  If code does not map to any known device type, it is returned as is
      * @param - int code
      * @return - String deviceTypeName
@@ -375,7 +438,7 @@ public class MainActivity extends AppCompatActivity{
         return deviceTypeName;
     }
 
-    /** Will translate the integer code returned by Bluetooth adapter into a readable major class
+    /** Translate the integer code returned by Bluetooth adapter into a readable major class
      *  If code does not map to any known major class, it is returned as is
      * @param - int code
      * @return - String majorClassName
@@ -588,18 +651,23 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        for (int i = 0; i < grantResults.length; i++) {
-            permissionsToRequest.add(permissions[i]);
-        }
-        if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE){
+            ArrayList<String> permissionsToRequest = new ArrayList<>();
+            for (int i = 0; i < grantResults.length; i++) {
+                if(grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    permissionsToRequest.add(permissions[i]);
+                }
+            }
+            if (permissionsToRequest.size() > 0) {
+                Toast.makeText(getApplicationContext(), "Permissions required for optimal use!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
+    /** Request permissions when necessary
+     * @param permissions
+     * @return -
+     */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         for (String permission : permissions) {
@@ -610,45 +678,78 @@ public class MainActivity extends AppCompatActivity{
             }
         }
         if (permissionsToRequest.size() > 0) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setMessage("These permissions are important for optimal use of the application. Please permit them!")
+                        .setTitle("Important permissions required!");
+
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this, permissionsToRequest.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
+                    }
+                });
+
+                dialog.setNegativeButton("NO THANKS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Permissions denied!", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                dialog.show();
+            } else {
+                ActivityCompat.requestPermissions(this, permissionsToRequest.toArray(new String[0]), REQUEST_PERMISSIONS_REQUEST_CODE);
+            }
         }
     }
 
-    /** Will request permission to use Bluetooth to operating system when necessary
-     * All devices with Android Lollipop (version 5.0) and above need proper permissions before starting discovery of new devices
-     * @param -
-     * @return -
-     */
-    private void requestBTPermissions() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            Log.d(TAG, "checkBTPermissions: Checking permissions. SDK version >= LOLLIPOP.");
-            int permissionCheck = 0;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
-            }
-            if (permissionCheck != 0) {
+    private void updateMapTheme(){
+        if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+            //Matrix to inverse colors
+            ColorMatrix negate = new ColorMatrix(constants.NEGATE_COLORS_MATRIX);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
-                }
-            }
-        } else {
-            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+            //Matrix for black and white filter
+            ColorMatrix blackAndWhiteTintMatrix = new ColorMatrix(constants.BLACK_AND_WHITE_COLORS_MATRIX);
+
+            //Apply black and white filter over negate inverted colors
+            negate.preConcat(blackAndWhiteTintMatrix);
+
+            //Apply filter to map
+            map.getOverlayManager().getTilesOverlay().setColorFilter( new ColorMatrixColorFilter(negate));
+        }else{
+            //Set default colors
+            map.getOverlayManager().getTilesOverlay().setColorFilter(null);
         }
+    }
+
+    public void swapTheme() {
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
+            userSingleton.setCurrentTheme(constants.LIGHT_THEME);
+            editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+            setTheme(R.style.Theme_Tp2);
+        } else {
+            userSingleton.setCurrentTheme(constants.DARK_THEME);
+            editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+            setTheme(R.style.Theme_Tp2_dark);
+        }
+        editor.commit();
+
+        finish();
+        startActivity(getIntent());
+
     }
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy: called.");
+        Log.d(TAG, "onDestroy called.");
         super.onDestroy();
-        // unregisterReceiver(enableBluetoothReceiver);
-        unregisterReceiver(makeDiscoverableReceiver);
+        unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
     }
 }
