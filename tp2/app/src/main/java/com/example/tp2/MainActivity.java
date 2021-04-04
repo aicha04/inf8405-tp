@@ -265,7 +265,10 @@ public class MainActivity extends AppCompatActivity{
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-
+    /** switch from current fragment to {@link ListFragment}
+     * @param  -
+     * @return -
+     */
     public void  swapToListFragment(){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -273,7 +276,10 @@ public class MainActivity extends AppCompatActivity{
         ft.addToBackStack(null);
         ft.commit();
     }
-
+    /** Refresh {@link ListFragment} to update  device list
+     * @param  -
+     * @return -
+     */
     public void refreshListFragment(){
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         if(currentFragment instanceof ListFragment) {
@@ -283,7 +289,10 @@ public class MainActivity extends AppCompatActivity{
             ft.commit();
         }
     }
-
+    /** switch from current fragment to {@link DeviceInfoFragment}
+     * @param  deviceIndex index of device to display their collected information
+     * @return -
+     */
     public void swapToDeviceInfoFragment(int deviceIndex){
         // Begin the transaction
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -298,9 +307,6 @@ public class MainActivity extends AppCompatActivity{
         isAppRunning = true;
         Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
         discoverDevices();
     }
@@ -310,9 +316,6 @@ public class MainActivity extends AppCompatActivity{
         super.onPause();
         isAppRunning = false;
         //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
         map.onPause();  //needed for compass, my location overlays, v6.0.0 and up
         // False if BT not enabled
         if (bluetoothAdapter.isDiscovering()) {
