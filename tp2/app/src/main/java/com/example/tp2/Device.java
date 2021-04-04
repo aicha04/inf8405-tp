@@ -7,7 +7,6 @@ public class Device {
     public String classMajorCategory;
     public String deviceType;
     public String friendlyName;
-    //Add any useful infos
     public int isFavorite = 0;
     public String dbKey = "";
 

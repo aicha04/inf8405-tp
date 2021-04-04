@@ -15,13 +15,13 @@ import android.widget.Button;
 
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of Devices.
  */
 public class ListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
+
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
     private Button swapButton = null;
     /**
@@ -31,15 +31,6 @@ public class ListFragment extends Fragment {
     public ListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static ListFragment newInstance(int columnCount) {
-        ListFragment fragment = new ListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +71,7 @@ public class ListFragment extends Fragment {
         }else{
             System.out.println("---------error------");
         }
+        // Set the button listener
         swapButton = (Button) viewLayout.findViewById(R.id.swapTheme);
         swapButton.setOnClickListener(onClickListener);
         return viewLayout;
