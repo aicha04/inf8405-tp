@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity{
      * @param -
      * @return True if GPS is activated. False otherwise.
      */
-    private boolean isGPSEnabled() {
+    public boolean isGPSEnabled() {
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE );
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }

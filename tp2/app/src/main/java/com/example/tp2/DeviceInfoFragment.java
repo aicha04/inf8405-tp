@@ -85,13 +85,17 @@ public class DeviceInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
-                String latitude = latlon[0];
-                String longitude = latlon[1];
-                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                startActivity(mapIntent);
+                if (((MainActivity)getActivity()).isGPSEnabled()) {
+                    String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
+                    String latitude = latlon[0];
+                    String longitude = latlon[1];
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                } else {
+                    Toast.makeText(((MainActivity)getActivity()).getApplicationContext(), "Enable localization to get directions", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
