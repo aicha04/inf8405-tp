@@ -708,7 +708,10 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     }
-
+    /** Update the map theme
+     * @param -
+     * @return -
+     */
     private void updateMapTheme(){
         if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
             //Matrix to inverse colors
@@ -727,7 +730,10 @@ public class MainActivity extends AppCompatActivity{
             map.getOverlayManager().getTilesOverlay().setColorFilter(null);
         }
     }
-
+    /** Update the app theme
+     * @param -
+     * @return -
+     */
     public void swapTheme() {
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
