@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity{
                         public void run() {
                             mapController.setCenter(myLocation);
                             mapController.animateTo(myLocation);
-                            mapController.setZoom(15.0);
+                            
                         }
                     });
                 };
