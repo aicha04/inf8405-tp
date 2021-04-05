@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="deviceIndex" type="id"/>
+    <item name="deviceAddress" type="id" />
+    <item name="deviceAlias" type="id" />
+    <item name="deviceClass" type="id" />
+    <item name="deviceMajorClass" type="id" />
+    <item name="deviceBondState" type="id" />
+    <item name="deviceName" type="id" />
+    <item name="deviceType" type="id" />
+    <item name="deviceUuid" type="id" />
+
+
+</resources>
