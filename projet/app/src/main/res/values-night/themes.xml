@@ -13,8 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
 
-        <item name="textColor">@color/lightBaseColor</item>
+        <item name="textColor">@color/purple_700</item>
         <item name="background">@color/purple_100</item>
+        <item name="buttonBackground">@color/purple_500</item>
+        <item name="buttonTextColor">@color/purple_700</item>
 
     </style>
 
@@ -33,5 +35,7 @@
         <!-- Customize your theme here. -->
         <item name="textColor">@color/purple_500</item>
         <item name="background">@color/purple_700</item>
+        <item name="buttonTextColor">@color/purple_700</item>
+        <item name="buttonBackground">@color/purple_500</item>
     </style>
 </resources>

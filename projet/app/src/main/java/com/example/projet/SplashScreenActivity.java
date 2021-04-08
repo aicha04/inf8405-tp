@@ -45,8 +45,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         }catch(Exception e){
             e.printStackTrace();
-            Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
+            Intent i = new Intent(SplashScreenActivity.this, WelcomeActivity.class);
             startActivity(i);
+            finish();
         }
 
     }
@@ -61,7 +62,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         catch(Exception e){
             e.printStackTrace();
 
-            Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
+            Intent i = new Intent(SplashScreenActivity.this, WelcomeActivity.class);
             startActivity(i);
 
             // close this activity
@@ -81,7 +82,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
 
                 //create intent to start main activity
-                Intent i = new Intent(SplashScreenActivity.this, MainActivity.class);
+                Intent i = new Intent(SplashScreenActivity.this, WelcomeActivity.class);
                 startActivity(i);
 
                 // close this activity

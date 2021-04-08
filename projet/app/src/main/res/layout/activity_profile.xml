@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/background"
+    tools:context=".Profile">
+
+    <ImageView
+        android:id="@+id/profile_photo_view"
+        android:layout_width="190dp"
+        android:layout_height="169dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="584dp"
+        android:layout_marginRight="584dp"
+        android:src="@drawable/no_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/swap_theme_button"
+        android:layout_width="221dp"
+        android:layout_height="86dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:layout_marginStart="320dp"
+        android:layout_marginLeft="320dp"
+        android:layout_marginEnd="616dp"
+        android:layout_marginRight="616dp"
+        android:layout_marginBottom="5dp"
+        android:background="?attr/buttonBackground"
+        android:text="@string/swap_theme"
+        android:textAllCaps="false"
+        android:textColor="?attr/buttonTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

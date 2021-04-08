@@ -15,6 +15,7 @@ public class UserSingleton {
     private ArrayList<Device> devices = new ArrayList<Device>();
     private  String currentTheme = constants.LIGHT_THEME;
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+    public Boolean hasProfilePhoto = true;
 
     private UserSingleton() { }
 
@@ -157,5 +158,9 @@ public class UserSingleton {
             }
         }
         return false;
+    }
+
+    public void setHasProfilePhoto(Boolean hasProfilePhoto) {
+        this.hasProfilePhoto = hasProfilePhoto;
     }
 }
