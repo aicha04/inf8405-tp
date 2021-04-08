@@ -22,7 +22,7 @@ public class ListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private int mColumnCount = 1;
-    private Button swapButton = null;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -48,7 +48,7 @@ public class ListFragment extends Fragment {
     };
 
     public void onClickSwapButton(){
-        ((MainActivity)getActivity()).swapTheme();
+        ((MainActivity)getActivity()).displayProfile();
     }
 
     @Override
@@ -71,8 +71,8 @@ public class ListFragment extends Fragment {
             System.out.println("---------error------");
         }
         // Set the button listener
-        swapButton = (Button) viewLayout.findViewById(R.id.swapTheme);
-        swapButton.setOnClickListener(onClickListener);
+        Button profileButton = (Button) viewLayout.findViewById(R.id.profile_button);
+        profileButton.setOnClickListener(onClickListener);
         return viewLayout;
     }
 }

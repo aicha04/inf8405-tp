@@ -18,7 +18,7 @@
         android:layout_alignParentTop="true"/>
 
     <Button
-    android:id="@+id/swapTheme"
+    android:id="@+id/profile_button"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
@@ -27,5 +27,5 @@
     android:textColor="?attr/buttonTextColor"
     android:background="?attr/buttonBackground"
     android:layout_margin="5dp"
-    android:text="@string/swap_theme" />
+    android:text="Profile" />
 </RelativeLayout>

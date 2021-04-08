@@ -730,29 +730,6 @@ public class MainActivity extends AppCompatActivity{
             map.getOverlayManager().getTilesOverlay().setColorFilter(null);
         }
     }
-    /** Update the app theme
-     * @param -
-     * @return -
-     */
-    public void swapTheme() {
-
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
-            userSingleton.setCurrentTheme(constants.LIGHT_THEME);
-            editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
-            setTheme(R.style.Theme_projet);
-        } else {
-            userSingleton.setCurrentTheme(constants.DARK_THEME);
-            editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
-            setTheme(R.style.Theme_projet_dark);
-        }
-        editor.commit();
-
-        finish();
-        startActivity(getIntent());
-
-    }
 
     @Override
     protected void onDestroy() {
@@ -760,5 +737,11 @@ public class MainActivity extends AppCompatActivity{
         super.onDestroy();
         unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
+    }
+
+    void displayProfile() {
+        Intent profileActivity = new Intent(MainActivity.this, Profile.class);
+        startActivity(profileActivity);
+        finish();
     }
 }
