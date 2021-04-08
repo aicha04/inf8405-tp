@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">projet</string>
+    <string name="discover_devices">Découvrir des appareils</string>
+    <string name="deviceIndexError">Index non disponible</string>
+    <string name="deviceAddressError">Adresse non disponible</string>
+    <string name="deviceClassError">Classe non disponible</string>
+    <string name="deviceMajorClassError">Classe majeure non disponible</string>
+    <string name="deviceNameError">Nom non disponible</string>
+    <string name="deviceTypeError">Type non disponible</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello fragment vide</string>
+    <string name="swap_theme">Changer de thème</string>
+    <string name="profile_creation">Création du profil</string>
+    <string name="pick_a_username">1. Nom d\'utilisateur</string>
+    <string name="add_a_profile_picture">2. Photo de profil</string>
+    <string name="change_photo">Changer la photo</string>
+    <string name="create_profile">Créer un profil</string>
+    <string name="log_in">Se connecter</string>
+    <string name="welcome_to_findmydevice">Bienvenue sur FindMyDevice !</string>
+    <string name="add_to_favorites">Ajouter aux favoris</string>
+    <string name="profile">Profil</string>
+    <string name="change_language">Changer la langue</string>
+    <string name="choose_language">Choisir une langue</string></resources>

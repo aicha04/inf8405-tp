@@ -1,9 +1,13 @@
 package com.example.projet;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +17,8 @@ import com.example.projet.MyAppGlideModule.*;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.Locale;
 
 public class Profile extends AppCompatActivity {
     private Constants constants = new Constants();
@@ -26,6 +32,7 @@ public class Profile extends AppCompatActivity {
             setTheme(R.style.Theme_projet_dark);
         }
         super.onCreate(savedInstanceState);
+        loadLocale();
         setContentView(R.layout.activity_profile);
 
         // Set the button listener
@@ -34,11 +41,76 @@ public class Profile extends AppCompatActivity {
             swapTheme();
         });
 
+        Button languageButton = (Button) findViewById(R.id.change_language_button);
+        languageButton.setOnClickListener(v -> {
+            showChangeLanguageDialog();
+        });
+
         if(userSingleton.hasProfilePhoto){
             loadProfilePicture();
         }
     }
+    /** Show language options to user
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void showChangeLanguageDialog() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(Profile.this);
+        mBuilder.setTitle(getResources().getString(R.string.choose_language));
+        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // French
+                        setLocale("fr");
+                        recreate();
+                        break;
+                    case 1:
+                        // English
+                        setLocale("en");
+                        recreate();
+                        break;
+                    default:
+                        Log.d("PROFILE", "No language chosen");
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
 
+    /** Change the app language
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void setLocale(String lang) {
+        Log.d("Profile", "setLocale");
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).edit();
+        editor.putString(constants.CURRENT_LANGUAGE, lang);
+        editor.apply();
+    }
+
+    /** Load the app language
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void loadLocale() {
+        Log.d("Profile", "loadLocale");
+        SharedPreferences sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        String language = sharedPreferences.getString(constants.CURRENT_LANGUAGE, "");
+        setLocale(language);
+    }
 
     /** Update the app theme
      * @param -
