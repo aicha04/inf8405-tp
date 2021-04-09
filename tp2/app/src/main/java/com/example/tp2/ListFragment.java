@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * A fragment representing a list of Devices.
@@ -22,7 +23,7 @@ public class ListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private int mColumnCount = 1;
-    private Button swapButton = null;
+    private ImageButton swapButton = null;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -71,7 +72,7 @@ public class ListFragment extends Fragment {
             System.out.println("---------error------");
         }
         // Set the button listener
-        swapButton = (Button) viewLayout.findViewById(R.id.swapTheme);
+        swapButton = (ImageButton) viewLayout.findViewById(R.id.swapTheme);
         swapButton.setOnClickListener(onClickListener);
         return viewLayout;
     }

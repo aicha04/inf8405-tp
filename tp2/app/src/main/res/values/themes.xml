@@ -15,8 +15,9 @@
 
         <item name="textColor">@color/lightBaseColor</item>
         <item name="background">@color/purple_100</item>
-
-
+        <item name="themeIcon">@drawable/theme_black</item>
+        <item name="profileIcon">@drawable/profile_black</item>
+        <item name="analyticsIcon">@drawable/analytics_black</item>
     </style>
 
     <!-- Base application theme. -->
@@ -34,5 +35,8 @@
         <!-- Customize your theme here. -->
         <item name="textColor">@color/purple_500</item>
         <item name="background">@color/purple_700</item>
+        <item name="themeIcon">@drawable/theme_white</item>
+        <item name="profileIcon">@drawable/profile_white</item>
+        <item name="analyticsIcon">@drawable/analytics_white</item>
     </style>
 </resources>
