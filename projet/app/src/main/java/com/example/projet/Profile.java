@@ -1,26 +1,20 @@
 package com.example.projet;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.projet.MyAppGlideModule.*;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Locale;
-
-public class Profile extends AppCompatActivity {
+public class Profile extends BaseActivity {
+    private static final String TAG = "Profile";
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
@@ -32,7 +26,7 @@ public class Profile extends AppCompatActivity {
             setTheme(R.style.Theme_projet_dark);
         }
         super.onCreate(savedInstanceState);
-        loadLocale();
+        //loadLocale();
         setContentView(R.layout.activity_profile);
 
         // Set the button listener
@@ -64,13 +58,11 @@ public class Profile extends AppCompatActivity {
                 switch (which) {
                     case 0:
                         // French
-                        setLocale("fr");
-                        recreate();
+                        setNewLocale(App.localeManager.LANGUAGE_FRENCH);
                         break;
                     case 1:
                         // English
-                        setLocale("en");
-                        recreate();
+                        setNewLocale(App.localeManager.LANGUAGE_ENGLISH);
                         break;
                     default:
                         Log.d("PROFILE", "No language chosen");
@@ -84,32 +76,13 @@ public class Profile extends AppCompatActivity {
     }
 
     /** Change the app language
-     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * https://github.com/YarikSOffice/LanguageTest/blob/db5b3742bfcc083459e4f23aeb91c877babb0968/app/src/main/java/com/yariksoffice/languagetest/ui/SettingsActivity.java
      * @param -
      * @return -
      */
-    private void setLocale(String lang) {
-        Log.d("Profile", "setLocale");
-        Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.setLocale(locale);
-        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-        SharedPreferences.Editor editor = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE).edit();
-        editor.putString(constants.CURRENT_LANGUAGE, lang);
-        editor.apply();
-    }
-
-    /** Load the app language
-     * https://www.youtube.com/watch?v=zILw5eV9QBQ
-     * @param -
-     * @return -
-     */
-    private void loadLocale() {
-        Log.d("Profile", "loadLocale");
-        SharedPreferences sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        String language = sharedPreferences.getString(constants.CURRENT_LANGUAGE, "");
-        setLocale(language);
+    private void setNewLocale(String lang) {
+        App.localeManager.setNewLocale(this, lang);
+        recreate();
     }
 
     /** Update the app theme

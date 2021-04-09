@@ -1,6 +1,7 @@
 package com.example.projet;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,16 +9,20 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.projet.databinding.FragmentItemListBinding;
 
 /**
  * A fragment representing a list of Devices.
  */
 public class ListFragment extends Fragment {
 
+    private FragmentItemListBinding binding;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
 
@@ -30,9 +35,9 @@ public class ListFragment extends Fragment {
     public ListFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //App.localeManager.setLocale(((MainActivity)getActivity()).getApplicationContext());
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -55,12 +60,13 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View viewLayout = inflater.inflate(R.layout.fragment_item_list, container, false);
-        View view = viewLayout.findViewById(R.id.list);
+        binding = FragmentItemListBinding.inflate(inflater, container, false);
+        View viewLayout = binding.getRoot();
+
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        if (binding.list instanceof RecyclerView) {
+            Context context = binding.list.getContext();
+            RecyclerView recyclerView = (RecyclerView) binding.list;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -71,8 +77,20 @@ public class ListFragment extends Fragment {
             System.out.println("---------error------");
         }
         // Set the button listener
-        Button profileButton = (Button) viewLayout.findViewById(R.id.profile_button);
-        profileButton.setOnClickListener(onClickListener);
+        binding.profileButton.setOnClickListener(onClickListener);
         return viewLayout;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Context context = App.localeManager.setLocale(getActivity());
+        Resources resources = context.getResources();
+        binding.profileButton.setText(resources.getString(R.string.profile));
+        Log.d("Fragment", "onResume");
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

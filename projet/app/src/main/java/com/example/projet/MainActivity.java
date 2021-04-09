@@ -36,7 +36,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
     private static boolean isAppRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
@@ -742,6 +742,6 @@ public class MainActivity extends AppCompatActivity{
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
-        finish();
+//        finish();
     }
 }
