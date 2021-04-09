@@ -10,6 +10,7 @@
     <string name="deviceTypeError">Type non disponible</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <!-- Layout -->
     <string name="hello_blank_fragment">Hello fragment vide</string>
     <string name="swap_theme">Changer de thème</string>
     <string name="profile_creation">Création du profil</string>
@@ -22,4 +23,11 @@
     <string name="add_to_favorites">Ajouter aux favoris</string>
     <string name="profile">Profil</string>
     <string name="change_language">Changer la langue</string>
-    <string name="choose_language">Choisir une langue</string></resources>
+    <string name="choose_language">Choisir une langue</string>
+    <!-- Toast -->
+    <string name="enable_BT">Activer Bluetooth</string>
+    <string name="enable_BT_and_GPS">Activer Bluetooth et la localisation</string>
+    <string name="permissions_required">Permissions requises!</string>
+    <string name="permissions_denied">Permissions refusées!</string>
+    <string name="device_no_BT">Appareil sans Bluetooth!</string>
+</resources>

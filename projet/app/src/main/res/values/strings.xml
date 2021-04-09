@@ -9,6 +9,7 @@
     <string name="deviceTypeError">Type unavailable</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <!-- Layout -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="swap_theme">Swap theme</string>
     <string name="profile_creation">Profile creation</string>
@@ -24,5 +25,11 @@
     <string name="profile">Profile</string>
     <string name="change_language">Change language</string>
     <string name="choose_language">Choose language</string>
+    <!-- Toast -->
+    <string name="enable_BT">Enable Bluetooth to discover devices</string>
+    <string name="enable_BT_and_GPS">Enable Bluetooth and localization to discover devices</string>
+    <string name="permissions_required">Permissions required for optimal use!</string>
+    <string name="permissions_denied">Permissions denied!</string>
+    <string name="device_no_BT">Device doesn\'t support Bluetooth!</string>
 
 </resources>

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
@@ -93,7 +94,8 @@ public class MainActivity extends BaseActivity{
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-            Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
+            Resources resources = App.localeManager.setLocale(getApplicationContext()).getResources();
+            Toast.makeText(getApplicationContext(), resources.getString(R.string.device_no_BT), Toast.LENGTH_SHORT).show();
         } else {
             if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -110,7 +112,8 @@ public class MainActivity extends BaseActivity{
         // check if the request code is same as what is passed
         if(requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Enable Bluetooth to discover devices", Toast.LENGTH_LONG).show();
+                Resources resources = App.localeManager.setLocale(getApplicationContext()).getResources();
+                Toast.makeText(getApplicationContext(), resources.getString(R.string.enable_BT), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -144,7 +147,8 @@ public class MainActivity extends BaseActivity{
                     bluetoothAdapter.startDiscovery();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Enable Bluetooth and localization to discover devices", Toast.LENGTH_LONG).show();
+                Resources resources = App.localeManager.setLocale(getApplicationContext()).getResources();
+                Toast.makeText(getApplicationContext(), resources.getString(R.string.enable_BT_and_GPS), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -662,7 +666,8 @@ public class MainActivity extends BaseActivity{
                 }
             }
             if (permissionsToRequest.size() > 0) {
-                Toast.makeText(getApplicationContext(), "Permissions required for optimal use!", Toast.LENGTH_LONG).show();
+                Resources resources = App.localeManager.setLocale(getApplicationContext()).getResources();
+                Toast.makeText(getApplicationContext(), resources.getString(R.string.permissions_required), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -698,7 +703,8 @@ public class MainActivity extends BaseActivity{
                 dialog.setNegativeButton("NO THANKS", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "Permissions denied!", Toast.LENGTH_LONG).show();
+                        Resources resources = App.localeManager.setLocale(getApplicationContext()).getResources();
+                        Toast.makeText(getApplicationContext(), resources.getString(R.string.permissions_denied), Toast.LENGTH_LONG).show();
                     }
                 });
 
