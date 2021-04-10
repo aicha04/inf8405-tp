@@ -4,13 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.projet.MyAppGlideModule.*;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -70,7 +67,7 @@ public class Profile extends AppCompatActivity {
     private void loadProfilePicture(){
         try {
             // Reference to an image file in Cloud Storage
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userSingleton.getUserId());
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userSingleton.getCurrentUser());
 
             // ImageView in your Activity
             ImageView imageView = findViewById(R.id.profile_photo_view);

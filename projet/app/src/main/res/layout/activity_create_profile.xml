@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <EditText
-        android:id="@+id/plain_text_input"
+        android:id="@+id/user_id_view"
         android:layout_width="197dp"
         android:layout_height="44dp"
         android:layout_marginStart="48dp"
@@ -60,8 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="292dp"
-        android:layout_marginRight="292dp"
+        android:layout_marginEnd="308dp"
+        android:layout_marginRight="308dp"
         android:text="2. Add a profile picture"
         android:textColor="?attr/textColor"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
         android:textAllCaps="false"
         android:textColor="?attr/buttonTextColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.614"
+        app:layout_constraintHorizontal_bias="0.564"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -93,29 +93,29 @@
         android:layout_marginLeft="81dp"
         android:layout_marginEnd="133dp"
         android:layout_marginRight="133dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="84dp"
         android:background="?attr/buttonBackground"
         android:text="Create profil"
         android:textAllCaps="false"
         android:textColor="?attr/buttonTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.243"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView"
-        android:layout_width="240dp"
-        android:layout_height="236dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="143dp"
+        android:scaleType="centerCrop"
+        android:layout_width="314dp"
+        android:layout_height="223dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:src="@drawable/no_profile"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/title"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.212" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

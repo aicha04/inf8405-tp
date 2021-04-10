@@ -11,11 +11,16 @@ public class UserSingleton {
 
    public static final UserSingleton instance = new UserSingleton();
     private Constants constants = new Constants();
-    public String userId = "";
-    private ArrayList<Device> devices = new ArrayList<Device>();
+    public UserInfo currentUser = new UserInfo();
     private  String currentTheme = constants.LIGHT_THEME;
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+    public void setHasProfilePhoto(Boolean hasProfilePhoto) {
+        this.hasProfilePhoto = hasProfilePhoto;
+    }
+
     public Boolean hasProfilePhoto = true;
+    private ArrayList<Device> devices = new ArrayList<>();
 
     private UserSingleton() { }
 
@@ -31,16 +36,9 @@ public class UserSingleton {
      * @param  -
      * @return the user id
      */
-    public String getUserId() {
-        return userId;
-    }
 
-    /**Set user id
-     * @param  userId, the new id
-     * @return -
-     */
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setCurrentUser(UserInfo user) {
+        this.currentUser = currentUser;
     }
     /**Get devices
      * @param  -
@@ -64,7 +62,7 @@ public class UserSingleton {
      */
     void fetchUserDevices(){
         this.resetUserDevicesLocally();
-        databaseRef.child(userId).get().addOnCompleteListener(task -> {
+        databaseRef.child(currentUser.getUserId()).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 System.out.println( task.getException());
             }
@@ -87,8 +85,7 @@ public class UserSingleton {
     void addNewDeviceToDb(Device device){
         if(!contains(device)) {
             devices.add(device);
-            DatabaseReference pushedPostRef = databaseRef.child(UserSingleton.getInstance()
-                    .getUserId()).child(constants.DATABASE_NAME).push();
+            DatabaseReference pushedPostRef = databaseRef.child(currentUser.getUserId()).child(constants.DATABASE_NAME).push();
             device.setDbKey(pushedPostRef.getKey());
             pushedPostRef.setValue(device);
         }
@@ -112,7 +109,7 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(UserSingleton.getInstance().getUserId())
+            databaseRef.child(UserSingleton.getInstance().getCurrentUser())
                     .child(constants.DATABASE_NAME).updateChildren(map);
         }
     }
@@ -127,7 +124,7 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(UserSingleton.getInstance().getUserId()).child(constants.DATABASE_NAME).updateChildren(map);
+            databaseRef.child(UserSingleton.getInstance().getCurrentUser()).child(constants.DATABASE_NAME).updateChildren(map);
         }
     }
 
@@ -160,7 +157,12 @@ public class UserSingleton {
         return false;
     }
 
-    public void setHasProfilePhoto(Boolean hasProfilePhoto) {
-        this.hasProfilePhoto = hasProfilePhoto;
+
+    public void addNewUser(String userId, Boolean hasProfilePicture){
+
+    }
+
+    public UserInfo getCurrentUser() {
+        return currentUser;
     }
 }

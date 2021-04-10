@@ -41,7 +41,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             //Fetch detected devices
             userSingleton.fetchUserDevices();
-            System.out.println("ID" +userSingleton.getUserId());
+            System.out.println("ID" +userSingleton.getCurrentUser());
 
         }catch(Exception e){
             e.printStackTrace();
@@ -104,7 +104,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         if(file.exists()){
             sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, SplashScreenActivity.this.MODE_PRIVATE);
             if(sharedPreferences.contains(constants.SHARED_USER_ID)){
-                userSingleton.setUserId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
+                userSingleton.setCurrentUser(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
             }
             if(sharedPreferences.contains(constants.CURRENT_THEME)){
                 userSingleton.setCurrentTheme(sharedPreferences.getString(constants.CURRENT_THEME, constants.LIGHT_THEME));
@@ -114,7 +114,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             String userUId =  UUID.randomUUID().toString();
-            userSingleton.setUserId(userUId);
+            userSingleton.setCurrentUser(userUId);
             editor.putString(constants.SHARED_USER_ID, userUId);
 
             editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
