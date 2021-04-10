@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -13,12 +12,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.location.LocationManager;
-import android.widget.Toast;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothDevice;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -36,7 +33,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
     private static boolean isAppRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
@@ -93,7 +90,7 @@ public class MainActivity extends AppCompatActivity{
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
-            Toast.makeText(getApplicationContext(), "Device doesn't support Bluetooth!", Toast.LENGTH_SHORT).show();
+            showToast(getApplicationContext(), R.string.device_no_BT);
         } else {
             if (!bluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity{
         // check if the request code is same as what is passed
         if(requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Enable Bluetooth to discover devices", Toast.LENGTH_LONG).show();
+                showToast(getApplicationContext(), R.string.enable_BT);
             }
         }
     }
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity{
                     bluetoothAdapter.startDiscovery();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Enable Bluetooth and localization to discover devices", Toast.LENGTH_LONG).show();
+                showToast(getApplicationContext(), R.string.enable_BT_and_GPS);
             }
         }
     }
@@ -662,7 +659,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
             if (permissionsToRequest.size() > 0) {
-                Toast.makeText(getApplicationContext(), "Permissions required for optimal use!", Toast.LENGTH_LONG).show();
+                showToast(getApplicationContext(), R.string.permissions_required);
             }
         }
     }
@@ -698,7 +695,7 @@ public class MainActivity extends AppCompatActivity{
                 dialog.setNegativeButton("NO THANKS", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "Permissions denied!", Toast.LENGTH_LONG).show();
+                        showToast(getApplicationContext(), R.string.permissions_denied);
                     }
                 });
 
@@ -742,6 +739,6 @@ public class MainActivity extends AppCompatActivity{
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
-        finish();
+//        finish();
     }
 }

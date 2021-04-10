@@ -1,20 +1,20 @@
 package com.example.projet;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.projet.MyAppGlideModule.*;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class Profile extends AppCompatActivity {
+public class Profile extends BaseActivity {
+    private static final String TAG = "Profile";
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
@@ -26,6 +26,7 @@ public class Profile extends AppCompatActivity {
             setTheme(R.style.Theme_projet_dark);
         }
         super.onCreate(savedInstanceState);
+        //loadLocale();
         setContentView(R.layout.activity_profile);
 
         // Set the button listener
@@ -34,11 +35,55 @@ public class Profile extends AppCompatActivity {
             swapTheme();
         });
 
+        Button languageButton = (Button) findViewById(R.id.change_language_button);
+        languageButton.setOnClickListener(v -> {
+            showChangeLanguageDialog();
+        });
+
         if(userSingleton.hasProfilePhoto){
             loadProfilePicture();
         }
     }
+    /** Show language options to user
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void showChangeLanguageDialog() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(Profile.this);
+        mBuilder.setTitle(getResources().getString(R.string.choose_language));
+        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // French
+                        setNewLocale(App.localeManager.LANGUAGE_FRENCH);
+                        break;
+                    case 1:
+                        // English
+                        setNewLocale(App.localeManager.LANGUAGE_ENGLISH);
+                        break;
+                    default:
+                        Log.d("PROFILE", "No language chosen");
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
 
+    /** Change the app language
+     * https://github.com/YarikSOffice/LanguageTest/blob/db5b3742bfcc083459e4f23aeb91c877babb0968/app/src/main/java/com/yariksoffice/languagetest/ui/SettingsActivity.java
+     * @param -
+     * @return -
+     */
+    private void setNewLocale(String lang) {
+        App.localeManager.setNewLocale(this, lang);
+        recreate();
+    }
 
     /** Update the app theme
      * @param -
