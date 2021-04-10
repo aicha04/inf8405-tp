@@ -23,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:textColor="@color/purple_700"
         android:background="@color/purple_500"
-        android:text="Add to favorites"
+        android:text="@string/add_to_favorites"
         android:textAllCaps="false"/>
     <RelativeLayout
         android:id="@+id/container"

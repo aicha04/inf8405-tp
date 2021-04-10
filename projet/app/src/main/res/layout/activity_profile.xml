@@ -19,6 +19,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/change_language_button"
+        android:layout_width="221dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:background="?attr/buttonBackground"
+        android:text="@string/change_language"
+        android:textAllCaps="false"
+        android:textColor="?attr/buttonTextColor"
+        app:layout_constraintBottom_toTopOf="@+id/swap_theme_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
         android:id="@+id/swap_theme_button"
         android:layout_width="221dp"
         android:layout_height="86dp"
