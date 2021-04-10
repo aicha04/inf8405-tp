@@ -24,6 +24,7 @@ public class ListFragment extends Fragment {
 
     private int mColumnCount = 1;
     private ImageButton swapButton = null;
+    private ImageButton analyticsButton = null;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -41,7 +42,7 @@ public class ListFragment extends Fragment {
         }
     }
 
-    private final View.OnClickListener onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onClickListenerSwapButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onClickSwapButton();
@@ -50,6 +51,16 @@ public class ListFragment extends Fragment {
 
     public void onClickSwapButton(){
         ((MainActivity)getActivity()).swapTheme();
+    }
+    private final View.OnClickListener onClickListenerAnalyticsButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickAnalyticsButton();
+        }
+    };
+
+    public void onClickAnalyticsButton(){
+        ((MainActivity)getActivity()).switchToAnalyticsActivity();
     }
 
     @Override
@@ -73,7 +84,9 @@ public class ListFragment extends Fragment {
         }
         // Set the button listener
         swapButton = (ImageButton) viewLayout.findViewById(R.id.swapTheme);
-        swapButton.setOnClickListener(onClickListener);
+        swapButton.setOnClickListener(onClickListenerSwapButton);
+        analyticsButton = (ImageButton) viewLayout.findViewById(R.id.app_analytics);
+        analyticsButton.setOnClickListener(onClickListenerAnalyticsButton);
         return viewLayout;
     }
 }
