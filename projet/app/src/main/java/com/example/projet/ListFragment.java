@@ -17,6 +17,8 @@ import android.widget.Button;
 
 import com.example.projet.databinding.FragmentItemListBinding;
 
+import java.util.Objects;
+
 /**
  * A fragment representing a list of Devices.
  */
@@ -53,7 +55,18 @@ public class ListFragment extends Fragment {
     };
 
     public void onClickSwapButton(){
-        ((MainActivity)getActivity()).displayProfile();
+        ((MainActivity) Objects.requireNonNull(getActivity())).displayProfile();
+    }
+
+    private final View.OnClickListener onClickListenerAnalyticsButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickAnalyticsButton();
+        }
+    };
+
+    public void onClickAnalyticsButton(){
+        ((MainActivity) Objects.requireNonNull(getActivity())).switchToAnalyticsActivity();
     }
 
     @Override
@@ -78,6 +91,7 @@ public class ListFragment extends Fragment {
         }
         // Set the button listener
         binding.profileButton.setOnClickListener(onClickListener);
+        binding.appAnalytics.setOnClickListener(onClickListenerAnalyticsButton);
         return viewLayout;
     }
     @Override
@@ -85,7 +99,6 @@ public class ListFragment extends Fragment {
         super.onResume();
         Context context = App.localeManager.setLocale(getActivity());
         Resources resources = context.getResources();
-        binding.profileButton.setText(resources.getString(R.string.profile));
         Log.d("Fragment", "onResume");
     }
     @Override

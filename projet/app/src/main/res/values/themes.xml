@@ -17,6 +17,9 @@
         <item name="background">@color/purple_100</item>
         <item name="buttonBackground">@color/purple_500</item>
         <item name="buttonTextColor">@color/purple_700</item>
+        <item name="themeIcon">@drawable/theme_black</item>
+        <item name="profileIcon">@drawable/profile_black</item>
+        <item name="analyticsIcon">@drawable/analytics_black</item>
 
     </style>
 
@@ -37,5 +40,8 @@
         <item name="background">@color/purple_700</item>
         <item name="buttonTextColor">@color/purple_700</item>
         <item name="buttonBackground">@color/purple_500</item>
+        <item name="themeIcon">@drawable/theme_black</item>
+        <item name="profileIcon">@drawable/profile_black</item>
+        <item name="analyticsIcon">@drawable/analytics_black</item>
     </style>
 </resources>

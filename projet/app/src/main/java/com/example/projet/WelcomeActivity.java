@@ -51,6 +51,7 @@ public class WelcomeActivity extends BaseActivity {
             Intent welcomeAct = new Intent(WelcomeActivity.this, MainActivity.class);
             startActivity(welcomeAct);
             fileList();
+            finish();
         });
     }
 
