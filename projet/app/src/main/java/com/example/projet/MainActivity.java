@@ -741,4 +741,15 @@ public class MainActivity extends BaseActivity{
         startActivity(profileActivity);
 //        finish();
     }
+    /** Go to analytics activity
+     * @param -
+     * @return -
+     */
+    public void switchToAnalyticsActivity() {
+
+        Intent i = new Intent(MainActivity.this, AppAnalyticsActivity.class);
+        startActivity(i);
+        finish();
+    }
+
 }
