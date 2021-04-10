@@ -2,10 +2,10 @@ package com.example.projet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
@@ -17,7 +17,7 @@ public class Profile extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+        if(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)){
             setTheme(R.style.Theme_projet);
         }else{
             setTheme(R.style.Theme_projet_dark);
@@ -25,15 +25,20 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        Button swapButton = findViewById(R.id.swap_theme_button);
+        TextView userIdView = findViewById(R.id.username_view);
+        TextView userThemeView = findViewById(R.id.user_theme_view);
+
         // Set the button listener
-        Button swapButton = (Button) findViewById(R.id.swap_theme_button);
         swapButton.setOnClickListener(v -> {
             swapTheme();
         });
 
-        if(userSingleton.hasProfilePhoto){
+        if(userSingleton.getCurrentUser().hasProfilePicture()){
             loadProfilePicture();
         }
+        userIdView.setText("Username:" + userSingleton.getCurrentUserId());
+        userThemeView.setText("Theme: " + userSingleton.getCurrentUserTheme());
     }
 
 
@@ -43,19 +48,14 @@ public class Profile extends AppCompatActivity {
      */
     public void swapTheme() {
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (userSingleton.getCurrentTheme().equals(constants.DARK_THEME)) {
-            userSingleton.setCurrentTheme(constants.LIGHT_THEME);
-            editor.putString(constants.CURRENT_THEME, constants.LIGHT_THEME);
+        if (userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)) {
+            userSingleton.setCurrentUserTheme(constants.LIGHT_THEME);
             setTheme(R.style.Theme_projet);
         } else {
-            userSingleton.setCurrentTheme(constants.DARK_THEME);
-            editor.putString(constants.CURRENT_THEME, constants.DARK_THEME);
+            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
             setTheme(R.style.Theme_projet_dark);
+            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
         }
-        System.out.println(userSingleton.getCurrentTheme());
-        editor.commit();
 
         finish();
         startActivity(getIntent());
@@ -67,7 +67,7 @@ public class Profile extends AppCompatActivity {
     private void loadProfilePicture(){
         try {
             // Reference to an image file in Cloud Storage
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userSingleton.getCurrentUser());
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userSingleton.getCurrentUserId());
 
             // ImageView in your Activity
             ImageView imageView = findViewById(R.id.profile_photo_view);

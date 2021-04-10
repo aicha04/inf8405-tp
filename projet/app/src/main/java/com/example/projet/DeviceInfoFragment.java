@@ -5,13 +5,11 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +57,7 @@ public class DeviceInfoFragment extends Fragment {
         favorite_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Device device =  userSingleton.getDevices().get(deviceIndex);
+                Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
                 if (device.isFavorite == 0) {
                     Toast.makeText(getActivity(),"Device added to favorites", Toast.LENGTH_LONG).show();
                     userSingleton.addToFavorites(deviceIndex);
@@ -77,7 +75,7 @@ public class DeviceInfoFragment extends Fragment {
             public void onClick(View v) {
 
                 if (((MainActivity)getActivity()).isGPSEnabled()) {
-                    String[] latlon = userSingleton.getDevices().get(deviceIndex).position.split(",");
+                    String[] latlon = userSingleton.getCurrentUserDevices().get(deviceIndex).position.split(",");
                     String latitude = latlon[0];
                     String longitude = latlon[1];
                     Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
@@ -115,7 +113,7 @@ public class DeviceInfoFragment extends Fragment {
      * @return {@link String} content to display
      */
     private String setInfoContent(){
-        Device device = userSingleton.getDevices().get(deviceIndex);
+        Device device = userSingleton.getCurrentUserDevices().get(deviceIndex);
         String mac = "Mac: " + device.id;
         String friendlyName  = "Friendly Name: " + device.friendlyName;
         String majorCategory = "Major Category: " + device.classMajorCategory;
@@ -131,7 +129,7 @@ public class DeviceInfoFragment extends Fragment {
     void updateFavoriteButton(Button favorite_button){
         String removeFavoriteStr = "REMOVE FROM FAVORITES";
         String addToFavoriteStr = "ADD TO FAVORITES";
-        Device device =  userSingleton.getDevices().get(deviceIndex);
+        Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
         if (device.isFavorite == 1) {
             favorite_button.setText(removeFavoriteStr);
         } else {

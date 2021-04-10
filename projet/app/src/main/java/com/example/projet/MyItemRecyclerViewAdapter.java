@@ -6,10 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Device}.
@@ -23,7 +21,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     public MyItemRecyclerViewAdapter(ArrayList<Device> items, RecyclerView recyclerView) {
-        mValues = userSingleton.getDevices();
+        mValues = userSingleton.getCurrentUserDevices();
         this.recyclerView = recyclerView;
     }
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -50,7 +48,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        mValues = userSingleton.getDevices();
+        mValues = userSingleton.getCurrentUserDevices();
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         String friendlyName = "No name";
@@ -66,7 +64,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     @Override
     public int getItemCount() {
-        return userSingleton.getDevices().size();
+        return userSingleton.getCurrentUserDevices().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

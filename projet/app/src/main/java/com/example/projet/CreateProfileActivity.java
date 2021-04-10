@@ -36,11 +36,11 @@ public class CreateProfileActivity extends AppCompatActivity {
     private  UserSingleton userSingleton = UserSingleton.getInstance();
     private String currentPhotoPath = null;
     private EditText userIdView = null;
-    private Boolean photoSucessfullySaved = false;
+    private UserInfo newUserInfo = new UserInfo();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+        if(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)){
             setTheme(R.style.Theme_projet);
         }else{
             setTheme(R.style.Theme_projet_dark);
@@ -50,26 +50,34 @@ public class CreateProfileActivity extends AppCompatActivity {
 
         userIdView = findViewById(R.id.user_id_view);
         Button create_profile_button = (Button) findViewById(R.id.create_profile_button);
+        Button add_photo_button = (Button) findViewById(R.id.add_photo_button);
+        imageView = findViewById(R.id.imageView);
+
         create_profile_button.setOnClickListener(v -> {
-            saveImage();
-            if(photoSucessfullySaved){
-                //userSingleton.setUserId(userIdView.getText().toString());
-                userSingleton.setHasProfilePhoto(true);
+            String newUserId = userIdView.getText().toString();
+            if(newUserId.trim().length() == 0){
+                Toast.makeText(this,"Please enter a valid username", Toast.LENGTH_LONG).show();
+            }else {
+
+                newUserInfo.setUserId(userIdView.getText().toString());
+                userSingleton.setCurrentUser(newUserInfo);
+
+                //Add user infos to database
+                userSingleton.updateUserInfo();
+
+                saveImage();
+
+                //Fetch detected devices
+                userSingleton.fetchCurrentUserDevices();
                 Intent welcomeAct = new Intent(CreateProfileActivity.this, MainActivity.class);
                 startActivity(welcomeAct);
                 finish();
-            }else{
-                Toast.makeText(this,"Try again, phofile creation failed", Toast.LENGTH_LONG).show();
-            }
-
+                }
         });
 
-        Button add_photo_button = (Button) findViewById(R.id.add_photo_button);
         add_photo_button.setOnClickListener(v -> {
             dispatchTakePictureIntent();
         });
-
-        imageView = findViewById(R.id.imageView);
 
         userIdView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -107,7 +115,8 @@ public class CreateProfileActivity extends AppCompatActivity {
 
     //Souce: https://developer.android.com/training/camera/photobasics#java
     private void saveImage(){
-        StorageReference userRef = storageReference.child(userSingleton.getCurrentUser());
+        System.out.println("HERE"+ userSingleton.getCurrentUserId());
+        StorageReference userRef = storageReference.child(userSingleton.getCurrentUserId());
        if(imageBitmap != null) {
            ByteArrayOutputStream baos = new ByteArrayOutputStream();
            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -115,15 +124,14 @@ public class CreateProfileActivity extends AppCompatActivity {
 
            UploadTask uploadTask = userRef.putBytes(data);
 
-           uploadTask.addOnFailureListener(exception -> {
-               System.out.println("Profile adding failed");
-               photoSucessfullySaved = false;
+           uploadTask.addOnSuccessListener(taskSnapshot -> {
+               newUserInfo.setHasProfilePhoto(true);
            });
 
-           uploadTask.addOnSuccessListener(taskSnapshot -> {
-               System.out.println("Profile successfully added");
-               photoSucessfullySaved = true;
+           uploadTask.addOnFailureListener(exception -> {
+               System.out.println("Profile adding failed");
            });
+
        }
     }
 

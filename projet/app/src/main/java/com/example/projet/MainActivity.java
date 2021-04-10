@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if(userSingleton.getCurrentTheme().equals(constants.LIGHT_THEME)){
+        if(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)){
             setTheme(R.style.Theme_projet);
         }else{
             setTheme(R.style.Theme_projet_dark);
@@ -66,11 +65,11 @@ public class MainActivity extends AppCompatActivity{
         initBluetooth();
         createMap();
 
-        System.out.println("onCreate: " + userSingleton.getDevices().size());
+        System.out.println("onCreate: " + userSingleton.getCurrentUserDevices().size());
 
         // Add markers on the map
-        for (int i=0; i < userSingleton.getDevices().size(); i++) {
-            Device device = userSingleton.getDevices().get(i);
+        for (int i = 0; i < userSingleton.getCurrentUserDevices().size(); i++) {
+            Device device = userSingleton.getCurrentUserDevices().get(i);
             String[] latlon = device.position.split(",");
             if (latlon.length == 2) {
                 GeoPoint location = new GeoPoint(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
@@ -359,7 +358,7 @@ public class MainActivity extends AppCompatActivity{
                         GeoPoint location = getCurrentLocation();
 
                         if (location != null) {
-                            addMarker(location, userSingleton.getDevices().size());
+                            addMarker(location, userSingleton.getCurrentUserDevices().size());
                             String position = location.getLatitude() + "," + location.getLongitude();
                             Device deviceDB = new Device(device.getAddress(),
                                                         position,
@@ -379,7 +378,7 @@ public class MainActivity extends AppCompatActivity{
                                 System.out.println(e.getMessage());
                             }
 
-                            Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
+                            Log.d(TAG, String.valueOf(userSingleton.getCurrentUserDevices().size()));
                             Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " +
                                     translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " +
                                     translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " +
@@ -404,7 +403,7 @@ public class MainActivity extends AppCompatActivity{
      */
     private boolean deviceExists(BluetoothDevice device){
         Log.d(TAG, "check if device exists");
-        ArrayList<Device> devices = userSingleton.getDevices();
+        ArrayList<Device> devices = userSingleton.getCurrentUserDevices();
         boolean deviceExists = false;
         for(int i = 0; i < devices.size(); i++){
             if(devices.get(i).id.equals(device.getAddress())){
@@ -713,7 +712,7 @@ public class MainActivity extends AppCompatActivity{
      * @return -
      */
     private void updateMapTheme(){
-        if(userSingleton.getCurrentTheme().equals(constants.DARK_THEME)){
+        if(userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)){
             //Matrix to inverse colors
             ColorMatrix negate = new ColorMatrix(constants.NEGATE_COLORS_MATRIX);
 

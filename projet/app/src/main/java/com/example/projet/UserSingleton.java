@@ -14,12 +14,9 @@ public class UserSingleton {
     public UserInfo currentUser = new UserInfo();
     private  String currentTheme = constants.LIGHT_THEME;
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+    private ArrayList<String> allUserIds = new ArrayList<String>();
 
-    public void setHasProfilePhoto(Boolean hasProfilePhoto) {
-        this.hasProfilePhoto = hasProfilePhoto;
-    }
 
-    public Boolean hasProfilePhoto = true;
     private ArrayList<Device> devices = new ArrayList<>();
 
     private UserSingleton() { }
@@ -38,13 +35,13 @@ public class UserSingleton {
      */
 
     public void setCurrentUser(UserInfo user) {
-        this.currentUser = currentUser;
+        this.currentUser = user;
     }
     /**Get devices
      * @param  -
      * @return devices
      */
-    public ArrayList<Device> getDevices() {
+    public ArrayList<Device> getCurrentUserDevices() {
         return devices;
     }
 
@@ -60,9 +57,9 @@ public class UserSingleton {
      * @param -
      * @return -
      */
-    void fetchUserDevices(){
+    void fetchCurrentUserDevices(){
         this.resetUserDevicesLocally();
-        databaseRef.child(currentUser.getUserId()).get().addOnCompleteListener(task -> {
+        databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 System.out.println( task.getException());
             }
@@ -85,18 +82,10 @@ public class UserSingleton {
     void addNewDeviceToDb(Device device){
         if(!contains(device)) {
             devices.add(device);
-            DatabaseReference pushedPostRef = databaseRef.child(currentUser.getUserId()).child(constants.DATABASE_NAME).push();
+            DatabaseReference pushedPostRef = databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).push();
             device.setDbKey(pushedPostRef.getKey());
             pushedPostRef.setValue(device);
         }
-    }
-
-    /**Reset db for a specific user/phone
-     * @param id user id
-     * @return -
-     */
-    void resetDb(String id){
-        databaseRef.child(id).child(constants.DATABASE_NAME).removeValue();
     }
 
     /**Add a device to favorites
@@ -109,8 +98,8 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(UserSingleton.getInstance().getCurrentUser())
-                    .child(constants.DATABASE_NAME).updateChildren(map);
+            databaseRef.child(currentUser.getUserId())
+                    .child(constants.DEVICES_DATABASE_NAME).updateChildren(map);
         }
     }
 
@@ -124,7 +113,7 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(UserSingleton.getInstance().getCurrentUser()).child(constants.DATABASE_NAME).updateChildren(map);
+            databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).updateChildren(map);
         }
     }
 
@@ -132,16 +121,26 @@ public class UserSingleton {
      * @param -
      * @return -
      */
-    public String getCurrentTheme() {
-        return currentTheme;
+    public String getCurrentUserTheme() {
+        return currentUser.getTheme();
     }
 
     /**Set current theme(Light or dark)
      * @param currentTheme the new theme
      * @return -
      */
-    public void setCurrentTheme(String currentTheme) {
-        this.currentTheme = currentTheme;
+    public void setCurrentUserTheme(String currentTheme) {
+        this.currentUser.setTheme(currentTheme);
+        updateUserInfo();
+    }
+
+    /**Set current language
+     * @param currentUserLanguage
+     * @return -
+     */
+    public void setCurrentUserLanguage(String currentUserLanguage) {
+        this.currentUser.setLanguage(currentUserLanguage);
+        updateUserInfo();
     }
 
     /**Verify if devices array contains a specific device
@@ -158,11 +157,21 @@ public class UserSingleton {
     }
 
 
-    public void addNewUser(String userId, Boolean hasProfilePicture){
-
+    public void addNewUser(String userId){
+        allUserIds.add(userId);
     }
 
     public UserInfo getCurrentUser() {
         return currentUser;
     }
+
+    public String getCurrentUserId() {
+        return currentUser.getUserId();
+    }
+
+    public void updateUserInfo(){
+        databaseRef.child(currentUser.getUserId()).child(constants.USER_INFO_DATABASE_NAME).setValue(currentUser);
+    }
+
+
 }

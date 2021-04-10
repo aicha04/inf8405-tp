@@ -10,8 +10,13 @@ public  class UserInfo {
     public static final String  LANGUAGE_2 = "ENGLISH";
 
     private String userId;
-    private Boolean hasProfilePhoto;
+    private Boolean hasProfilePhoto = false;
     private String language = LANGUAGE_1;
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
     private String theme = LIGHT_THEME;
 
 
@@ -19,12 +24,15 @@ public  class UserInfo {
      * @param  userId, the new id
      * @return -
      */
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUserId() {
         return userId;
     }
 
-    public Boolean getHasProfilePicture() {
+    public Boolean hasProfilePicture() {
         return hasProfilePhoto;
     }
 
@@ -41,17 +49,7 @@ public  class UserInfo {
         return theme;
     }
 
-
-    /**Set current theme(Light or dark)
-     * @param currentTheme the new theme
-     * @return -
-     */
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setLanguage(String currentUserLanguage) {
+        this.language = currentUserLanguage;
     }
-    /**Get devices
-     * @param  -
-     * @return devices
-     */
 }
