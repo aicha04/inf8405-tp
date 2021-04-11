@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.7.0'
     implementation 'org.osmdroid:osmdroid-android:6.1.10'
     implementation 'com.google.firebase:firebase-storage:19.2.2'
+    implementation 'com.jjoe64:graphview:4.2.2'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
