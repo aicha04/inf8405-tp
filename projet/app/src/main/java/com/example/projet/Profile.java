@@ -2,6 +2,7 @@ package com.example.projet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,17 +29,34 @@ public class Profile extends AppCompatActivity {
         Button swapButton = findViewById(R.id.swap_theme_button);
         TextView userIdView = findViewById(R.id.username_view);
         TextView userThemeView = findViewById(R.id.user_theme_view);
+        Button backButton = findViewById(R.id.back_button);
+        Button changeProfileButton = findViewById(R.id.change_profile_button);
+
+        if(userSingleton.getCurrentUser().hasProfilePicture()){
+            loadProfilePicture();
+        }
+
+        userIdView.setText("Username: " + userSingleton.getCurrentUser().getUserId());
+        userThemeView.setText("Theme: " + userSingleton.getCurrentUserTheme());
 
         // Set the button listener
         swapButton.setOnClickListener(v -> {
             swapTheme();
         });
 
-        if(userSingleton.getCurrentUser().hasProfilePicture()){
-            loadProfilePicture();
-        }
-        userIdView.setText("Username:" + userSingleton.getCurrentUserId());
-        userThemeView.setText("Theme: " + userSingleton.getCurrentUserTheme());
+        backButton.setOnClickListener(v->{
+            Intent mainAct = new Intent(this, MainActivity.class);
+            startActivity(mainAct);
+            finish();
+
+        });
+
+        changeProfileButton.setOnClickListener(v->{
+            Intent mainAct = new Intent(this, WelcomeActivity.class);
+            startActivity(mainAct);
+            finish();
+
+        });
     }
 
 

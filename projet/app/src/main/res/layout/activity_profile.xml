@@ -52,8 +52,8 @@
         android:id="@+id/profile_photo_view"
         android:layout_width="283dp"
         android:layout_height="172dp"
-        android:layout_marginEnd="416dp"
-        android:layout_marginRight="416dp"
+        android:layout_marginEnd="400dp"
+        android:layout_marginRight="400dp"
         android:scaleType="centerCrop"
         android:src="@drawable/no_profile"
         app:civ_border_color="#FFFFFF"
@@ -61,19 +61,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.449" />
+        app:layout_constraintVertical_bias="0.347" />
 
     <Button
         android:id="@+id/swap_theme_button"
         android:layout_width="180dp"
         android:layout_height="93dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginEnd="546dp"
-        android:layout_marginRight="546dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="231dp"
+        android:layout_marginRight="231dp"
         android:layout_marginBottom="4dp"
         android:background="?attr/buttonBackground"
         android:text="@string/swap_theme"
@@ -81,6 +80,37 @@
         android:textColor="?attr/buttonTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/back_button" />
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="180dp"
+        android:layout_height="93dp"
+        android:layout_marginStart="46dp"
+        android:layout_marginLeft="46dp"
+        android:layout_marginBottom="4dp"
+        android:background="?attr/buttonBackground"
+        android:text="@string/back"
+        android:textAllCaps="false"
+        android:textColor="?attr/buttonTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/change_profile_button" />
+
+    <Button
+        android:id="@+id/change_profile_button"
+        android:layout_width="180dp"
+        android:layout_height="93dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginEnd="46dp"
+        android:layout_marginRight="46dp"
+        android:layout_marginBottom="4dp"
+        android:background="?attr/buttonBackground"
+        android:text="@string/changeProfile"
+        android:textAllCaps="false"
+        android:textColor="?attr/buttonTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/back_button"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

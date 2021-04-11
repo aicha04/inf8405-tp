@@ -15,12 +15,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         try{
-            if(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)){
-                setTheme(R.style.Theme_projet);
-            }else{
-                setTheme(R.style.Theme_projet_dark);
-            }
-
             setContentView(R.layout.activity_splash_screen);
             super.onCreate(savedInstanceState);
 
@@ -32,7 +26,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 container.setImageResource(R.drawable.splash_screen);
             }
 
-            System.out.println("ID" +userSingleton.getCurrentUser());
+            userSingleton.fetchAllUsers();
 
         }catch(Exception e){
             e.printStackTrace();

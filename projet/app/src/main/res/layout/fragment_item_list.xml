@@ -5,6 +5,7 @@
     android:id="@+id/list_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/list"
@@ -14,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/fragment_item"
-        android:layout_above="@+id/swapTheme"
+        android:layout_above="@+id/profile_button"
         android:layout_alignParentTop="true"/>
 
     <Button

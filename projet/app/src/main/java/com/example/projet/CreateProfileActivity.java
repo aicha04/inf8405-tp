@@ -49,57 +49,38 @@ public class CreateProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_profile);
 
         userIdView = findViewById(R.id.user_id_view);
-        Button create_profile_button = (Button) findViewById(R.id.create_profile_button);
-        Button add_photo_button = (Button) findViewById(R.id.add_photo_button);
+        Button create_profile_button = findViewById(R.id.create_profile_button);
+        Button add_photo_button =  findViewById(R.id.add_photo_button);
         imageView = findViewById(R.id.imageView);
 
         create_profile_button.setOnClickListener(v -> {
-            String newUserId = userIdView.getText().toString();
+            String newUserId = userIdView.getText().toString().trim();
             if(newUserId.trim().length() == 0){
                 Toast.makeText(this,"Please enter a valid username", Toast.LENGTH_LONG).show();
-            }else {
-
+            }else if(userSingleton.userExists(newUserId)) {
+                Toast.makeText(this,"This username already exits", Toast.LENGTH_LONG).show();
+            }else{
                 newUserInfo.setUserId(userIdView.getText().toString());
                 userSingleton.setCurrentUser(newUserInfo);
 
-                //Add user infos to database
-                userSingleton.updateUserInfo();
-
                 saveImage();
 
+                //Add user infos to database
+                userSingleton.addNewUser(newUserInfo);
+
                 //Fetch detected devices
+
                 userSingleton.fetchCurrentUserDevices();
                 Intent welcomeAct = new Intent(CreateProfileActivity.this, MainActivity.class);
                 startActivity(welcomeAct);
                 finish();
-                }
+            }
         });
 
         add_photo_button.setOnClickListener(v -> {
             dispatchTakePictureIntent();
         });
 
-        userIdView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                if(s.toString().trim().length() == 0){
-                    create_profile_button.setEnabled(false);
-                } else {
-                    create_profile_button.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     //Souce: https://developer.android.com/training/camera/photobasics#java
@@ -107,6 +88,7 @@ public class CreateProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            newUserInfo.setHasProfilePhoto(true);
             setPic();
         }else{
             Toast.makeText(this, "Picture taking failed", Toast.LENGTH_SHORT).show();
@@ -115,7 +97,7 @@ public class CreateProfileActivity extends AppCompatActivity {
 
     //Souce: https://developer.android.com/training/camera/photobasics#java
     private void saveImage(){
-        System.out.println("HERE"+ userSingleton.getCurrentUserId());
+
         StorageReference userRef = storageReference.child(userSingleton.getCurrentUserId());
        if(imageBitmap != null) {
            ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -125,7 +107,7 @@ public class CreateProfileActivity extends AppCompatActivity {
            UploadTask uploadTask = userRef.putBytes(data);
 
            uploadTask.addOnSuccessListener(taskSnapshot -> {
-               newUserInfo.setHasProfilePhoto(true);
+               System.out.println("Profile added successfully");
            });
 
            uploadTask.addOnFailureListener(exception -> {
@@ -159,7 +141,6 @@ public class CreateProfileActivity extends AppCompatActivity {
 
             // Create the File where the photo should go
             File photoFile = null;
-            System.out.println("HERRRRE");
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {

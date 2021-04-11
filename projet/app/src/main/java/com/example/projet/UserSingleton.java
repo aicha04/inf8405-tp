@@ -1,7 +1,9 @@
 package com.example.projet;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,12 +16,25 @@ public class UserSingleton {
     public UserInfo currentUser = new UserInfo();
     private  String currentTheme = constants.LIGHT_THEME;
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-    private ArrayList<String> allUserIds = new ArrayList<String>();
 
+    public void setAllUserInfos(ArrayList<UserInfo> allUserInfos) {
+        this.allUserInfos = allUserInfos;
+    }
+
+    private ArrayList<UserInfo> allUserInfos = new ArrayList<UserInfo>();
+
+    public void setDevices(ArrayList<Device> devices) {
+        this.devices = devices;
+    }
 
     private ArrayList<Device> devices = new ArrayList<>();
 
-    private UserSingleton() { }
+    public ArrayList<UserInfo> getAllUserInfos() {
+        return allUserInfos;
+    }
+
+    private UserSingleton() {
+    }
 
     /**Get the instance of the singleton
      * @param  -
@@ -57,24 +72,24 @@ public class UserSingleton {
      * @param -
      * @return -
      */
-    void fetchCurrentUserDevices(){
-        this.resetUserDevicesLocally();
-        databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).get().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                System.out.println( task.getException());
-            }
-            else {
-                DataSnapshot snapshot = task.getResult();
-                for(DataSnapshot shot:  snapshot.getChildren()) {
-                    for (DataSnapshot val : shot.getChildren()) {
-                        Device device = val.getValue(Device.class);
-                        devices.add(device);
+    void fetchCurrentUserDevices() {
+        try {
+            this.resetUserDevicesLocally();
+            databaseRef.child(constants.DEVICES_DATABASE_NAME).child(currentUser.getUserId()).get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    System.out.println(task.getException());
+                } else {
+                    DataSnapshot snapshot = task.getResult();
+                    for (DataSnapshot shot : snapshot.getChildren()) {
+                            Device device = shot.getValue(Device.class);
+                            devices.add(device);
+                        }
                     }
-                }
-            }
-        });
+            });
+        } catch (Exception e) {
+            System.out.println("Something wrong with fetch devices");
+        }
     }
-
     /**Add new device to firebase database
      * @param device the new device
      * @return -
@@ -82,7 +97,7 @@ public class UserSingleton {
     void addNewDeviceToDb(Device device){
         if(!contains(device)) {
             devices.add(device);
-            DatabaseReference pushedPostRef = databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).push();
+            DatabaseReference pushedPostRef = databaseRef.child(constants.DEVICES_DATABASE_NAME).child(currentUser.getUserId()).push();
             device.setDbKey(pushedPostRef.getKey());
             pushedPostRef.setValue(device);
         }
@@ -98,8 +113,9 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(currentUser.getUserId())
-                    .child(constants.DEVICES_DATABASE_NAME).updateChildren(map);
+            databaseRef.child(constants.DEVICES_DATABASE_NAME)
+                    .child(currentUser.getUserId())
+                    .updateChildren(map);
         }
     }
 
@@ -113,7 +129,7 @@ public class UserSingleton {
         if(!device.getDbKey().equals("")){
             Map<String, Object> map = new HashMap<>();
             map.put(device.getDbKey(), device);
-            databaseRef.child(currentUser.getUserId()).child(constants.DEVICES_DATABASE_NAME).updateChildren(map);
+            databaseRef.child(constants.DEVICES_DATABASE_NAME).child(currentUser.getUserId()).updateChildren(map);
         }
     }
 
@@ -131,7 +147,7 @@ public class UserSingleton {
      */
     public void setCurrentUserTheme(String currentTheme) {
         this.currentUser.setTheme(currentTheme);
-        updateUserInfo();
+        this.updateUserInfo(currentUser);
     }
 
     /**Set current language
@@ -140,7 +156,7 @@ public class UserSingleton {
      */
     public void setCurrentUserLanguage(String currentUserLanguage) {
         this.currentUser.setLanguage(currentUserLanguage);
-        updateUserInfo();
+        updateUserInfo(currentUser);
     }
 
     /**Verify if devices array contains a specific device
@@ -157,8 +173,9 @@ public class UserSingleton {
     }
 
 
-    public void addNewUser(String userId){
-        allUserIds.add(userId);
+    public void addNewUser(UserInfo user){
+        allUserInfos.add(user);
+        databaseRef.child(constants.USER_INFO_DATABASE_NAME).child(user.getUserId()).setValue(user);
     }
 
     public UserInfo getCurrentUser() {
@@ -169,9 +186,45 @@ public class UserSingleton {
         return currentUser.getUserId();
     }
 
-    public void updateUserInfo(){
-        databaseRef.child(currentUser.getUserId()).child(constants.USER_INFO_DATABASE_NAME).setValue(currentUser);
+    public void updateUserInfo(UserInfo userInfo){
+        databaseRef.child(constants.USER_INFO_DATABASE_NAME).child(userInfo.getUserId()).setValue(userInfo);
     }
 
 
+    /**Reset users infos array locally(not in db)
+     * @param  -
+     * @return -
+     */
+    public void resetAllUsersInfosLocally(){
+        this.allUserInfos = new ArrayList<>();
+    }
+
+    /** Retrieve user saved devices from firebase database
+     * @param -
+     * @return -
+     */
+    void fetchAllUsers(){
+        this.resetAllUsersInfosLocally();
+        databaseRef.child(constants.USER_INFO_DATABASE_NAME).get().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                System.out.println( task.getException());
+            }
+            else {
+                DataSnapshot snapshot = task.getResult();
+                    for (DataSnapshot val : snapshot.getChildren()) {
+                        UserInfo userInfo = val.getValue(UserInfo.class);
+                        allUserInfos.add(userInfo);
+                    }
+            }
+        });
+    }
+
+    public Boolean userExists(String userId){
+        for(UserInfo user: allUserInfos){
+            if(user.getUserId().equals(userId)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
