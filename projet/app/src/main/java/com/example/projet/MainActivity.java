@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -32,6 +33,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
@@ -78,6 +80,8 @@ public class MainActivity extends BaseActivity{
         }
 
         swapToListFragment();
+
+
     }
 
     /** Get Bluetooth adapter and register receiver
@@ -305,9 +309,26 @@ public class MainActivity extends BaseActivity{
         Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        System.out.println("---------well2----------");
         discoverDevices();
+        addBatteryLevel();
+
     }
-    
+    private void addBatteryLevel(){
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        int batteryPct = level * 100 / (int)scale;
+
+        AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
+        ArrayList<Date> timestamps = analyticsInstance.getTimeStamps();
+        ArrayList<Integer> batteryLevels = analyticsInstance.getBatteryLevels();
+        batteryLevels.add(batteryPct);
+        timestamps.add(new Date());
+        System.out.println("---------------"+timestamps.size()+ "-------------");
+    }
     @Override
     public void onPause() {
         super.onPause();
@@ -734,8 +755,12 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
         unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
+        clearBatteryGraph();
     }
-
+    private void clearBatteryGraph(){
+        AppAnalyticsSingleton.getInstance().getTimeStamps().clear();
+        AppAnalyticsSingleton.getInstance().getBatteryLevels().clear();
+    }
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
@@ -751,5 +776,11 @@ public class MainActivity extends BaseActivity{
         startActivity(i);
         finish();
     }
+    @Override
+    public void onStop(){
+        super.onStop();
+        clearBatteryGraph();
+    }
+
 
 }

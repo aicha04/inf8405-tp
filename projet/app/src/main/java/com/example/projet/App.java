@@ -26,4 +26,5 @@ public class App extends Application {
         localeManager.setLocale(this);
         Log.d(TAG, "onConfigurationChanged: " + newConfig.locale.getLanguage());
     }
+
 }
