@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,6 +19,7 @@ import android.util.Log;
 import android.location.LocationManager;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothDevice;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -35,7 +40,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity implements SensorEventListener {
     private static final String TAG = "MainActivity";
     private static boolean isAppRunning = false;
     private static final int REQUEST_ENABLE_BT = 3;
@@ -50,6 +55,35 @@ public class MainActivity extends BaseActivity{
 
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
+
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private Sensor gravity;
+    private Sensor linearAcc;
+    private Sensor stepCounter;
+    // private Sensor proximity;
+    private Sensor magnetometer;
+    private int sensorType;
+    private static final int ACCELE = 0;
+    private static final int GRAVITY = 1;
+    private static final int LINEAR_ACCELE = 2;
+    private static final int STEP = 3;
+    private static final int MAGNETIC_FIELD = 4;
+    private final static String NOT_SUPPORTED_MESSAGE = "Sorry, some sensors are unavailable on this device.";
+    private float x, y, z;
+    private float acelVal,acelLast,shake;
+    private static final int SENSOR_SENSITIVITY = 4;
+    private float[] floatGravity = new float[3];
+    private float[] floatGeoMagnetic = new float[3];
+    private float[] floatOrientation = new float[3];
+    private float[] floatRotationMatrix = new float[9];
+    private float[] mLastAccelerometer = new float[3];
+    private float[] mLastMagnetometer = new float[3];
+    private boolean mLastAccelerometerSet = false;
+    private boolean mLastMagnetometerSet = false;
+    private float[] mR = new float[9];
+    private float[] mOrientation = new float[3];
+    private float mCurrentDegree = 0f;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +115,27 @@ public class MainActivity extends BaseActivity{
 
         swapToListFragment();
 
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        linearAcc = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        // proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        if (accelerometer == null || gravity == null || linearAcc == null || stepCounter == null || magnetometer == null) {
+            System.out.println(NOT_SUPPORTED_MESSAGE);
+            Toast t =Toast.makeText(getApplicationContext(), NOT_SUPPORTED_MESSAGE,Toast.LENGTH_SHORT);
+            t.show();
+        }
+        else{
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, linearAcc, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
+            // sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, magnetometer , SensorManager.SENSOR_DELAY_UI);
+        }
 
     }
 
@@ -171,8 +226,8 @@ public class MainActivity extends BaseActivity{
         setContentView(R.layout.activity_main);
 
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK); 
-        
+        map.setTileSource(TileSourceFactory.MAPNIK);
+
         updateMapTheme();
 
         // default zoom buttons
@@ -216,7 +271,7 @@ public class MainActivity extends BaseActivity{
                         public void run() {
                             mapController.setCenter(myLocation);
                             mapController.animateTo(myLocation);
-                            
+
                         }
                     });
                 };
@@ -312,6 +367,15 @@ public class MainActivity extends BaseActivity{
         System.out.println("---------well2----------");
         discoverDevices();
         addBatteryLevel();
+        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null ) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, linearAcc, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
+            // sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
+
+        }
 
     }
     private void addBatteryLevel(){
@@ -339,6 +403,15 @@ public class MainActivity extends BaseActivity{
         if (bluetoothAdapter.isDiscovering()) {
             Log.d(TAG, "OnPause: stop discovery");
             bluetoothAdapter.cancelDiscovery();
+        }
+        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null ) {
+            sensorManager.unregisterListener(this, accelerometer);
+            sensorManager.unregisterListener(this, gravity);
+            sensorManager.unregisterListener(this, linearAcc);
+            sensorManager.unregisterListener(this, stepCounter);
+            // sensorManager.unregisterListener(this, proximity);
+            sensorManager.unregisterListener(this, magnetometer);
+
         }
     }
 
@@ -374,35 +447,35 @@ public class MainActivity extends BaseActivity{
                 Log.d(TAG, "discoverDevicesReceiver: ACTION FOUND.");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (!deviceExists(device)) {
-                        GeoPoint location = getCurrentLocation();
+                    GeoPoint location = getCurrentLocation();
 
-                        if (location != null) {
-                            addMarker(location, userSingleton.getDevices().size());
-                            String position = location.getLatitude() + "," + location.getLongitude();
-                            Device deviceDB = new Device(device.getAddress(),
-                                                        position,
-                                                        translateClassCode(device.getBluetoothClass().getDeviceClass()),
-                                                        translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()),
-                                                        translateDeviceTypeCode(device.getType()),
-                                                        device.getName(),
-                                                        0);
+                    if (location != null) {
+                        addMarker(location, userSingleton.getDevices().size());
+                        String position = location.getLatitude() + "," + location.getLongitude();
+                        Device deviceDB = new Device(device.getAddress(),
+                                position,
+                                translateClassCode(device.getBluetoothClass().getDeviceClass()),
+                                translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()),
+                                translateDeviceTypeCode(device.getType()),
+                                device.getName(),
+                                0);
 
-                            userSingleton.addNewDeviceToDb(deviceDB);
-                            // update list fragment
-                            try {
+                        userSingleton.addNewDeviceToDb(deviceDB);
+                        // update list fragment
+                        try {
 
-                                refreshListFragment();
-                            }
-                            catch (Exception e){
-                                System.out.println(e.getMessage());
-                            }
-
-                            Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
-                            Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " +
-                                    translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " +
-                                    translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " +
-                                    translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                            refreshListFragment();
                         }
+                        catch (Exception e){
+                            System.out.println(e.getMessage());
+                        }
+
+                        Log.d(TAG, String.valueOf(userSingleton.getDevices().size()));
+                        Log.d(TAG, "discoverDevicesReceiver: " + device.getAddress() + ": " +
+                                translateClassCode(device.getBluetoothClass().getDeviceClass()) + ": " +
+                                translateMajorClassCode(device.getBluetoothClass().getMajorDeviceClass()) + ": " +
+                                translateDeviceTypeCode(device.getType()) + ": " + device.getName());
+                    }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 Log.d(TAG,"Entered the Finished ");
@@ -700,7 +773,7 @@ public class MainActivity extends BaseActivity{
         }
         if (permissionsToRequest.size() > 0) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
-                || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                 dialog.setMessage("These permissions are important for optimal use of the application. Please permit them!")
@@ -756,11 +829,21 @@ public class MainActivity extends BaseActivity{
         unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
         clearBatteryGraph();
+        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null ) {
+            sensorManager.unregisterListener(this, accelerometer);
+            sensorManager.unregisterListener(this, gravity);
+            sensorManager.unregisterListener(this, linearAcc);
+            sensorManager.unregisterListener(this, stepCounter);
+            // sensorManager.unregisterListener(this, proximity);
+            sensorManager.unregisterListener(this, magnetometer);
+
+        }
     }
     private void clearBatteryGraph(){
         AppAnalyticsSingleton.getInstance().getTimeStamps().clear();
         AppAnalyticsSingleton.getInstance().getBatteryLevels().clear();
     }
+
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
@@ -780,7 +863,77 @@ public class MainActivity extends BaseActivity{
     public void onStop(){
         super.onStop();
         clearBatteryGraph();
+        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null ) { // TODO: onStop ou onDestroy?
+            sensorManager.unregisterListener( this, accelerometer);
+            sensorManager.unregisterListener(this, gravity);
+            sensorManager.unregisterListener(this, linearAcc);
+            // sensorManager.unregisterListener(this, stepCounter);
+            sensorManager.unregisterListener(this, magnetometer);
+        }
     }
 
 
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+//            try {
+//                Thread.sleep(16); // https://www.youtube.com/watch?v=BlmavgYIfuk
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } // https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android/5271532#5271532
+
+        if (sensorEvent.sensor == accelerometer) { // https://www.techrepublic.com/article/pro-tip-create-your-own-magnetic-compass-using-androids-internal-sensors/
+            System.arraycopy(sensorEvent.values, 0, mLastAccelerometer, 0, sensorEvent.values.length);
+            mLastAccelerometerSet = true;
+        } else if (sensorEvent.sensor == magnetometer) {
+            System.arraycopy(sensorEvent.values, 0, mLastMagnetometer, 0, sensorEvent.values.length);
+            mLastMagnetometerSet = true;
+        }
+        if (mLastAccelerometerSet && mLastMagnetometerSet) {
+            SensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
+            SensorManager.getOrientation(mR, mOrientation);
+            float azimuthInRadians = mOrientation[0];
+            float azimuthInDegress = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
+            System.out.println("Heading: " + Float.toString(azimuthInDegress) + " degrees");
+//            RotateAnimation ra = new RotateAnimation(
+//                    mCurrentDegree,
+//                    -azimuthInDegress,
+//                    Animation.RELATIVE_TO_SELF, 0.5f,
+//                    Animation.RELATIVE_TO_SELF,
+//                    0.5f);
+//
+//            ra.setDuration(250);
+//
+//            ra.setFillAfter(true);
+//
+//            mPointer.startAnimation(ra);
+            mCurrentDegree = -azimuthInDegress;
+        }
+
+//        if (((sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) && (sensorType == ACCELE)) // TODO: ***Step Counter***
+//                || ((sensorEvent.sensor.getType() == Sensor.TYPE_GRAVITY) && (sensorType == GRAVITY))
+//                || ((sensorEvent.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) && (sensorType == LINEAR_ACCELE))
+//                || ((sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) && (sensorType == STEP))) {
+//            float x = sensorEvent.values[0];
+//            float y = sensorEvent.values[1];
+//            float z = sensorEvent.values[2];
+//            acelLast = acelVal;
+//            acelVal = (float) Math.sqrt((double) (x * x) + (y * y) + (z * z));
+//            float delta = acelVal - acelLast;
+//            shake = shake * 0.9f + delta;
+//            if (shake > 12) {
+//                // Profile.class.swapTheme;
+//                Toast t = Toast.makeText(getApplicationContext(), "Don't Shake Phone", Toast.LENGTH_SHORT);
+//                t.show();
+//            }
+//        }
+//        else if ((sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) && (sensorType == MAGNETIC_FIELD)) { // TODO: ***Compass***
+//            float degree = Math.round(sensorEvent.values[0]);
+//            System.out.println("Heading: " + Float.toString(degree) + " degrees");
+//        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+        // Auto-generated
+    }
 }
