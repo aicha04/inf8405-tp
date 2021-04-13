@@ -1,8 +1,10 @@
 package com.example.projet;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -24,9 +26,9 @@ import com.google.firebase.storage.internal.Sleeper;
 import java.util.ArrayList;
 import com.example.projet.databinding.ActivityWelcomeBinding;
 import java.util.Locale;
-public class WelcomeActivity extends BaseActivity {
+public class WelcomeActivity extends AppCompatActivity {
     private Constants constants = new Constants();
-    private  UserSingleton userSingleton = UserSingleton.getInstance();
+    private UserSingleton userSingleton = UserSingleton.getInstance();
     private GridView grid = null;
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -44,36 +46,37 @@ public class WelcomeActivity extends BaseActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        ImageButton create_profil_button = (ImageButton) findViewById(R.id.create_button);
+        language = App.localeManager.getAppLanguage();
         if(userSingleton.getAllUserInfos().size() == 0){
-            TextView warningView = findViewById(R.id.warning);
-            warningView.setText("No profile found !");
+            binding.warning.setText(R.string.no_profile_found);
         }
-        language = App.localeManager.getLanguage();
-        create_profil_button.setOnClickListener(v -> {
+        binding.createButton.setOnClickListener(v -> {
             Intent welcomeAct = new Intent(WelcomeActivity.this, CreateProfileActivity.class);
             startActivity(welcomeAct);
             finish();
         });
 
-        grid = findViewById(R.id.grid);
         loadGrid();
+
+        binding.changeLanguageButton.setOnClickListener(v -> {
+            showChangeLanguageDialog();
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        if (!language.equals(App.localeManager.getLanguage())) {
-//            Context context = App.localeManager.setLocale(this);
-//            Resources resources = context.getResources();
-//
-//            binding.createButton.setText(resources.getString(R.string.create_profile));
-//            binding.loginButton.setText(resources.getString(R.string.log_in));
-//            binding.textView.setText(resources.getString(R.string.welcome_to_findmydevice));
-//
-//            language = App.localeManager.getLanguage();
-//        }
-        Log.d(TAG, "onResume");
+        if(userSingleton.getAllUserInfos().size() == 0) {
+            if (!language.equals(App.localeManager.getAppLanguage())) {
+                Context context = App.localeManager.setAppLocale(this);
+                Resources resources = context.getResources();
+
+                binding.warning.setText(resources.getString(R.string.no_profile_found));
+
+                language = App.localeManager.getLanguage();
+            }
+            Log.d(TAG, "onResume");
+        }
     }
 
     @Override
@@ -84,7 +87,7 @@ public class WelcomeActivity extends BaseActivity {
 
     void loadGrid(){
             UserAdapter adapter = new UserAdapter(WelcomeActivity.this, userSingleton.getAllUserInfos());
-            grid.setAdapter(adapter);
+            binding.grid.setAdapter(adapter);
     }
 
     public void openAccount(int position) {
@@ -95,4 +98,36 @@ public class WelcomeActivity extends BaseActivity {
         startActivity(mainAct);
         finish();
     }
+
+    /** Show language options to user
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void showChangeLanguageDialog() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(WelcomeActivity.this);
+        mBuilder.setTitle(getResources().getString(R.string.choose_language));
+        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // French
+                        App.localeManager.setNewAppLocale(WelcomeActivity.this, App.localeManager.LANGUAGE_FRENCH);
+                        break;
+                    case 1:
+                        // English
+                        App.localeManager.setNewAppLocale(WelcomeActivity.this, App.localeManager.LANGUAGE_ENGLISH);
+                        break;
+                    default:
+                        Log.d("PROFILE", "No language chosen");
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
+
 }

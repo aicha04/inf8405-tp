@@ -1,10 +1,13 @@
 package com.example.projet;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.projet.databinding.FragmentDeviceInfoBinding;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -20,6 +25,8 @@ public class DeviceInfoFragment extends Fragment {
     private final UserSingleton userSingleton = UserSingleton.getInstance();
 
     private static int deviceIndex;
+    private String language;
+    private FragmentDeviceInfoBinding binding;
 
     public DeviceInfoFragment(int deviceIndex) {
         DeviceInfoFragment.deviceIndex = deviceIndex;
@@ -43,8 +50,11 @@ public class DeviceInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        language = App.localeManager.getLanguage();
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_device_info, container, false);
+        binding = FragmentDeviceInfoBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
         String infoContent = setInfoContent();
         deviceInfoView.setText(infoContent);
@@ -52,20 +62,19 @@ public class DeviceInfoFragment extends Fragment {
         ImageButton back_button = (ImageButton) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
 
-        Button favorite_button = (Button) view.findViewById(R.id.favorite);
-        updateFavoriteButton(favorite_button);
-        favorite_button.setOnClickListener(new View.OnClickListener() {
+        updateFavoriteButton();
+        binding.favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
                 if (device.isFavorite == 0) {
-                    Toast.makeText(getActivity(),"Device added to favorites", Toast.LENGTH_LONG).show();
+                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_added_favorite);
                     userSingleton.addToFavorites(deviceIndex);
                 } else {
-                    Toast.makeText(getActivity(),"Device removed from favorites", Toast.LENGTH_LONG).show();
+                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_removed_favorite);
                     userSingleton.removeFromFavorites(deviceIndex);
                 }
-                updateFavoriteButton(favorite_button);
+                updateFavoriteButton();
             }
         });
 
@@ -83,7 +92,7 @@ public class DeviceInfoFragment extends Fragment {
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
                 } else {
-                    Toast.makeText(((MainActivity)getActivity()).getApplicationContext(), "Enable localization to get directions", Toast.LENGTH_LONG).show();
+                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.enable_GPS);;
                 }
 
             }
@@ -108,6 +117,25 @@ public class DeviceInfoFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!language.equals(App.localeManager.getLanguage())) {
+            Log.d("DeviceInfoFragment", "Language changed");
+            updateFavoriteButton();
+
+            language = App.localeManager.getLanguage();
+        }
+        Log.d("DeviceInfoFragment", "onResume");
+    }
+
     /**Returns content to put in {@link DeviceInfoFragment}
      * @param  -
      * @return {@link String} content to display
@@ -126,14 +154,14 @@ public class DeviceInfoFragment extends Fragment {
      * @param  -
      * @return -
      */
-    void updateFavoriteButton(Button favorite_button){
-        String removeFavoriteStr = "REMOVE FROM FAVORITES";
-        String addToFavoriteStr = "ADD TO FAVORITES";
+    void updateFavoriteButton(){
+        Context context = App.localeManager.setLocale(((MainActivity)getActivity()).getApplicationContext());
+        Resources resources = context.getResources();
         Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
         if (device.isFavorite == 1) {
-            favorite_button.setText(removeFavoriteStr);
+            binding.favorite.setText(resources.getString(R.string.remove_favorite));
         } else {
-            favorite_button.setText(addToFavoriteStr);
+            binding.favorite.setText(resources.getString(R.string.add_favorite));
         }
     }
 }

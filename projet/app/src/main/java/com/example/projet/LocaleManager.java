@@ -15,11 +15,32 @@ public class LocaleManager {
     public static final  String LANGUAGE_ENGLISH   = "en";
     public static final  String LANGUAGE_FRENCH = "fr";
     private Constants constants = new Constants();
+    private final SharedPreferences prefs;
 
     public LocaleManager(Context context) {
         //prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
+        prefs = context.getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
     }
+
+    public Context setAppLocale(Context c) {
+        return updateResources(c, getAppLanguage());
+    }
+
+    public String getAppLanguage() {
+        return prefs.getString(constants.CURRENT_LANGUAGE, "");
+    }
+
+    public Context setNewAppLocale(Context c, String language) {
+        persistAppLanguage(language);
+        return updateResources(c, language);
+    }
+
+    private void persistAppLanguage(String language) {
+        // use commit() instead of apply(), because sometimes we kill the application process
+        // immediately that prevents apply() from finishing
+        prefs.edit().putString(constants.CURRENT_LANGUAGE, language).commit();
+    }
+
 
     public Context setLocale(Context c) {
         return updateResources(c, getLanguage());
@@ -28,11 +49,6 @@ public class LocaleManager {
     public Context setNewLocale(Context c, String language) {
         persistLanguage(language);
         return updateResources(c, language);
-    }
-
-    public static Locale getLocale(Resources res) {
-        Configuration config = res.getConfiguration();
-        return isAtLeastVersion(Build.VERSION_CODES.N) ? config.getLocales().get(0) : config.locale;
     }
 
     public String getLanguage() {
@@ -60,5 +76,10 @@ public class LocaleManager {
 
     public static boolean isAtLeastVersion(int version) {
         return Build.VERSION.SDK_INT >= version;
+    }
+
+    public static Locale getLocale(Resources res) {
+        Configuration config = res.getConfiguration();
+        return isAtLeastVersion(Build.VERSION_CODES.N) ? config.getLocales().get(0) : config.locale;
     }
 }

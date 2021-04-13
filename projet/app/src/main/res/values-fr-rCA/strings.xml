@@ -12,22 +12,36 @@
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
     <string name="hello_blank_fragment">Hello fragment vide</string>
-    <string name="swap_theme">Changer de thème</string>
     <string name="profile_creation">Création du profil</string>
     <string name="pick_a_username">1. Nom d\'utilisateur</string>
     <string name="add_a_profile_picture">2. Photo de profil</string>
     <string name="change_photo">Changer la photo</string>
     <string name="create_profile">Créer un profil</string>
-    <string name="log_in">Se connecter</string>
     <string name="welcome_to_findmydevice">Bienvenue sur FindMyDevice !</string>
     <string name="add_to_favorites">Ajouter aux favoris</string>
     <string name="profile">Profil</string>
-    <string name="change_language">Changer la langue</string>
     <string name="choose_language">Choisir une langue</string>
+    <string name="back">Retour</string>
+    <string name="change_profile">Changer de profil</string>
+    <string name="battery_usage">Utilisation de la batterie</string>
+    <string name="uplink">Téléversement:</string>
+    <string name="downlink">Téléchargement:</string>
+    <string name="theme">Thème : </string>
+    <string name="username">Nom d\'usager : </string>
+    <string name="language">Langue : </string>
+    <string name="no_profile_found">Aucun profil trouvé !</string>
+    <string name="cancel">Annuler</string>
+    <string name="remove_favorite">RETIRER DES FAVORIS</string>
+    <string name="add_favorite">AJOUTER AUX FAVORIS</string>
     <!-- Toast -->
     <string name="enable_BT">Activer Bluetooth</string>
     <string name="enable_BT_and_GPS">Activer Bluetooth et la localisation</string>
     <string name="permissions_required">Permissions requises!</string>
     <string name="permissions_denied">Permissions refusées!</string>
     <string name="device_no_BT">Appareil sans Bluetooth!</string>
+    <string name="please_enter_valid_username">Entrez un nom d\'usager valide</string>
+    <string name="username_already_exists">Ce nom d\'usager existe déjà</string>
+    <string name="device_removed_favorite">Appareil retiré des favoris</string>
+    <string name="device_added_favorite">Appareil ajouté aux favoris</string>
+    <string name="enable_GPS">Activer la localisation</string>
 </resources>

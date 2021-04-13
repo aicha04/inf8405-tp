@@ -10,8 +10,9 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/back_black"
-        android:contentDescription="go back" />
+        android:background="?attr/background"
+        android:src="?attr/backIcon"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,10 +25,11 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/battery_usage_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Battery usage"/>
+                android:text="@string/battery_usage"/>
 
             <com.jjoe64.graphview.GraphView
                 android:layout_width = "match_parent"
@@ -41,22 +43,24 @@
             android:orientation="vertical"
             android:layout_weight="1">
             <TextView
-                android:text="Uplink:"
+                android:id="@+id/uplink_view"
+                android:text="@string/uplink"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal" />
             <TextView
-                android:text="MB"
+                android:text="@string/mb"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal" />
             <TextView
-                android:text="Downlink:"
+                android:id="@+id/downlink_view"
+                android:text="@string/downlink"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal"/>
             <TextView
-                android:text="MB"
+                android:text="@string/mb"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center_horizontal" />

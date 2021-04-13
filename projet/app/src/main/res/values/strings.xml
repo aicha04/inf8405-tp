@@ -11,27 +11,40 @@
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="swap_theme">Swap theme</string>
     <string name="profile_creation">Profile creation</string>
     <string name="pick_a_username">1. Pick a username</string>
     <string name="add_a_profile_picture">2. Add a profile picture</string>
     <string name="change_photo">Change photo</string>
     <string name="create_profile">Create profile</string>
-    <string name="log_in">Log in</string>
     <string name="welcome_to_findmydevice">Welcome to FindMyDevice !</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="mac_address" translatable="false">MAC address</string>
     <string name="device_name" translatable="false">device name</string>
     <string name="profile">Profile</string>
-    <string name="change_language">Change language</string>
-    <string name="choose_language">Choose language</string>
+    <string name="choose_language">Choose a language</string>
+    <string name="back">Back</string>
+    <string name="change_profile">Change profile</string>
+    <string name="battery_usage">Battery usage</string>
+    <string name="uplink">Uplink:</string>
+    <string name="downlink">Downlink:</string>
+    <string name="mb" translatable="false">MB</string>
+    <string name="theme">Theme : </string>
+    <string name="username">Username : </string>
+    <string name="language">Language : </string>
+    <string name="no_profile_found">No profile found !</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove_favorite">REMOVE FROM FAVORITES</string>
+    <string name="add_favorite">ADD TO FAVORITES</string>
     <!-- Toast -->
     <string name="enable_BT">Enable Bluetooth to discover devices</string>
     <string name="enable_BT_and_GPS">Enable Bluetooth and localization to discover devices</string>
     <string name="permissions_required">Permissions required for optimal use!</string>
     <string name="permissions_denied">Permissions denied!</string>
     <string name="device_no_BT">Device doesn\'t support Bluetooth!</string>
-    <string name="back">Back</string>
-    <string name="changeProfile">Change profile</string>
+    <string name="please_enter_valid_username">Please enter a valid username</string>
+    <string name="username_already_exists">This username already exists</string>
+    <string name="device_removed_favorite">Device removed from favorites</string>
+    <string name="device_added_favorite">Device added to favorites</string>
+    <string name="enable_GPS">Enable localization to get directions</string>
 
 </resources>

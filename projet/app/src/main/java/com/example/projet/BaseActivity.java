@@ -14,10 +14,12 @@ import android.widget.Toast;
 /** https://github.com/YarikSOffice/LanguageTest/blob/master/app/src/main/java/com/yariksoffice/languagetest/ui/BaseActivity.java */
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
+    protected String language;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(App.localeManager.setLocale(base));
+        language = App.localeManager.getLanguage();
         Log.d(TAG, "attachBaseContext");
     }
 

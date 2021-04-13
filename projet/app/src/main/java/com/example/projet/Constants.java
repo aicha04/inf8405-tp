@@ -1,6 +1,8 @@
 package com.example.projet;
 
 public class Constants {
+    public String SHARED_PREFERENCES_PATH = "/data/data/com.example.projet/shared_prefs/preferences.xml";
+    public String SHARED_PREFERENCES_NAME ="preferences";
     public double DEFAULT_LATITUDE = 45.5578;
     public double DEFAULT_LONGITUDE = -73.6161;
     public String LIGHT_THEME= "LIGHT";

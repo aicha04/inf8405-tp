@@ -23,13 +23,29 @@
         android:numColumns="3"
         android:layout_centerHorizontal="true"/>
 
-    <ImageButton
-        android:id="@+id/create_button"
+    <RelativeLayout
+        android:id="@+id/container_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/background"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:src="?attr/createProfileIcon"
-        />
+        android:layout_centerHorizontal="true">
+        <ImageButton
+            android:id="@+id/change_language_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:src="?attr/languageIcon"
+            android:layout_margin="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/create_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:src="?attr/createProfileIcon"
+            android:layout_toEndOf="@id/change_language_button"
+            android:layout_margin="20dp"
+            />
+    </RelativeLayout>
 </RelativeLayout>

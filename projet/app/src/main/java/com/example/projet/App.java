@@ -23,7 +23,11 @@ public class App extends Application {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        localeManager.setLocale(this);
+        try {
+            localeManager.setAppLocale(this);
+        } catch (Exception e) {
+            Log.e(TAG, String.valueOf(e));
+        }
         Log.d(TAG, "onConfigurationChanged: " + newConfig.locale.getLanguage());
     }
 

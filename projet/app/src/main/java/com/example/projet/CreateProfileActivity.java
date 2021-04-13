@@ -1,23 +1,23 @@
 package com.example.projet;
 
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.example.projet.databinding.ActivityCreateProfileBinding;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,15 +29,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CreateProfileActivity extends AppCompatActivity {
+    private static final String TAG = "CreateProfileActivity";
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     private Bitmap imageBitmap = null;
     private Constants constants = new Constants();
-    private ImageView imageView = null;
     private  UserSingleton userSingleton = UserSingleton.getInstance();
     private String currentPhotoPath = null;
-    private EditText userIdView = null;
     private UserInfo newUserInfo = new UserInfo();
+
+    private ActivityCreateProfileBinding binding;
+    private String language;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(App.localeManager.setAppLocale(base));
+        Log.d(TAG, "attachBaseContext");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +55,20 @@ public class CreateProfileActivity extends AppCompatActivity {
             setTheme(R.style.Theme_projet_dark);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_profile);
+        binding = ActivityCreateProfileBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        userIdView = findViewById(R.id.user_id_view);
-        Button create_profile_button = findViewById(R.id.create_profile_button);
-        ImageButton add_photo_button =  findViewById(R.id.add_photo_button);
-        imageView = findViewById(R.id.imageView);
+        language = App.localeManager.getAppLanguage();
 
-        create_profile_button.setOnClickListener(v -> {
-            String newUserId = userIdView.getText().toString().trim();
+        binding.createProfileButton.setOnClickListener(v -> {
+            String newUserId = binding.userIdView.getText().toString().trim();
             if(newUserId.trim().length() == 0){
-                Toast.makeText(this,"Please enter a valid username", Toast.LENGTH_LONG).show();
+                showToast(getApplicationContext(), R.string.please_enter_valid_username);
             }else if(userSingleton.userExists(newUserId)) {
-                Toast.makeText(this,"This username already exits", Toast.LENGTH_LONG).show();
+                showToast(getApplicationContext(), R.string.username_already_exists);
             }else{
-                newUserInfo.setUserId(userIdView.getText().toString());
+                newUserInfo.setUserId(binding.userIdView.getText().toString());
                 userSingleton.setCurrentUser(newUserInfo);
 
                 saveImage();
@@ -78,10 +85,34 @@ public class CreateProfileActivity extends AppCompatActivity {
             }
         });
 
-        add_photo_button.setOnClickListener(v -> {
+        binding.addPhotoButton.setOnClickListener(v -> {
             dispatchTakePictureIntent();
         });
 
+        binding.cancelButton.setOnClickListener(v -> {
+            Intent welcomeAct = new Intent(CreateProfileActivity.this, WelcomeActivity.class);
+            startActivity(welcomeAct);
+            finish();
+        });
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!language.equals(App.localeManager.getAppLanguage())) {
+            Context context = App.localeManager.setAppLocale(this);
+            Resources resources = context.getResources();
+
+            binding.title.setText(resources.getString(R.string.profile_creation));
+            binding.textView2.setText(resources.getString(R.string.pick_a_username));
+            binding.textView3.setText(resources.getString(R.string.add_a_profile_picture));
+            binding.createProfileButton.setText(resources.getString(R.string.create_profile));
+            binding.cancelButton.setText(R.string.cancel);
+
+            language = App.localeManager.getAppLanguage();
+        }
+        Log.d(TAG, "onResume");
     }
 
     //Souce: https://developer.android.com/training/camera/photobasics#java
@@ -166,8 +197,8 @@ public class CreateProfileActivity extends AppCompatActivity {
     //Souce: https://developer.android.com/training/camera/photobasics#java
     private void setPic() {
         // Get the dimensions of the View
-        int targetW = imageView.getWidth();
-        int targetH = imageView.getHeight();
+        int targetW = binding.imageView.getWidth();
+        int targetH = binding.imageView.getHeight();
 
         // Get the dimensions of the bitmap
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -187,7 +218,12 @@ public class CreateProfileActivity extends AppCompatActivity {
         bmOptions.inPurgeable = true;
 
         imageBitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        imageView.setImageBitmap(imageBitmap);
+        binding.imageView.setImageBitmap(imageBitmap);
+    }
+
+    protected void showToast(Context c, @StringRes int id) {
+        Resources resources = App.localeManager.setAppLocale(c).getResources();
+        Toast.makeText(c, resources.getString(id), Toast.LENGTH_LONG).show();
     }
 }
 

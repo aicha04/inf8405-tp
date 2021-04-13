@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -16,13 +17,16 @@ import java.util.UUID;
 
 public class SplashScreenActivity extends AppCompatActivity {
     int SPLASH_SCREEN_TIME = 3000;
-
+    private SharedPreferences sharedPreferences;
     private  UserSingleton userSingleton = UserSingleton.getInstance();
     private Constants constants = new Constants();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         try{
+            //Get language
+            setUpSharedPreferences();
+
             setContentView(R.layout.activity_splash_screen);
             super.onCreate(savedInstanceState);
 
@@ -84,5 +88,28 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }, time);
 
+    }
+
+    /** Create a shared preferences database for the first use of the application
+     * and set language
+     * @param -
+     * @return -
+     */
+    void setUpSharedPreferences(){
+        File file = new File(constants.SHARED_PREFERENCES_PATH);
+        if(!file.exists()){
+//            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, SplashScreenActivity.this.MODE_PRIVATE);
+//            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
+//                userSingleton.setUserId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
+//            }
+//            if(sharedPreferences.contains(constants.CURRENT_THEME)){
+//                userSingleton.setCurrentTheme(sharedPreferences.getString(constants.CURRENT_THEME, constants.LIGHT_THEME));
+//            }
+//        }else{
+            Log.d("SplashScreen", "first time opening app");
+            sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(constants.CURRENT_LANGUAGE, App.localeManager.LANGUAGE_ENGLISH).commit();
+        }
     }
 }

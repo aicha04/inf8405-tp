@@ -4,7 +4,7 @@ public  class UserInfo {
 
     public String userId;
     public Boolean hasProfilePhoto = false;
-    public String language = "ENGLISH";
+    public String language = App.localeManager.getAppLanguage();
     public String theme = "LIGHT";
 
     public UserInfo(){

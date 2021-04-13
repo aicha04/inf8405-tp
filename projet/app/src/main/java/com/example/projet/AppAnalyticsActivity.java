@@ -2,11 +2,14 @@ package com.example.projet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AppAnalyticsActivity extends AppCompatActivity {
-
+public class AppAnalyticsActivity extends BaseActivity {
+    private static final String TAG = "AppAnalyticsActivity";
     private ActivityAppAnalyticsBinding binding;
     private Constants constants = new Constants();
     @Override
@@ -39,8 +42,6 @@ public class AppAnalyticsActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
         binding.backButton.setOnClickListener(onClickListener);
-
-
 
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
@@ -99,6 +100,22 @@ public class AppAnalyticsActivity extends AppCompatActivity {
         Intent i = new Intent(AppAnalyticsActivity.this, MainActivity.class);
         startActivity(i);
         finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!language.equals(App.localeManager.getLanguage())) {
+            Context context = App.localeManager.setLocale(this);
+            Resources resources = context.getResources();
+
+            binding.batteryUsageView.setText(resources.getString(R.string.battery_usage));
+            binding.uplinkView.setText(resources.getString(R.string.uplink));
+            binding.downlinkView.setText(resources.getString(R.string.downlink));
+
+            language = App.localeManager.getLanguage();
+        }
+        Log.d(TAG, "onResume");
     }
 
 }

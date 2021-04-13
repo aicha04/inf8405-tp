@@ -39,7 +39,6 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //App.localeManager.setLocale(((MainActivity)getActivity()).getApplicationContext());
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -94,13 +93,7 @@ public class ListFragment extends Fragment {
         binding.appAnalytics.setOnClickListener(onClickListenerAnalyticsButton);
         return viewLayout;
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        Context context = App.localeManager.setLocale(getActivity());
-        Resources resources = context.getResources();
-        Log.d("Fragment", "onResume");
-    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
