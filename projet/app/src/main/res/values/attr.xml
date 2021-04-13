@@ -3,4 +3,12 @@
     <attr name="textColor" format="color" />
     <attr name="buttonBackground" format="color" />
     <attr name="buttonTextColor" format="color"/>
+    <attr name="profileIcon" format="reference"/>
+    <attr name="themeIcon" format="reference"/>
+    <attr name="analyticsIcon" format="reference"/>
+    <attr name="backIcon" format="reference"/>
+    <attr name="switchProfileIcon" format="reference"/>
+    <attr name="languageIcon" format="reference"/>
+    <attr name="createProfileIcon" format="reference"/>
+    <attr name="cameraIcon" format="reference"/>
 </resources>

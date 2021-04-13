@@ -1,7 +1,5 @@
 package com.example.projet;
 
-import android.graphics.ColorMatrix;
-
 public class Constants {
     public double DEFAULT_LATITUDE = 45.5578;
     public double DEFAULT_LONGITUDE = -73.6161;
@@ -9,6 +7,9 @@ public class Constants {
     public String DARK_THEME = "DARK";
     public String DEVICES_DATABASE_NAME = "devices";
     public String USER_INFO_DATABASE_NAME = "userInfo";
+    public String CURRENT_THEME = "CURRENT_THEME";
+    public  String CURRENT_LANGUAGE = "My Lang";
+    public final String[] LANGUAGES = {"Français", "English"};
 
     //Matrix to inverse colors
     // Source : https://github.com/osmdroid/osmdroid/blob/master/osmdroid-android/src/main/java/org/osmdroid/views/overlay/TilesOverlay.java

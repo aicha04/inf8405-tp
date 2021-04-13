@@ -2,9 +2,17 @@ package com.example.projet;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 public class SplashScreenActivity extends AppCompatActivity {
     int SPLASH_SCREEN_TIME = 3000;

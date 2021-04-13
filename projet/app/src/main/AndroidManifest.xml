@@ -16,14 +16,18 @@
         android:required="true" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.projet">
-        <activity android:name=".Profile"
-            android:screenOrientation="landscape" ></activity>
+        <activity android:name=".AppAnalyticsActivity"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".Profile"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".CreateProfileActivity"
             android:screenOrientation="landscape" />

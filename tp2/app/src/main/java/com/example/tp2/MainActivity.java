@@ -753,6 +753,16 @@ public class MainActivity extends AppCompatActivity{
         startActivity(getIntent());
 
     }
+    /** Go to analytics activity
+     * @param -
+     * @return -
+     */
+    public void switchToAnalyticsActivity() {
+
+        Intent i = new Intent(MainActivity.this, AnalyticsActivity.class);
+        startActivity(i);
+        finish();
+    }
 
     @Override
     protected void onDestroy() {

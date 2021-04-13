@@ -17,6 +17,14 @@
         <item name="background">@color/purple_100</item>
         <item name="buttonBackground">@color/purple_500</item>
         <item name="buttonTextColor">@color/purple_700</item>
+        <item name="themeIcon">@drawable/theme_black</item>
+        <item name="profileIcon">@drawable/profile_black</item>
+        <item name="analyticsIcon">@drawable/analytics_black</item>
+        <item name="backIcon">@drawable/back36_black</item>
+        <item name="switchProfileIcon">@drawable/switch_profile_black</item>
+        <item name="languageIcon">@drawable/language_black</item>
+        <item name="createProfileIcon">@drawable/create_profile_black</item>
+        <item name="cameraIcon">@drawable/camera_black</item>
 
     </style>
 
@@ -37,5 +45,13 @@
         <item name="background">@color/purple_700</item>
         <item name="buttonTextColor">@color/purple_700</item>
         <item name="buttonBackground">@color/purple_500</item>
+        <item name="themeIcon">@drawable/theme_white</item>
+        <item name="profileIcon">@drawable/profile_white</item>
+        <item name="analyticsIcon">@drawable/analytics_white</item>
+        <item name="backIcon">@drawable/back36_white</item>
+        <item name="switchProfileIcon">@drawable/switch_profile_white</item>
+        <item name="languageIcon">@drawable/language_white</item>
+        <item name="createProfileIcon">@drawable/create_profile_white</item>
+        <item name="cameraIcon">@drawable/camera_white</item>
     </style>
 </resources>

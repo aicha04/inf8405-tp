@@ -1,10 +1,14 @@
 package com.example.projet;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +16,8 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class Profile extends AppCompatActivity {
+public class Profile extends BaseActivity {
+    private static final String TAG = "Profile";
     private Constants constants = new Constants();
     private  UserSingleton userSingleton = UserSingleton.getInstance();
 
@@ -24,13 +29,14 @@ public class Profile extends AppCompatActivity {
             setTheme(R.style.Theme_projet_dark);
         }
         super.onCreate(savedInstanceState);
+        //loadLocale();
         setContentView(R.layout.activity_profile);
 
-        Button swapButton = findViewById(R.id.swap_theme_button);
+        ImageButton swapButton = findViewById(R.id.swap_theme_button);
         TextView userIdView = findViewById(R.id.username_view);
         TextView userThemeView = findViewById(R.id.user_theme_view);
-        Button backButton = findViewById(R.id.back_button);
-        Button changeProfileButton = findViewById(R.id.change_profile_button);
+        ImageButton backButton = findViewById(R.id.back_button);
+        ImageButton changeProfileButton = findViewById(R.id.change_profile_button);
 
         if(userSingleton.getCurrentUser().hasProfilePicture()){
             loadProfilePicture();
@@ -57,8 +63,51 @@ public class Profile extends AppCompatActivity {
             finish();
 
         });
+        ImageButton languageButton = (ImageButton) findViewById(R.id.change_language_button);
+        languageButton.setOnClickListener(v -> {
+            showChangeLanguageDialog();
+        });
+    }
+    /** Show language options to user
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void showChangeLanguageDialog() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(Profile.this);
+        mBuilder.setTitle(getResources().getString(R.string.choose_language));
+        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // French
+                        setNewLocale(App.localeManager.LANGUAGE_FRENCH);
+                        break;
+                    case 1:
+                        // English
+                        setNewLocale(App.localeManager.LANGUAGE_ENGLISH);
+                        break;
+                    default:
+                        Log.d("PROFILE", "No language chosen");
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
     }
 
+    /** Change the app language
+     * https://github.com/YarikSOffice/LanguageTest/blob/db5b3742bfcc083459e4f23aeb91c877babb0968/app/src/main/java/com/yariksoffice/languagetest/ui/SettingsActivity.java
+     * @param -
+     * @return -
+     */
+    private void setNewLocale(String lang) {
+        App.localeManager.setNewLocale(this, lang);
+        recreate();
+    }
 
     /** Update the app theme
      * @param -

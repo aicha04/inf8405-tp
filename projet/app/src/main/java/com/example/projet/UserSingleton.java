@@ -158,6 +158,9 @@ public class UserSingleton {
         this.currentUser.setLanguage(currentUserLanguage);
         updateUserInfo(currentUser);
     }
+    public String getCurrentUserLanguage(){
+        return currentUser.getLanguage();
+    }
 
     /**Verify if devices array contains a specific device
      * @param device the searched device

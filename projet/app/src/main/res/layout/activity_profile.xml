@@ -1,116 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/background"
     tools:context=".Profile">
+    <RelativeLayout
+        android:id="@+id/container_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        >
+        <RelativeLayout
+            android:id="@+id/container_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/profile_photo_view"
+            android:layout_margin="20dp"
+            android:layout_centerVertical="true"
+            >
+            <TextView
+                android:id="@+id/user_theme_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/textColor"
+                android:text="Theme :"
+                />
 
-    <TextView
-        android:id="@+id/user_theme_view"
-        android:layout_width="92dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="300dp"
-        android:layout_marginRight="300dp"
-        android:layout_marginBottom="44dp"
-        android:textColor="?attr/textColor"
-        android:text="Theme :"
-        app:layout_constraintBottom_toTopOf="@+id/themeView"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/username_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username :"
+                android:textColor="?attr/textColor"
+                android:layout_below="@+id/user_theme_view"
+                />
 
-    <TextView
-        android:id="@+id/username_view"
-        android:layout_width="92dp"
-        android:layout_height="22dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="300dp"
-        android:layout_marginRight="300dp"
-        android:layout_marginBottom="61dp"
-        android:text="Username :"
-        android:textColor="?attr/textColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/themeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Language"
+                android:textColor="?attr/textColor"
+                android:layout_below="@+id/username_view"
+                />
+        </RelativeLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_photo_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_profile"
+            app:civ_border_color="#FFFFFF"
+            app:civ_border_width="1dp"
 
-    <TextView
-        android:id="@+id/themeView"
-        android:layout_width="141dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="62dp"
-        android:layout_marginLeft="62dp"
-        android:layout_marginEnd="249dp"
-        android:layout_marginRight="249dp"
-        android:layout_marginBottom="140dp"
-        android:text="Language"
-        android:textColor="?attr/textColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/profile_photo_view" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_photo_view"
-        android:layout_width="283dp"
-        android:layout_height="172dp"
-        android:layout_marginEnd="400dp"
-        android:layout_marginRight="400dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/no_profile"
-        app:civ_border_color="#FFFFFF"
-        app:civ_border_width="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.347" />
-
-    <Button
-        android:id="@+id/swap_theme_button"
-        android:layout_width="180dp"
-        android:layout_height="93dp"
+            app:layout_constraintVertical_bias="0.347" />
+    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/change_language_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/background"
+        android:layout_centerHorizontal="true"
+        android:src="?attr/languageIcon"
+        android:layout_above="@+id/container_button"
+        />
+    <RelativeLayout
+        android:id="@+id/container_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="5dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginEnd="231dp"
-        android:layout_marginRight="231dp"
-        android:layout_marginBottom="4dp"
-        android:background="?attr/buttonBackground"
-        android:text="@string/swap_theme"
-        android:textAllCaps="false"
-        android:textColor="?attr/buttonTextColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/back_button" />
+        android:layout_centerHorizontal="true">
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="180dp"
-        android:layout_height="93dp"
-        android:layout_marginStart="46dp"
-        android:layout_marginLeft="46dp"
-        android:layout_marginBottom="4dp"
-        android:background="?attr/buttonBackground"
-        android:text="@string/back"
-        android:textAllCaps="false"
-        android:textColor="?attr/buttonTextColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/change_profile_button" />
 
-    <Button
-        android:id="@+id/change_profile_button"
-        android:layout_width="180dp"
-        android:layout_height="93dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginEnd="46dp"
-        android:layout_marginRight="46dp"
-        android:layout_marginBottom="4dp"
-        android:background="?attr/buttonBackground"
-        android:text="@string/changeProfile"
-        android:textAllCaps="false"
-        android:textColor="?attr/buttonTextColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/back_button"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageButton
+            android:id="@+id/swap_theme_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:layout_toEndOf="@id/change_profile_button"
+            android:src="?attr/themeIcon"
+            android:layout_margin="20dp"
+            />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:src="?attr/backIcon"
+            android:layout_margin="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/change_profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:src="?attr/switchProfileIcon"
+            android:layout_toEndOf="@id/back_button"
+            android:layout_margin="20dp"
+            />
+    </RelativeLayout>
+
+
+</RelativeLayout>

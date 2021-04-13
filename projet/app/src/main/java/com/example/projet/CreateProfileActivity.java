@@ -14,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -50,7 +51,7 @@ public class CreateProfileActivity extends AppCompatActivity {
 
         userIdView = findViewById(R.id.user_id_view);
         Button create_profile_button = findViewById(R.id.create_profile_button);
-        Button add_photo_button =  findViewById(R.id.add_photo_button);
+        ImageButton add_photo_button =  findViewById(R.id.add_photo_button);
         imageView = findViewById(R.id.imageView);
 
         create_profile_button.setOnClickListener(v -> {

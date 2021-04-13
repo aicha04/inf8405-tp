@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 /**
  * A fragment representing a list of Devices.
@@ -22,7 +23,8 @@ public class ListFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private int mColumnCount = 1;
-    private Button swapButton = null;
+    private ImageButton swapButton = null;
+    private ImageButton analyticsButton = null;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -40,7 +42,7 @@ public class ListFragment extends Fragment {
         }
     }
 
-    private final View.OnClickListener onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onClickListenerSwapButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onClickSwapButton();
@@ -49,6 +51,16 @@ public class ListFragment extends Fragment {
 
     public void onClickSwapButton(){
         ((MainActivity)getActivity()).swapTheme();
+    }
+    private final View.OnClickListener onClickListenerAnalyticsButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickAnalyticsButton();
+        }
+    };
+
+    public void onClickAnalyticsButton(){
+        ((MainActivity)getActivity()).switchToAnalyticsActivity();
     }
 
     @Override
@@ -71,8 +83,10 @@ public class ListFragment extends Fragment {
             System.out.println("---------error------");
         }
         // Set the button listener
-        swapButton = (Button) viewLayout.findViewById(R.id.swapTheme);
-        swapButton.setOnClickListener(onClickListener);
+        swapButton = (ImageButton) viewLayout.findViewById(R.id.swapTheme);
+        swapButton.setOnClickListener(onClickListenerSwapButton);
+        analyticsButton = (ImageButton) viewLayout.findViewById(R.id.app_analytics);
+        analyticsButton.setOnClickListener(onClickListenerAnalyticsButton);
         return viewLayout;
     }
 }
