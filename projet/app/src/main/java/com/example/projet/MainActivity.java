@@ -84,6 +84,8 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
     private float[] mR = new float[9];
     private float[] mOrientation = new float[3];
     private float mCurrentDegree = 0f;
+    private double MagnitudePrevious = 0;
+    private Integer stepCount = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -908,6 +910,10 @@ public class MainActivity extends BaseActivity implements SensorEventListener {
 //            mPointer.startAnimation(ra);
             mCurrentDegree = -azimuthInDegress;
         }
+
+
+
+
 
 //        if (((sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) && (sensorType == ACCELE)) // TODO: ***Step Counter***
 //                || ((sensorEvent.sensor.getType() == Sensor.TYPE_GRAVITY) && (sensorType == GRAVITY))
