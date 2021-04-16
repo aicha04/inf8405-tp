@@ -44,4 +44,6 @@
     <string name="device_removed_favorite">Appareil retiré des favoris</string>
     <string name="device_added_favorite">Appareil ajouté aux favoris</string>
     <string name="enable_GPS">Activer la localisation</string>
+    <string name="bandwidth">Bande passante</string>
+    <string name="wifi_speed">Vitesse WiFi</string>
 </resources>

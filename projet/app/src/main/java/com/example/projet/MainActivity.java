@@ -309,7 +309,6 @@ public class MainActivity extends BaseActivity{
         Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
-        System.out.println("---------well2----------");
         discoverDevices();
         addBatteryLevel();
 
@@ -755,12 +754,8 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
         unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
-        clearBatteryGraph();
     }
-    private void clearBatteryGraph(){
-        AppAnalyticsSingleton.getInstance().getTimeStamps().clear();
-        AppAnalyticsSingleton.getInstance().getBatteryLevels().clear();
-    }
+
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
@@ -779,7 +774,10 @@ public class MainActivity extends BaseActivity{
     @Override
     public void onStop(){
         super.onStop();
-        clearBatteryGraph();
+        if(AppAnalyticsSingleton.getInstance().getTimeStamps().size() % 2 == 1){
+            addBatteryLevel();
+        }
+
     }
 
 
