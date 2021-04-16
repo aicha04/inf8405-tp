@@ -171,8 +171,8 @@ public class MainActivity extends BaseActivity{
         setContentView(R.layout.activity_main);
 
         map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK); 
-        
+        map.setTileSource(TileSourceFactory.MAPNIK);
+
         updateMapTheme();
 
         // default zoom buttons
@@ -776,6 +776,16 @@ public class MainActivity extends BaseActivity{
         startActivity(i);
         finish();
     }
+    /** Go to sensors activity
+     * @param -
+     * @return -
+     */
+    public void switchToSensorsActivity() {
+        Intent i = new Intent(MainActivity.this, SensorsActivity.class);
+        startActivity(i);
+        finish();
+    }
+
     @Override
     public void onStop(){
         super.onStop();

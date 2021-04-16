@@ -68,6 +68,17 @@ public class ListFragment extends Fragment {
         ((MainActivity) Objects.requireNonNull(getActivity())).switchToAnalyticsActivity();
     }
 
+    private final View.OnClickListener onClickListenerSensorsButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickSensorsButton();
+        }
+    };
+
+    public void onClickSensorsButton(){
+        ((MainActivity) Objects.requireNonNull(getActivity())).switchToSensorsActivity();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +102,7 @@ public class ListFragment extends Fragment {
         // Set the button listener
         binding.profileButton.setOnClickListener(onClickListener);
         binding.appAnalytics.setOnClickListener(onClickListenerAnalyticsButton);
+        binding.sensorsButton.setOnClickListener(onClickListenerSensorsButton);
         return viewLayout;
     }
 

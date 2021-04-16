@@ -11,4 +11,5 @@
     <attr name="languageIcon" format="reference"/>
     <attr name="createProfileIcon" format="reference"/>
     <attr name="cameraIcon" format="reference"/>
+    <attr name="sensorsIcon" format="reference"/>
 </resources>

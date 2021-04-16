@@ -53,5 +53,16 @@
             android:layout_margin="5dp"
             android:layout_toEndOf="@+id/profile_button"
             android:layout_toRightOf="@+id/profile_button" />
+
+        <ImageButton
+            android:id="@+id/sensors_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/background"
+            android:textAllCaps="false"
+            android:src="@drawable/sensors_black"
+            android:layout_margin="5dp"
+            android:layout_toEndOf="@+id/app_analytics"
+            android:layout_toRightOf="@+id/app_analytics" />
     </RelativeLayout>
 </RelativeLayout>

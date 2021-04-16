@@ -25,6 +25,8 @@
         <item name="languageIcon">@drawable/language_black</item>
         <item name="createProfileIcon">@drawable/create_profile_black</item>
         <item name="cameraIcon">@drawable/camera_black</item>
+        <item name="sensorsIcon">@drawable/sensors_black</item>
+
 
     </style>
 
@@ -53,5 +55,6 @@
         <item name="languageIcon">@drawable/language_white</item>
         <item name="createProfileIcon">@drawable/create_profile_white</item>
         <item name="cameraIcon">@drawable/camera_white</item>
+        <item name="sensorsIcon">@drawable/sensors_white</item>
     </style>
 </resources>
