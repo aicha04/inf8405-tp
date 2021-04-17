@@ -13,10 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,9 +50,9 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
     ImageView compassImage;
     TextView degreeTV, stepCounterTV;
     private static final DecimalFormat df = new DecimalFormat("0.00");
-    ImageButton playPauseButton;
-    ImageButton restartButton;
-    boolean isPlay = false;
+    ToggleButton startPauseButton;
+    Button restartButton;
+    boolean isStart = false;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -113,8 +116,8 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         compassImage = (ImageView) findViewById(R.id.compass_image);
         degreeTV = (TextView) findViewById(R.id.DegreeTV);
         stepCounterTV = (TextView) findViewById(R.id.step_count);
-        playPauseButton = (ImageButton) findViewById(R.id.play_button);
-        restartButton = (ImageButton) findViewById(R.id.restart_button);
+        startPauseButton = (ToggleButton) findViewById(R.id.start_pause_button);
+        restartButton = (Button) findViewById(R.id.restart_button);
 
         View.OnClickListener restartListener = new View.OnClickListener(){
             @Override
@@ -131,15 +134,10 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         View.OnClickListener togglePlayListener = new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if(isPlay){
-                    v.setBackgroundResource(R.drawable.pause_black);
-                }else{
-                    v.setBackgroundResource(R.drawable.play_black);
-                }
-                isPlay = !isPlay;
+                isStart = !isStart;
             }
         };
-        playPauseButton.setOnClickListener(togglePlayListener);
+        startPauseButton.setOnClickListener(togglePlayListener);
 
 
         if (sensorEvent.sensor == accelerometer) {
@@ -149,7 +147,7 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             System.arraycopy(sensorEvent.values, 0, lastMagnetometer, 0, sensorEvent.values.length);
             lastMagnetometerSet = true;
         }
-        else if(isPlay) {
+        else if(isStart) {
             if (sensorEvent.sensor == stepCounter) {
                 if (reportedSteps < 1) {
                     // Log the initial value

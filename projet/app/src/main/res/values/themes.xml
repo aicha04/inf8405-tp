@@ -26,9 +26,6 @@
         <item name="createProfileIcon">@drawable/create_profile_black</item>
         <item name="cameraIcon">@drawable/camera_black</item>
         <item name="sensorsIcon">@drawable/sensors_black</item>
-        <item name="playIcon">@drawable/play_black</item>
-        <item name="pauseIcon">@drawable/pause_black</item>
-        <item name="restartIcon">@drawable/restart_black</item>
 
     </style>
 
@@ -58,9 +55,6 @@
         <item name="createProfileIcon">@drawable/create_profile_white</item>
         <item name="cameraIcon">@drawable/camera_white</item>
         <item name="sensorsIcon">@drawable/sensors_white</item>
-        <item name="playIcon">@drawable/play_white</item>
-        <item name="pauseIcon">@drawable/pause_white</item>
-        <item name="restartIcon">@drawable/restart_white</item>
 
     </style>
 </resources>

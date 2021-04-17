@@ -26,11 +26,11 @@
             android:layout_marginBottom="40dp"
             android:layout_marginTop="20dp"
             android:text="Heading: 0.0"
-            android:textSize="10sp"
+            android:textSize="20sp"
         android:textStyle="normal|bold" />
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:id="@+id/compass_image"
             android:layout_below="@+id/DegreeTV"
             android:layout_centerHorizontal="true"
@@ -43,7 +43,8 @@
         android:layout_height="280dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:background="@color/gunMetalGray">
         <TextView
             android:id="@+id/step_counter"
             android:layout_width="wrap_content"
@@ -52,7 +53,8 @@
             android:layout_marginTop="50dp"
             android:layout_marginBottom="40dp"
             android:text="Step Counter"
-            android:textSize="10sp"
+            android:textSize="25sp"
+            android:textColor="@color/white"
             android:textStyle="normal|bold" />
         <View
             android:id="@+id/rectangleView2"
@@ -66,41 +68,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginTop="130dp"
             android:text="Step count: "
-            android:textSize="10sp"
+            android:textSize="20sp"
             android:textStyle="normal|bold" />
         <TextView
             android:id="@+id/step_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginTop="130dp"
             android:layout_toEndOf="@+id/step_count2"
             android:text="0"
-            android:textSize="10sp"
+            android:textSize="20sp"
             android:background="@color/white"
             android:textStyle="normal|bold" />
-        <ImageButton
-            android:id="@+id/play_button"
+        <ToggleButton
+            android:id="@+id/start_pause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
+            android:textOff="Start"
+            android:textOn="Pause"
+            android:textColor="@color/white"
             android:layout_below="@id/rectangleView2"
-            android:background="?attr/background"
-            android:src="@drawable/play_black" />
-
-        <ImageButton
+            android:background="?attr/background"/>
+        <Button
             android:id="@+id/restart_button"
+            android:text="Restart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/background"
-            android:src="@drawable/restart_black"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="20dp"
+            android:textColor="@color/white"
             android:layout_below="@id/rectangleView2"
-            android:layout_toEndOf="@id/play_button"
+            android:layout_toEndOf="@id/start_pause_button"
             android:layout_marginStart="20dp"
             android:layout_alignParentRight="true" />
     </RelativeLayout>

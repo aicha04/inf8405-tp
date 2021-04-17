@@ -10,4 +10,6 @@
     <color name="grey">#595555</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lightBaseColor">#2D5669</color>
+    <color name="gunMetalGray">#8D918D</color>
+
 </resources>
