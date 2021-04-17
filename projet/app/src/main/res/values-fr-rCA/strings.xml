@@ -33,6 +33,9 @@
     <string name="cancel">Annuler</string>
     <string name="remove_favorite">RETIRER DES FAVORIS</string>
     <string name="add_favorite">AJOUTER AUX FAVORIS</string>
+    <string name="step_counter">Compteur de pas</string>
+    <string name="step_count">Nombre de pas: </string>
+    <string name="heading">Cap: </string>
     <!-- Toast -->
     <string name="enable_BT">Activer Bluetooth</string>
     <string name="enable_BT_and_GPS">Activer Bluetooth et la localisation</string>
@@ -44,4 +47,7 @@
     <string name="device_removed_favorite">Appareil retiré des favoris</string>
     <string name="device_added_favorite">Appareil ajouté aux favoris</string>
     <string name="enable_GPS">Activer la localisation</string>
+    <string name="sensors_unavailable">Désolé, certains capteurs ne sont pas disponibles.</string>
+
+
 </resources>

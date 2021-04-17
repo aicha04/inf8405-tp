@@ -35,6 +35,9 @@
     <string name="cancel">Cancel</string>
     <string name="remove_favorite">REMOVE FROM FAVORITES</string>
     <string name="add_favorite">ADD TO FAVORITES</string>
+    <string name="step_counter">Step Counter</string>
+    <string name="step_count">Step count: </string>
+    <string name="heading">Heading: </string>
     <!-- Toast -->
     <string name="enable_BT">Enable Bluetooth to discover devices</string>
     <string name="enable_BT_and_GPS">Enable Bluetooth and localization to discover devices</string>
@@ -46,5 +49,7 @@
     <string name="device_removed_favorite">Device removed from favorites</string>
     <string name="device_added_favorite">Device added to favorites</string>
     <string name="enable_GPS">Enable localization to get directions</string>
+    <string name="sensors_unavailable">Sorry, sensors are unavailable on this device.</string>
+
 
 </resources>

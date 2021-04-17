@@ -22,17 +22,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:id="@+id/DegreeTV"
+            android:id="@+id/degreeTV"
             android:layout_marginBottom="40dp"
             android:layout_marginTop="20dp"
-            android:text="Heading: 0.0"
+            android:text="@string/heading"
             android:textSize="20sp"
-        android:textStyle="normal|bold" />
+            android:textStyle="normal|bold" />
+        <TextView
+            android:id="@+id/degrees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="0.0"
+            android:layout_toEndOf="@+id/degreeTV"
+            android:textSize="20sp"
+            android:background="@color/white"
+            android:textStyle="normal|bold" />
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:id="@+id/compass_image"
-            android:layout_below="@+id/DegreeTV"
+            android:layout_below="@+id/degreeTV"
             android:layout_centerHorizontal="true"
             android:src="@drawable/compass_icon" />
     </RelativeLayout>
@@ -52,7 +62,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="40dp"
-            android:text="Step Counter"
+            android:text="@string/step_counter"
             android:textSize="25sp"
             android:textColor="@color/white"
             android:textStyle="normal|bold" />
@@ -69,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="130dp"
-            android:text="Step count: "
+            android:text="@string/step_count"
             android:textSize="20sp"
             android:textStyle="normal|bold" />
         <TextView

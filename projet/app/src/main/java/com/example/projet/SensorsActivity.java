@@ -26,7 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.projet.databinding.ActivitySensorsBinding;
 import java.text.DecimalFormat;
 
-public class SensorsActivity extends AppCompatActivity implements SensorEventListener {
+public class SensorsActivity extends BaseActivity implements SensorEventListener {
     private final UserSingleton userSingleton = UserSingleton.getInstance();
     private final Constants constants = new Constants();
     private SensorManager sensorManager;
@@ -36,7 +36,6 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
     private Sensor stepCounter;
     private Sensor stepDetector;
     private Sensor magnetometer;
-    private final static String NOT_SUPPORTED_MESSAGE = "Sorry, sensors are unavailable on this device.";
     private final float[] lastAccelerometer = new float[3];
     private final float[] lastMagnetometer = new float[3];
     private boolean lastAccelerometerSet = false;
@@ -93,9 +92,9 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (accelerometer == null || gravity == null || linearAcc == null || stepCounter == null || magnetometer == null) {
-            System.out.println(NOT_SUPPORTED_MESSAGE);
-            Toast t = Toast.makeText(getApplicationContext(), NOT_SUPPORTED_MESSAGE, Toast.LENGTH_SHORT);
-            t.show();
+            System.out.println("Sorry, sensors are unavailable on this device.");
+            showToast(getApplicationContext(), R.string.sensors_unavailable);
+
         } else {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_UI);
@@ -114,7 +113,7 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
      */
     public void onSensorChanged (SensorEvent sensorEvent){
         compassImage = (ImageView) findViewById(R.id.compass_image);
-        degreeTV = (TextView) findViewById(R.id.DegreeTV);
+        degreeTV = (TextView) findViewById(R.id.degrees);
         stepCounterTV = (TextView) findViewById(R.id.step_count);
         startPauseButton = (ToggleButton) findViewById(R.id.start_pause_button);
         restartButton = (Button) findViewById(R.id.restart_button);
@@ -167,7 +166,7 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             float azimuthInRadians = orientation[0];
             float azimuthInDegress = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
             System.out.println("Heading: " + df.format(azimuthInDegress) + " degrees");
-            degreeTV.setText("Heading: " + df.format(azimuthInDegress) + " degrees");
+            degreeTV.setText(df.format(azimuthInDegress) + " degrees");
             RotateAnimation ra = new RotateAnimation(
                     currentDegree,
                     -azimuthInDegress,
