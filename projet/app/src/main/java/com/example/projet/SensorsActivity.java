@@ -1,7 +1,7 @@
 package com.example.projet;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,24 +9,21 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.projet.databinding.ActivitySensorsBinding;
-
 import java.text.DecimalFormat;
 
 public class SensorsActivity extends AppCompatActivity implements SensorEventListener {
-    private static final String TAG = "SensorsActivity";
     private ActivitySensorsBinding binding;
     private Constants constants = new Constants();
     private SensorManager sensorManager;
@@ -60,6 +57,7 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
     ImageButton playPauseButton;
     ImageButton restartButton;
     boolean isPlay = false;
+    private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -76,8 +74,29 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         binding = ActivitySensorsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        binding.backButton.setOnClickListener(onClickListener);
 
+// Set the button listener
+        binding.swapThemeButton.setOnClickListener(v -> {
+            swapTheme();
+        });
+
+        binding.backButton.setOnClickListener(v->{
+            Intent mainAct = new Intent(this, MainActivity.class);
+            startActivity(mainAct);
+            finish();
+
+        });
+
+        binding.changeProfileButton.setOnClickListener(v->{
+            Intent mainAct = new Intent(this, WelcomeActivity.class);
+            startActivity(mainAct);
+            finish();
+
+        });
+        ;
+        binding.changeLanguageButton.setOnClickListener(v -> {
+            showChangeLanguageDialog();
+        });
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -98,6 +117,67 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         }
+    }
+
+    /** Change the app language
+     * https://github.com/YarikSOffice/LanguageTest/blob/db5b3742bfcc083459e4f23aeb91c877babb0968/app/src/main/java/com/yariksoffice/languagetest/ui/SettingsActivity.java
+     * @param -
+     * @return -
+     */
+    private void setNewLocale(String lang) {
+        App.localeManager.setNewLocale(this, lang);
+        recreate();
+    }
+
+    /** Update the app theme
+     * @param -
+     * @return -
+     */
+    public void swapTheme() {
+
+        if (userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)) {
+            userSingleton.setCurrentUserTheme(constants.LIGHT_THEME);
+            setTheme(R.style.Theme_projet);
+        } else {
+            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
+            setTheme(R.style.Theme_projet_dark);
+            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
+        }
+
+        finish();
+        startActivity(getIntent());
+
+    }
+
+    /** Show language options to user
+     * https://www.youtube.com/watch?v=zILw5eV9QBQ
+     * @param -
+     * @return -
+     */
+    private void showChangeLanguageDialog() {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(SensorsActivity.this);
+        mBuilder.setTitle(getResources().getString(R.string.choose_language));
+        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        // French
+                        setNewLocale(App.localeManager.LANGUAGE_FRENCH);
+                        break;
+                    case 1:
+                        // English
+                        setNewLocale(App.localeManager.LANGUAGE_ENGLISH);
+                        break;
+                    default:
+                        Log.d("PROFILE", "No language chosen");
+                        break;
+                }
+                dialog.dismiss();
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
     }
 
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -165,8 +245,9 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         DegreeTV = (TextView) findViewById(R.id.DegreeTV);
         StepCounterTV = (TextView) findViewById(R.id.step_count);
         playPauseButton = (ImageButton) findViewById(R.id.play_button);
+        restartButton = (ImageButton) findViewById(R.id.restart_button);
 
-        View.OnClickListener restartButton = new View.OnClickListener(){
+        View.OnClickListener restartListener = new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 reportedSteps = 0;
@@ -176,9 +257,9 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
                 StepCounterTV.setText(String.valueOf(stepsTaken));
             }
         };
-        playPauseButton.setOnClickListener(restartButton);
+        restartButton.setOnClickListener(restartListener);
 
-        View.OnClickListener togglePlayButton = new View.OnClickListener(){
+        View.OnClickListener togglePlayListerner = new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if(isPlay){
@@ -189,7 +270,7 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
                 isPlay = !isPlay; // reverse
             }
         };
-        playPauseButton.setOnClickListener(togglePlayButton);
+        playPauseButton.setOnClickListener(togglePlayListerner);
 
 
         if (sensorEvent.sensor == accelerometer) { // https://www.techrepublic.com/article/pro-tip-create-your-own-magnetic-compass-using-androids-internal-sensors/
