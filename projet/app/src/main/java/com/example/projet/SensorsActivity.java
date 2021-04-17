@@ -24,8 +24,8 @@ import com.example.projet.databinding.ActivitySensorsBinding;
 import java.text.DecimalFormat;
 
 public class SensorsActivity extends AppCompatActivity implements SensorEventListener {
-    private ActivitySensorsBinding binding;
-    private Constants constants = new Constants();
+    private final UserSingleton userSingleton = UserSingleton.getInstance();
+    private final Constants constants = new Constants();
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor gravity;
@@ -34,69 +34,53 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
     private Sensor stepDetector;
     private Sensor magnetometer;
     private final static String NOT_SUPPORTED_MESSAGE = "Sorry, sensors are unavailable on this device.";
-    private float[] floatGravity = new float[3];
-    private float[] floatGeoMagnetic = new float[3];
-    private float[] floatOrientation = new float[3];
-    private float[] floatRotationMatrix = new float[9];
-    private float[] mLastAccelerometer = new float[3];
-    private float[] mLastMagnetometer = new float[3];
-    private boolean mLastAccelerometerSet = false;
-    private boolean mLastMagnetometerSet = false;
-    private float[] mR = new float[9];
-    private float[] mOrientation = new float[3];
-    private float mCurrentDegree = 0f;
-    private double MagnitudePrevious = 0;
-    private Integer stepCount = 0;
+    private final float[] lastAccelerometer = new float[3];
+    private final float[] lastMagnetometer = new float[3];
+    private boolean lastAccelerometerSet = false;
+    private boolean lastMagnetometerSet = false;
+    private final float[] mR = new float[9];
+    private final float[] orientation = new float[3];
+    private float currentDegree = 0f;
     private int stepsTaken = 0;
     private int reportedSteps = 0;
     private int stepsDetected = 0;
-    private ImageView compassImage;
-    private float DegreeStart = 0f;
-    TextView DegreeTV, StepCounterTV;
-    private static DecimalFormat df = new DecimalFormat("0.00");
+    ImageView compassImage;
+    TextView degreeTV, stepCounterTV;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     ImageButton playPauseButton;
     ImageButton restartButton;
     boolean isPlay = false;
-    private  UserSingleton userSingleton = UserSingleton.getInstance();
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        restartButton = (ImageButton) findViewById(R.id.restart_button);
-
-
         if(UserSingleton.getInstance().getCurrentUserTheme().equals(constants.LIGHT_THEME)){
             setTheme(R.style.Theme_projet);
         }else{
             setTheme(R.style.Theme_projet_dark);
         }
-        binding = ActivitySensorsBinding.inflate(getLayoutInflater());
+        com.example.projet.databinding.ActivitySensorsBinding binding = ActivitySensorsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
-// Set the button listener
         binding.swapThemeButton.setOnClickListener(v -> {
             swapTheme();
         });
-
         binding.backButton.setOnClickListener(v->{
             Intent mainAct = new Intent(this, MainActivity.class);
             startActivity(mainAct);
             finish();
-
         });
-
         binding.changeProfileButton.setOnClickListener(v->{
             Intent mainAct = new Intent(this, WelcomeActivity.class);
             startActivity(mainAct);
             finish();
-
         });
-        ;
         binding.changeLanguageButton.setOnClickListener(v -> {
             showChangeLanguageDialog();
         });
+
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
@@ -105,7 +89,6 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-
         if (accelerometer == null || gravity == null || linearAcc == null || stepCounter == null || magnetometer == null) {
             System.out.println(NOT_SUPPORTED_MESSAGE);
             Toast t = Toast.makeText(getApplicationContext(), NOT_SUPPORTED_MESSAGE, Toast.LENGTH_SHORT);
@@ -117,6 +100,93 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         }
+    }
+
+    /** Function collecting data from sensors to show functioning compass and step counter on screen
+     * Step Counter inspired from https://gist.github.com/dyadica/93438442857b1a93f19e
+     * Compass inspired from https://www.techrepublic.com/article/pro-tip-create-your-own-magnetic-compass-using-androids-internal-sensors/
+     * and https://www.codespeedy.com/simple-compass-code-with-android-studio/
+     * @param -
+     * @return -
+     */
+    public void onSensorChanged (SensorEvent sensorEvent){
+        compassImage = (ImageView) findViewById(R.id.compass_image);
+        degreeTV = (TextView) findViewById(R.id.DegreeTV);
+        stepCounterTV = (TextView) findViewById(R.id.step_count);
+        playPauseButton = (ImageButton) findViewById(R.id.play_button);
+        restartButton = (ImageButton) findViewById(R.id.restart_button);
+
+        View.OnClickListener restartListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                reportedSteps = 0;
+                stepsDetected = 0;
+                stepsTaken = 0;
+                System.out.println("Number of steps: " + stepsTaken);
+                stepCounterTV.setText(String.valueOf(stepsTaken));
+            }
+        };
+        restartButton.setOnClickListener(restartListener);
+
+        View.OnClickListener togglePlayListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(isPlay){
+                    v.setBackgroundResource(R.drawable.pause_black);
+                }else{
+                    v.setBackgroundResource(R.drawable.play_black);
+                }
+                isPlay = !isPlay;
+            }
+        };
+        playPauseButton.setOnClickListener(togglePlayListener);
+
+
+        if (sensorEvent.sensor == accelerometer) {
+            System.arraycopy(sensorEvent.values, 0, lastAccelerometer, 0, sensorEvent.values.length);
+            lastAccelerometerSet = true;
+        } else if (sensorEvent.sensor == magnetometer) {
+            System.arraycopy(sensorEvent.values, 0, lastMagnetometer, 0, sensorEvent.values.length);
+            lastMagnetometerSet = true;
+        }
+        else if(isPlay) {
+            if (sensorEvent.sensor == stepCounter) {
+                if (reportedSteps < 1) {
+                    // Log the initial value
+                    reportedSteps = (int) sensorEvent.values[0];
+                }
+                stepsTaken = (int) sensorEvent.values[0] - reportedSteps;
+                System.out.println("Number of steps: " + stepsTaken);
+                stepCounterTV.setText(String.valueOf(stepsTaken));
+            } else if (sensorEvent.sensor == stepDetector) {
+                stepsDetected++;
+                System.out.println("Steps detected: " + stepsDetected);
+            }
+        }
+        if (lastAccelerometerSet && lastMagnetometerSet) {
+            SensorManager.getRotationMatrix(mR, null, lastAccelerometer, lastMagnetometer);
+            SensorManager.getOrientation(mR, orientation);
+            float azimuthInRadians = orientation[0];
+            float azimuthInDegress = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
+            System.out.println("Heading: " + df.format(azimuthInDegress) + " degrees");
+            degreeTV.setText("Heading: " + df.format(azimuthInDegress) + " degrees");
+            RotateAnimation ra = new RotateAnimation(
+                    currentDegree,
+                    -azimuthInDegress,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f);
+            ra.setDuration(250);
+            ra.setFillAfter(true);
+            compassImage.startAnimation(ra);
+            currentDegree = -azimuthInDegress;
+        }
+    }
+
+    /** Function auto-generated for SensorEventListener
+     * @param -
+     * @return -
+     */
+    public void onAccuracyChanged (Sensor sensor, int i) {
     }
 
     /** Change the app language
@@ -134,7 +204,6 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
      * @return -
      */
     public void swapTheme() {
-
         if (userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)) {
             userSingleton.setCurrentUserTheme(constants.LIGHT_THEME);
             setTheme(R.style.Theme_projet);
@@ -143,10 +212,8 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             setTheme(R.style.Theme_projet_dark);
             userSingleton.setCurrentUserTheme(constants.DARK_THEME);
         }
-
         finish();
         startActivity(getIntent());
-
     }
 
     /** Show language options to user
@@ -238,82 +305,5 @@ public class SensorsActivity extends AppCompatActivity implements SensorEventLis
             sensorManager.unregisterListener(this, stepCounter);
             sensorManager.unregisterListener(this, magnetometer);
         }
-    }
-
-    public void onSensorChanged (SensorEvent sensorEvent){
-        compassImage = (ImageView) findViewById(R.id.compass_image);
-        DegreeTV = (TextView) findViewById(R.id.DegreeTV);
-        StepCounterTV = (TextView) findViewById(R.id.step_count);
-        playPauseButton = (ImageButton) findViewById(R.id.play_button);
-        restartButton = (ImageButton) findViewById(R.id.restart_button);
-
-        View.OnClickListener restartListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                reportedSteps = 0;
-                stepsDetected = 0;
-                stepsTaken = 0;
-                System.out.println("Number of steps: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + stepsTaken);
-                StepCounterTV.setText(String.valueOf(stepsTaken));
-            }
-        };
-        restartButton.setOnClickListener(restartListener);
-
-        View.OnClickListener togglePlayListerner = new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                if(isPlay){
-                    v.setBackgroundResource(R.drawable.pause_black);
-                }else{
-                    v.setBackgroundResource(R.drawable.play_black);
-                }
-                isPlay = !isPlay; // reverse
-            }
-        };
-        playPauseButton.setOnClickListener(togglePlayListerner);
-
-
-        if (sensorEvent.sensor == accelerometer) { // https://www.techrepublic.com/article/pro-tip-create-your-own-magnetic-compass-using-androids-internal-sensors/
-            System.arraycopy(sensorEvent.values, 0, mLastAccelerometer, 0, sensorEvent.values.length); // https://www.codespeedy.com/simple-compass-code-with-android-studio/
-            mLastAccelerometerSet = true;
-        } else if (sensorEvent.sensor == magnetometer) {
-            System.arraycopy(sensorEvent.values, 0, mLastMagnetometer, 0, sensorEvent.values.length);
-            mLastMagnetometerSet = true;
-        }
-        else if(isPlay) {
-            if (sensorEvent.sensor == stepCounter) { // https://gist.github.com/dyadica/93438442857b1a93f19e
-                if (reportedSteps < 1) {
-                    // Log the initial value
-                    reportedSteps = (int) sensorEvent.values[0];
-                }
-                stepsTaken = (int) sensorEvent.values[0] - reportedSteps;
-                System.out.println("Number of steps: " + stepsTaken);
-                StepCounterTV.setText(String.valueOf(stepsTaken));
-            } else if (sensorEvent.sensor == stepDetector) {
-                stepsDetected++;
-                System.out.println("Steps detected: " + stepsDetected);
-            }
-        }
-        if (mLastAccelerometerSet && mLastMagnetometerSet) {
-            SensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
-            SensorManager.getOrientation(mR, mOrientation);
-            float azimuthInRadians = mOrientation[0];
-            float azimuthInDegress = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
-            System.out.println("Heading: " + df.format(azimuthInDegress) + " degrees");
-            DegreeTV.setText("Heading: " + df.format(azimuthInDegress) + " degrees");
-            RotateAnimation ra = new RotateAnimation(
-                    mCurrentDegree,
-                    -azimuthInDegress,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f);
-            ra.setDuration(250);
-            ra.setFillAfter(true);
-            compassImage.startAnimation(ra);
-            mCurrentDegree = -azimuthInDegress;
-        }
-    }
-
-    public void onAccuracyChanged (Sensor sensor,int i){
-        // Auto-generated
     }
 }

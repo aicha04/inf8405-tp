@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/background"
             android:src="@drawable/restart_black"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="20dp"
             android:layout_below="@id/rectangleView2"
             android:layout_toEndOf="@id/play_button"
