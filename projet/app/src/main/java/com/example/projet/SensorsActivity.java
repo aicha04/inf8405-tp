@@ -33,7 +33,6 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     private Sensor accelerometer;
     private Sensor gravity;
     private Sensor linearAcc;
-    private Sensor stepCounter;
     private Sensor stepDetector;
     private Sensor magnetometer;
     private final float[] lastAccelerometer = new float[3];
@@ -50,8 +49,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     TextView degreeTV, stepCounterTV;
     private static final DecimalFormat df = new DecimalFormat("0.00");
     ToggleButton startPauseButton;
-    Button restartButton;
+    Button resetButton;
     boolean isStart = false;
+
+
+    private float DegreeStart = 0f;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -87,11 +89,9 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         linearAcc = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        if (accelerometer == null || gravity == null || linearAcc == null || stepCounter == null || magnetometer == null) {
+        if (accelerometer == null || gravity == null || linearAcc == null || stepDetector == null || magnetometer == null) {
             System.out.println("Sorry, sensors are unavailable on this device.");
             showToast(getApplicationContext(), R.string.sensors_unavailable);
 
@@ -99,7 +99,7 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, linearAcc, SensorManager.SENSOR_DELAY_UI);
-            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, stepDetector, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         }
     }
@@ -112,11 +112,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
      * @return -
      */
     public void onSensorChanged (SensorEvent sensorEvent){
-        compassImage = (ImageView) findViewById(R.id.compass_image);
-        degreeTV = (TextView) findViewById(R.id.degrees);
-        stepCounterTV = (TextView) findViewById(R.id.step_count);
-        startPauseButton = (ToggleButton) findViewById(R.id.start_pause_button);
-        restartButton = (Button) findViewById(R.id.restart_button);
+        compassImage = findViewById(R.id.compass_image);
+        degreeTV = findViewById(R.id.degrees);
+        stepCounterTV = findViewById(R.id.step_count);
+        startPauseButton = findViewById(R.id.start_pause_button);
+        resetButton = findViewById(R.id.reset_button);
 
         View.OnClickListener restartListener = new View.OnClickListener(){
             @Override
@@ -124,11 +124,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
                 reportedSteps = 0;
                 stepsDetected = 0;
                 stepsTaken = 0;
-                System.out.println("Number of steps: " + stepsTaken);
-                stepCounterTV.setText(String.valueOf(stepsTaken));
+                System.out.println("Steps detected (Reset): " + stepsDetected);
+                stepCounterTV.setText(String.valueOf(stepsDetected));
             }
         };
-        restartButton.setOnClickListener(restartListener);
+        resetButton.setOnClickListener(restartListener);
 
         View.OnClickListener togglePlayListener = new View.OnClickListener(){
             @Override
@@ -138,44 +138,50 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
         };
         startPauseButton.setOnClickListener(togglePlayListener);
 
-
-        if (sensorEvent.sensor == accelerometer) {
-            System.arraycopy(sensorEvent.values, 0, lastAccelerometer, 0, sensorEvent.values.length);
-            lastAccelerometerSet = true;
-        } else if (sensorEvent.sensor == magnetometer) {
-            System.arraycopy(sensorEvent.values, 0, lastMagnetometer, 0, sensorEvent.values.length);
-            lastMagnetometerSet = true;
-        }
-        else if(isStart) {
-            if (sensorEvent.sensor == stepCounter) {
-                if (reportedSteps < 1) {
-                    // Log the initial value
-                    reportedSteps = (int) sensorEvent.values[0];
-                }
-                stepsTaken = (int) sensorEvent.values[0] - reportedSteps;
-                System.out.println("Number of steps: " + stepsTaken);
-                stepCounterTV.setText(String.valueOf(stepsTaken));
-            } else if (sensorEvent.sensor == stepDetector) {
+        if (sensorEvent.sensor == stepDetector) {
+            if(isStart) {
                 stepsDetected++;
                 System.out.println("Steps detected: " + stepsDetected);
+                stepCounterTV.setText(String.valueOf(stepsDetected));
             }
         }
-        if (lastAccelerometerSet && lastMagnetometerSet) {
-            SensorManager.getRotationMatrix(mR, null, lastAccelerometer, lastMagnetometer);
-            SensorManager.getOrientation(mR, orientation);
-            float azimuthInRadians = orientation[0];
-            float azimuthInDegress = (float)(Math.toDegrees(azimuthInRadians)+360)%360;
-            System.out.println("Heading: " + df.format(azimuthInDegress) + " degrees");
-            degreeTV.setText(df.format(azimuthInDegress) + " degrees");
-            RotateAnimation ra = new RotateAnimation(
-                    currentDegree,
-                    -azimuthInDegress,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f);
-            ra.setDuration(250);
-            ra.setFillAfter(true);
-            compassImage.startAnimation(ra);
-            currentDegree = -azimuthInDegress;
+        else {
+//            float degree = Math.round(sensorEvent.values[0]);
+//            degreeTV.setText(Float.toString(degree) + " degrees");
+//            RotateAnimation ra = new RotateAnimation(
+//                    DegreeStart,
+//                    -degree,
+//                    Animation.RELATIVE_TO_SELF, 0.5f,
+//                    Animation.RELATIVE_TO_SELF, 0.5f);
+//            ra.setFillAfter(true);
+//            ra.setDuration(120);
+//            compassImage.startAnimation(ra);
+//            DegreeStart = -degree;
+
+            if (sensorEvent.sensor == accelerometer) {
+                System.arraycopy(sensorEvent.values, 0, lastAccelerometer, 0, sensorEvent.values.length);
+                lastAccelerometerSet = true;
+            } else if (sensorEvent.sensor == magnetometer) {
+                System.arraycopy(sensorEvent.values, 0, lastMagnetometer, 0, sensorEvent.values.length);
+                lastMagnetometerSet = true;
+            }
+            if (lastAccelerometerSet && lastMagnetometerSet) {
+                SensorManager.getRotationMatrix(mR, null, lastAccelerometer, lastMagnetometer);
+                SensorManager.getOrientation(mR, orientation);
+                float azimuthInRadians = orientation[0];
+                float azimuthInDegrees = (float)(Math.toDegrees(azimuthInRadians)+360) % 360;
+                System.out.println("Heading: " + df.format(azimuthInDegrees) + " degrees");
+                degreeTV.setText(df.format(azimuthInDegrees) + " degrees");
+                RotateAnimation ra = new RotateAnimation(
+                        currentDegree,
+                        -azimuthInDegrees,
+                        Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f);
+                ra.setDuration(210);
+                ra.setFillAfter(true);
+                compassImage.startAnimation(ra);
+                currentDegree = -azimuthInDegrees;
+            }
         }
     }
 
@@ -259,11 +265,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     @Override
     public void onResume() {
         super.onResume();
-        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null || magnetometer != null) {
+        if (accelerometer != null && gravity != null && linearAcc != null && stepDetector != null && magnetometer != null) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, linearAcc, SensorManager.SENSOR_DELAY_UI);
-            sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, stepDetector, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
         }
     }
@@ -271,11 +277,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     @Override
     public void onPause() {
         super.onPause();
-        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null || magnetometer != null) {
+        if (accelerometer != null && gravity != null && linearAcc != null && stepDetector != null && magnetometer != null) {
             sensorManager.unregisterListener(this, accelerometer);
             sensorManager.unregisterListener(this, gravity);
             sensorManager.unregisterListener(this, linearAcc);
-            sensorManager.unregisterListener(this, stepCounter);
+            sensorManager.unregisterListener(this, stepDetector);
             sensorManager.unregisterListener(this, magnetometer);
         }
     }
@@ -283,11 +289,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null || magnetometer != null) {
+        if (accelerometer != null && gravity != null && linearAcc != null && stepDetector != null && magnetometer != null) {
             sensorManager.unregisterListener(this, accelerometer);
             sensorManager.unregisterListener(this, gravity);
             sensorManager.unregisterListener(this, linearAcc);
-            sensorManager.unregisterListener(this, stepCounter);
+            sensorManager.unregisterListener(this, stepDetector);
             sensorManager.unregisterListener(this, magnetometer);
         }
     }
@@ -295,11 +301,11 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
     @Override
     public void onStop() {
         super.onStop();
-        if (accelerometer != null && gravity != null && linearAcc != null && stepCounter != null || magnetometer != null) {
+        if (accelerometer != null && gravity != null && linearAcc != null && stepDetector != null && magnetometer != null) {
             sensorManager.unregisterListener(this, accelerometer);
             sensorManager.unregisterListener(this, gravity);
             sensorManager.unregisterListener(this, linearAcc);
-            sensorManager.unregisterListener(this, stepCounter);
+            sensorManager.unregisterListener(this, stepDetector);
             sensorManager.unregisterListener(this, magnetometer);
         }
     }
