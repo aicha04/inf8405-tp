@@ -67,21 +67,10 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
         com.example.projet.databinding.ActivitySensorsBinding binding = ActivitySensorsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        binding.swapThemeButton.setOnClickListener(v -> {
-            swapTheme();
-        });
         binding.backButton.setOnClickListener(v->{
             Intent mainAct = new Intent(this, MainActivity.class);
             startActivity(mainAct);
             finish();
-        });
-        binding.changeProfileButton.setOnClickListener(v->{
-            Intent mainAct = new Intent(this, WelcomeActivity.class);
-            startActivity(mainAct);
-            finish();
-        });
-        binding.changeLanguageButton.setOnClickListener(v -> {
-            showChangeLanguageDialog();
         });
 
 
@@ -146,18 +135,6 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
             }
         }
         else {
-//            float degree = Math.round(sensorEvent.values[0]);
-//            degreeTV.setText(Float.toString(degree) + " degrees");
-//            RotateAnimation ra = new RotateAnimation(
-//                    DegreeStart,
-//                    -degree,
-//                    Animation.RELATIVE_TO_SELF, 0.5f,
-//                    Animation.RELATIVE_TO_SELF, 0.5f);
-//            ra.setFillAfter(true);
-//            ra.setDuration(120);
-//            compassImage.startAnimation(ra);
-//            DegreeStart = -degree;
-
             if (sensorEvent.sensor == accelerometer) {
                 System.arraycopy(sensorEvent.values, 0, lastAccelerometer, 0, sensorEvent.values.length);
                 lastAccelerometerSet = true;
@@ -190,64 +167,6 @@ public class SensorsActivity extends BaseActivity implements SensorEventListener
      * @return -
      */
     public void onAccuracyChanged (Sensor sensor, int i) {
-    }
-
-    /** Change the app language
-     * https://github.com/YarikSOffice/LanguageTest/blob/db5b3742bfcc083459e4f23aeb91c877babb0968/app/src/main/java/com/yariksoffice/languagetest/ui/SettingsActivity.java
-     * @param -
-     * @return -
-     */
-    private void setNewLocale(String lang) {
-        App.localeManager.setNewLocale(this, lang);
-        recreate();
-    }
-
-    /** Update the app theme
-     * @param -
-     * @return -
-     */
-    public void swapTheme() {
-        if (userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)) {
-            userSingleton.setCurrentUserTheme(constants.LIGHT_THEME);
-            setTheme(R.style.Theme_projet);
-        } else {
-            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
-            setTheme(R.style.Theme_projet_dark);
-            userSingleton.setCurrentUserTheme(constants.DARK_THEME);
-        }
-        finish();
-        startActivity(getIntent());
-    }
-
-    /** Show language options to user
-     * https://www.youtube.com/watch?v=zILw5eV9QBQ
-     * @param -
-     * @return -
-     */
-    private void showChangeLanguageDialog() {
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(SensorsActivity.this);
-        mBuilder.setTitle(getResources().getString(R.string.choose_language));
-        mBuilder.setSingleChoiceItems(constants.LANGUAGES, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        // French
-                        setNewLocale(App.localeManager.LANGUAGE_FRENCH);
-                        break;
-                    case 1:
-                        // English
-                        setNewLocale(App.localeManager.LANGUAGE_ENGLISH);
-                        break;
-                    default:
-                        Log.d("PROFILE", "No language chosen");
-                        break;
-                }
-                dialog.dismiss();
-            }
-        });
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
     }
 
     private final View.OnClickListener onClickListener = new View.OnClickListener() {

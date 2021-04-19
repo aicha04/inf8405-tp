@@ -120,45 +120,14 @@
     </RelativeLayout>
 
     <ImageButton
-        android:id="@+id/change_language_button"
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/background"
         android:layout_centerHorizontal="true"
-        android:src="?attr/languageIcon"
+        android:layout_marginTop="300dp"
+        android:src="?attr/backIcon"
         android:layout_above="@+id/container_button"
         />
-    <RelativeLayout
-        android:id="@+id/container_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-        <ImageButton
-            android:id="@+id/swap_theme_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/background"
-            android:layout_toEndOf="@id/change_profile_button"
-            android:src="?attr/themeIcon"
-            android:layout_margin="20dp"
-            />
-        <ImageButton
-            android:id="@+id/back_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/background"
-            android:src="?attr/backIcon"
-            android:layout_margin="20dp"
-            />
-        <ImageButton
-            android:id="@+id/change_profile_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/background"
-            android:src="?attr/switchProfileIcon"
-            android:layout_toEndOf="@id/back_button"
-            android:layout_margin="20dp"
-            />
-    </RelativeLayout>
+
 </RelativeLayout>
