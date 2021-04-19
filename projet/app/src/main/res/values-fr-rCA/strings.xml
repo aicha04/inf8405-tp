@@ -6,8 +6,13 @@
     <string name="deviceAddressError">Adresse non disponible</string>
     <string name="deviceClassError">Classe non disponible</string>
     <string name="deviceMajorClassError">Classe majeure non disponible</string>
-    <string name="deviceNameError">Nom non disponible</string>
+    <string name="deviceNameError">Pas de nom</string>
     <string name="deviceTypeError">Type non disponible</string>
+
+    <string name="friendly_name">Surnom</string>
+    <string name="major_category">Categorie principale</string>
+    <string name="category">Categorie</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
@@ -51,5 +56,6 @@
 
     <string name="bandwidth">Bande passante</string>
     <string name="wifi_speed">Vitesse WiFi</string>
+
 
 </resources>
