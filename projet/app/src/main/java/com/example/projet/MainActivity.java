@@ -203,6 +203,18 @@ public class MainActivity extends BaseActivity{
                     discoverDevices();
                 }
             }
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d(TAG, "Provider disabled");
+                if (provider.equals("network")) {
+                    Log.d(TAG, provider + " provider");
+                    if (!bluetoothAdapter.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+            }
+
+            }
         };
 
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
