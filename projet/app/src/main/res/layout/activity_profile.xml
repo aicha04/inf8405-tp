@@ -6,72 +6,76 @@
     android:layout_height="match_parent"
     android:background="?attr/background"
     tools:context=".Profile">
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/background"
+        android:src="?attr/backIcon" />
+
     <RelativeLayout
         android:id="@+id/container_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        >
+        android:layout_below="@id/back_button"
+        android:layout_marginStart="20dp">
+
         <RelativeLayout
             android:id="@+id/container_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/profile_photo_view"
-            android:layout_margin="20dp"
             android:layout_centerVertical="true"
-            >
+            android:layout_margin="20dp"
+            android:layout_toEndOf="@+id/profile_photo_view">
+
             <TextView
                 android:id="@+id/username_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
                 android:text="@string/username"
-                />
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/username_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
                 android:layout_toRightOf="@id/username_view"
-                />
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/user_theme_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/theme"
-                android:textColor="?attr/textColor"
                 android:layout_below="@+id/username_view"
-                />
+                android:text="@string/theme"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/theme_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
-                android:layout_toRightOf="@id/user_theme_view"
                 android:layout_alignBottom="@id/user_theme_view"
-                />
+                android:layout_toRightOf="@id/user_theme_view"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/user_language_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/language"
-                android:textColor="?attr/textColor"
                 android:layout_below="@+id/user_theme_view"
-                />
+                android:text="@string/language"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/language_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/textColor"
-                android:layout_toRightOf="@id/user_language_view"
                 android:layout_alignBottom="@id/user_language_view"
-                />
+                android:layout_toRightOf="@id/user_language_view"
+                android:textColor="?attr/textColor" />
         </RelativeLayout>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_photo_view"
             android:layout_width="200dp"
@@ -83,15 +87,7 @@
 
             app:layout_constraintVertical_bias="0.347" />
     </RelativeLayout>
-    <ImageButton
-        android:id="@+id/change_language_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/background"
-        android:layout_centerHorizontal="true"
-        android:src="?attr/languageIcon"
-        android:layout_above="@+id/container_button"
-        />
+
     <RelativeLayout
         android:id="@+id/container_button"
         android:layout_width="wrap_content"
@@ -111,11 +107,11 @@
             />
 
         <ImageButton
-            android:id="@+id/back_button"
+            android:id="@+id/change_language_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/background"
-            android:src="?attr/backIcon"
+            android:src="?attr/languageIcon"
             android:layout_margin="20dp"
             />
 
@@ -125,7 +121,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/background"
             android:src="?attr/switchProfileIcon"
-            android:layout_toEndOf="@id/back_button"
+            android:layout_toEndOf="@id/change_language_button"
             android:layout_margin="20dp"
             />
     </RelativeLayout>
