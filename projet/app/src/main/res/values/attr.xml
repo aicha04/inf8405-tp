@@ -12,8 +12,4 @@
     <attr name="createProfileIcon" format="reference"/>
     <attr name="cameraIcon" format="reference"/>
     <attr name="sensorsIcon" format="reference"/>
-    <attr name="playIcon" format="reference"/>
-    <attr name="pauseIcon" format="reference"/>
-    <attr name="restartIcon" format="reference"/>
-
 </resources>
