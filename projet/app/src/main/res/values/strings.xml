@@ -43,7 +43,7 @@
     <string name="add_favorite">ADD TO FAVORITES</string>
     <string name="step_counter">Step Counter</string>
     <string name="step_count">Step count: </string>
-    <string name="heading">Heading: </string>
+    <string name="heading">Heading: &#160;</string>
     <!-- Toast -->
     <string name="enable_BT">Enable Bluetooth to discover devices</string>
     <string name="enable_BT_and_GPS">Enable Bluetooth and localization to discover devices</string>
@@ -59,7 +59,7 @@
 
     <string name="bandwidth">Bandwidth</string>
     <string name="_0_Mbps" translatable="false">0 Mbps</string>
-    <string name="wifi_speed">WiFi Speed</string>
+    <string name="wifi_speed">WiFi Speed:</string>
 
 
 
