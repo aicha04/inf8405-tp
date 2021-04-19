@@ -9,20 +9,6 @@
     android:background="?attr/background"
     tools:context=".WelcomeActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/buttonTextColor"
-        android:layout_gravity="center"
-        android:id="@+id/warning" />
-
-    <GridView
-        android:id="@+id/grid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numColumns="3"
-        android:layout_centerHorizontal="true"/>
-
     <RelativeLayout
         android:id="@+id/container_button"
         android:layout_width="wrap_content"
@@ -48,4 +34,20 @@
             android:layout_margin="20dp"
             />
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/buttonTextColor"
+        android:layout_gravity="center"
+        android:id="@+id/warning" />
+
+    <GridView
+        android:id="@+id/grid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numColumns="3"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/container_button"/>
+
 </RelativeLayout>
