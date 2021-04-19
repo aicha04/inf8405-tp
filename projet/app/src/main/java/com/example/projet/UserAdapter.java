@@ -51,7 +51,11 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
                 @Override
                 public void onClick(View v) {
                     if (v.getContext() instanceof WelcomeActivity) {
-                        ((WelcomeActivity)v.getContext()).openAccount(position);
+                        try {
+                            ((WelcomeActivity)v.getContext()).openAccount(position);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 }

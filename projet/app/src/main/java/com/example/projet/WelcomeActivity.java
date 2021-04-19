@@ -26,6 +26,8 @@ import com.google.firebase.storage.internal.Sleeper;
 import java.util.ArrayList;
 import com.example.projet.databinding.ActivityWelcomeBinding;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
 public class WelcomeActivity extends AppCompatActivity {
     private Constants constants = new Constants();
     private UserSingleton userSingleton = UserSingleton.getInstance();
@@ -90,10 +92,10 @@ public class WelcomeActivity extends AppCompatActivity {
             binding.grid.setAdapter(adapter);
     }
 
-    public void openAccount(int position) {
+    public void openAccount(int position) throws InterruptedException {
         userSingleton.setCurrentUser(userSingleton.getAllUserInfos().get(position));
         userSingleton.fetchCurrentUserDevices();
-
+        TimeUnit.MILLISECONDS.sleep(300);
         Intent mainAct = new Intent(this, MainActivity.class);
         startActivity(mainAct);
         finish();

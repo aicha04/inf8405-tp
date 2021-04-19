@@ -34,6 +34,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity{
         initBluetooth();
         createMap();
 
-        System.out.println("onCreate: " + userSingleton.getCurrentUserDevices().size());
+        Log.d(TAG, "onCreate: " + userSingleton.getCurrentUserDevices().size());
 
         // Add markers on the map
         for (int i = 0; i < userSingleton.getCurrentUserDevices().size(); i++) {

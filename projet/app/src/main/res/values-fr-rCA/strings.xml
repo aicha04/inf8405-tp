@@ -26,9 +26,12 @@
     <string name="battery_usage">Utilisation de la batterie</string>
     <string name="uplink">Téléversement:</string>
     <string name="downlink">Téléchargement:</string>
-    <string name="theme">Thème : </string>
-    <string name="username">Nom d\'usager : </string>
-    <string name="language">Langue : </string>
+    <string name="theme">Thème : &#160;</string>
+    <string name="username">Nom d\'usager : &#160;</string>
+    <string name="language">Langue : &#160; </string>
+    <string name="language_value">Français</string>
+    <string name="light_theme_value">Clair</string>
+    <string name="dark_theme_value">Sombre</string>
     <string name="no_profile_found">Aucun profil trouvé !</string>
     <string name="cancel">Annuler</string>
     <string name="remove_favorite">RETIRER DES FAVORIS</string>

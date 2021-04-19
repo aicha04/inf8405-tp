@@ -27,9 +27,12 @@
     <string name="battery_usage">Battery usage</string>
     <string name="uplink">Uplink:</string>
     <string name="downlink">Downlink:</string>
-    <string name="theme">Theme : </string>
-    <string name="username">Username : </string>
-    <string name="language">Language : </string>
+    <string name="theme">Theme : &#160;</string>
+    <string name="username">Username : &#160;</string>
+    <string name="language">Language : &#160;</string>
+    <string name="language_value">English</string>
+    <string name="light_theme_value">Light</string>
+    <string name="dark_theme_value">Dark</string>
     <string name="no_profile_found">No profile found !</string>
     <string name="cancel">Cancel</string>
     <string name="remove_favorite">REMOVE FROM FAVORITES</string>
