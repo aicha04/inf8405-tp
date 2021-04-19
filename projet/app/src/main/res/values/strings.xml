@@ -5,8 +5,12 @@
     <string name="deviceAddressError">Address unavailable</string>
     <string name="deviceClassError">Class unavailable</string>
     <string name="deviceMajorClassError">Major class unavailable</string>
-    <string name="deviceNameError">Name unavailable</string>
+    <string name="deviceNameError">No name</string>
     <string name="deviceTypeError">Type unavailable</string>
+
+    <string name="friendly_name">Friendly name</string>
+    <string name="major_category">Major Category</string>
+    <string name="category">Category</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
@@ -56,5 +60,7 @@
     <string name="bandwidth">Bandwidth</string>
     <string name="_0_Mbps" translatable="false">0 Mbps</string>
     <string name="wifi_speed">WiFi Speed</string>
+
+
 
 </resources>
