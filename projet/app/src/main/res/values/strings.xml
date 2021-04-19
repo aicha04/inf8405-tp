@@ -27,7 +27,6 @@
     <string name="battery_usage">Battery usage</string>
     <string name="uplink">Uplink:</string>
     <string name="downlink">Downlink:</string>
-    <string name="mb" translatable="false">MB</string>
     <string name="theme">Theme : </string>
     <string name="username">Username : </string>
     <string name="language">Language : </string>
@@ -51,5 +50,8 @@
     <string name="enable_GPS">Enable localization to get directions</string>
     <string name="sensors_unavailable">Sorry, sensors are unavailable on this device.</string>
 
+    <string name="bandwidth">Bandwidth</string>
+    <string name="_0_Mbps" translatable="false">0 Mbps</string>
+    <string name="wifi_speed">WiFi Speed</string>
 
 </resources>

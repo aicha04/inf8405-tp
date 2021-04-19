@@ -49,5 +49,7 @@
     <string name="enable_GPS">Activer la localisation</string>
     <string name="sensors_unavailable">Désolé, certains capteurs ne sont pas disponibles.</string>
 
+    <string name="bandwidth">Bande passante</string>
+    <string name="wifi_speed">Vitesse WiFi</string>
 
 </resources>

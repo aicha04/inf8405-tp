@@ -29,41 +29,107 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/battery_usage"/>
+                android:text="@string/battery_usage"
+                android:textColor="?attr/textColor"
+                android:textSize="25dp"/>
 
             <com.jjoe64.graphview.GraphView
                 android:layout_width = "match_parent"
                 android:layout_height = "200dp"
-                android:id = "@+id/graph" />
+                android:id = "@+id/graph"
+                android:layout_margin="5dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
             android:layout_weight="1">
             <TextView
-                android:id="@+id/uplink_view"
-                android:text="@string/uplink"
+                android:id="@+id/bandwidth_title"
+                android:text="@string/bandwidth"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal" />
-            <TextView
-                android:text="@string/mb"
-                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="?attr/textColor"
+                android:textSize="25dp"/>
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal" />
-            <TextView
-                android:id="@+id/downlink_view"
-                android:text="@string/downlink"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:text="@string/uplink"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+
+                    android:textSize="20dp"/>
+                <TextView
+                    android:id="@+id/uplink_view"
+                    android:text="@string/_0_Mbps"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginStart="5dp"
+                    android:textSize="40dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal"/>
-            <TextView
-                android:text="@string/mb"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <TextView
+
+                    android:text="@string/downlink"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+
+                    android:textSize="20dp"/>
+                <TextView
+                    android:id="@+id/downlink_view"
+                    android:text="@string/_0_Mbps"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginStart="5dp"
+                    android:textSize="40dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
+                <TextView
+
+                    android:text="@string/wifi_speed"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginTop="5dp"
+                    android:textSize="20dp"/>
+                <TextView
+                    android:id="@+id/signal_level_view"
+                    android:text="@string/_0_Mbps"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:layout_marginStart="5dp"
+                    android:textSize="40dp"/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
