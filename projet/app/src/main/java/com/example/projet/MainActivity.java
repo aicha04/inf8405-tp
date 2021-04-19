@@ -34,6 +34,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity{
         initBluetooth();
         createMap();
 
-        System.out.println("onCreate: " + userSingleton.getCurrentUserDevices().size());
+        Log.d(TAG, "onCreate: " + userSingleton.getCurrentUserDevices().size());
 
         // Add markers on the map
         for (int i = 0; i < userSingleton.getCurrentUserDevices().size(); i++) {
@@ -202,6 +203,18 @@ public class MainActivity extends BaseActivity{
                     discoverDevices();
                 }
             }
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d(TAG, "Provider disabled");
+                if (provider.equals("network")) {
+                    Log.d(TAG, provider + " provider");
+                    if (!bluetoothAdapter.isEnabled()) {
+                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+            }
+
+            }
         };
 
         mLocationOverlay = new MyLocationNewOverlay(mGpsMyLocationProvider, map);
@@ -309,26 +322,12 @@ public class MainActivity extends BaseActivity{
         Log.d(TAG, "onResume");
         //this will refresh the osmdroid configuration on resuming.
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
-        System.out.println("---------well2----------");
         discoverDevices();
-        addBatteryLevel();
-
-    }
-    private void addBatteryLevel(){
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        int batteryPct = level * 100 / (int)scale;
-
         AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
-        ArrayList<Date> timestamps = analyticsInstance.getTimeStamps();
-        ArrayList<Integer> batteryLevels = analyticsInstance.getBatteryLevels();
-        batteryLevels.add(batteryPct);
-        timestamps.add(new Date());
-        System.out.println("---------------"+timestamps.size()+ "-------------");
+        analyticsInstance.addBatteryLevel(getApplicationContext());
+
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -755,12 +754,8 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
         unregisterReceiver(BTStatusReceiver);
         unregisterReceiver(discoverDevicesReceiver);
-        clearBatteryGraph();
     }
-    private void clearBatteryGraph(){
-        AppAnalyticsSingleton.getInstance().getTimeStamps().clear();
-        AppAnalyticsSingleton.getInstance().getBatteryLevels().clear();
-    }
+
     void displayProfile() {
         Intent profileActivity = new Intent(MainActivity.this, Profile.class);
         startActivity(profileActivity);
@@ -789,7 +784,11 @@ public class MainActivity extends BaseActivity{
     @Override
     public void onStop(){
         super.onStop();
-        clearBatteryGraph();
+        if(AppAnalyticsSingleton.getInstance().getTimeStamps().size() % 2 == 1){
+            AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
+            analyticsInstance.addBatteryLevel(getApplicationContext());
+        }
+
     }
 
 

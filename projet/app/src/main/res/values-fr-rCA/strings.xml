@@ -6,8 +6,13 @@
     <string name="deviceAddressError">Adresse non disponible</string>
     <string name="deviceClassError">Classe non disponible</string>
     <string name="deviceMajorClassError">Classe majeure non disponible</string>
-    <string name="deviceNameError">Nom non disponible</string>
+    <string name="deviceNameError">Pas de nom</string>
     <string name="deviceTypeError">Type non disponible</string>
+
+    <string name="friendly_name">Surnom</string>
+    <string name="major_category">Categorie principale</string>
+    <string name="category">Categorie</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
@@ -26,16 +31,19 @@
     <string name="battery_usage">Utilisation de la batterie</string>
     <string name="uplink">Téléversement:</string>
     <string name="downlink">Téléchargement:</string>
-    <string name="theme">Thème : </string>
-    <string name="username">Nom d\'usager : </string>
-    <string name="language">Langue : </string>
+    <string name="theme">Thème : &#160;</string>
+    <string name="username">Nom d\'usager : &#160;</string>
+    <string name="language">Langue : &#160; </string>
+    <string name="language_value">Français</string>
+    <string name="light_theme_value">Clair</string>
+    <string name="dark_theme_value">Sombre</string>
     <string name="no_profile_found">Aucun profil trouvé !</string>
     <string name="cancel">Annuler</string>
     <string name="remove_favorite">RETIRER DES FAVORIS</string>
     <string name="add_favorite">AJOUTER AUX FAVORIS</string>
     <string name="step_counter">Compteur de pas</string>
     <string name="step_count">Nombre de pas: </string>
-    <string name="heading">Cap: </string>
+    <string name="heading">Cap: &#160;</string>
     <!-- Toast -->
     <string name="enable_BT">Activer Bluetooth</string>
     <string name="enable_BT_and_GPS">Activer Bluetooth et la localisation</string>
@@ -48,6 +56,9 @@
     <string name="device_added_favorite">Appareil ajouté aux favoris</string>
     <string name="enable_GPS">Activer la localisation</string>
     <string name="sensors_unavailable">Désolé, certains capteurs ne sont pas disponibles.</string>
+
+    <string name="bandwidth">Bande passante</string>
+    <string name="wifi_speed">Vitesse WiFi:</string>
 
 
 </resources>

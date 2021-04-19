@@ -50,7 +50,11 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
             // click listener for our item of list view.
             listItemView.setOnClickListener(v -> {
                 if (v.getContext() instanceof WelcomeActivity) {
-                    ((WelcomeActivity)v.getContext()).openAccount(position);
+                    try {
+                        ((WelcomeActivity)v.getContext()).openAccount(position);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             return listItemView;

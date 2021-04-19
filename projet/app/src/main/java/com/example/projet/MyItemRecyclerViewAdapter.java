@@ -51,7 +51,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         mValues = userSingleton.getCurrentUserDevices();
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
-        String friendlyName = "No name";
+        String friendlyName = holder.mContentView.getResources().getString(R.string.deviceNameError);
         if(mValues.get(position).friendlyName !=null)
             friendlyName = mValues.get(position).friendlyName;
         holder.mContentView.setText(friendlyName);

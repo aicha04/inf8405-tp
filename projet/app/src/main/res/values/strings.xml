@@ -5,8 +5,12 @@
     <string name="deviceAddressError">Address unavailable</string>
     <string name="deviceClassError">Class unavailable</string>
     <string name="deviceMajorClassError">Major class unavailable</string>
-    <string name="deviceNameError">Name unavailable</string>
+    <string name="deviceNameError">No name</string>
     <string name="deviceTypeError">Type unavailable</string>
+
+    <string name="friendly_name">Friendly name</string>
+    <string name="major_category">Major Category</string>
+    <string name="category">Category</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Layout -->
@@ -27,17 +31,19 @@
     <string name="battery_usage">Battery usage</string>
     <string name="uplink">Uplink:</string>
     <string name="downlink">Downlink:</string>
-    <string name="mb" translatable="false">MB</string>
-    <string name="theme">Theme : </string>
-    <string name="username">Username : </string>
-    <string name="language">Language : </string>
+    <string name="theme">Theme : &#160;</string>
+    <string name="username">Username : &#160;</string>
+    <string name="language">Language : &#160;</string>
+    <string name="language_value">English</string>
+    <string name="light_theme_value">Light</string>
+    <string name="dark_theme_value">Dark</string>
     <string name="no_profile_found">No profile found !</string>
     <string name="cancel">Cancel</string>
     <string name="remove_favorite">REMOVE FROM FAVORITES</string>
     <string name="add_favorite">ADD TO FAVORITES</string>
     <string name="step_counter">Step Counter</string>
     <string name="step_count">Step count: </string>
-    <string name="heading">Heading: </string>
+    <string name="heading">Heading: &#160;</string>
     <!-- Toast -->
     <string name="enable_BT">Enable Bluetooth to discover devices</string>
     <string name="enable_BT_and_GPS">Enable Bluetooth and localization to discover devices</string>
@@ -50,6 +56,11 @@
     <string name="device_added_favorite">Device added to favorites</string>
     <string name="enable_GPS">Enable localization to get directions</string>
     <string name="sensors_unavailable">Sorry, sensors are unavailable on this device.</string>
+
+    <string name="bandwidth">Bandwidth</string>
+    <string name="_0_Mbps" translatable="false">0 Mbps</string>
+    <string name="wifi_speed">WiFi Speed:</string>
+
 
 
 </resources>

@@ -135,11 +135,16 @@ public class DeviceInfoFragment extends Fragment {
     private String setInfoContent(){
         Device device = userSingleton.getCurrentUserDevices().get(deviceIndex);
         String mac = "Mac: " + device.id;
-        String friendlyName  = "Friendly Name: " + device.friendlyName;
-        String majorCategory = "Major Category: " + device.classMajorCategory;
-        String category = "Category: " + device.classCategory;
-        String position  = "position: " + device.position;
-        return mac + "\n" + friendlyName + "\n" + majorCategory + "\n" + category + "\n" + position;
+        String friendlyName  = getString(R.string.friendly_name) + ": " + getString(R.string.deviceNameError);
+        if(device.friendlyName != null){
+            friendlyName  = getString(R.string.friendly_name) + ": " + device.friendlyName;
+        }
+
+        String majorCategory = getString(R.string.major_category) + ": " + device.classMajorCategory;
+        String category = getString(R.string.category) + ": " + device.classCategory;
+        String type = "Type: " + device.deviceType;
+        String position  = "Position: " + device.position;
+        return mac + "\n" + friendlyName + "\n" + majorCategory + "\n" + category + "\n" + type + "\n" + position;
 
     }
     /**Update favorites button text
