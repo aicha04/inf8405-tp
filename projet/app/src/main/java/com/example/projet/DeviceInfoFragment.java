@@ -36,12 +36,8 @@ public class DeviceInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    private final View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickBack(v);
-        }
-    };
+    private final View.OnClickListener onClickListener = v -> onClickBack(v);
+
     public void onClickBack(final View view) {
         if (view.getContext() instanceof MainActivity) {
             ((MainActivity)view.getContext()).swapToListFragment();
@@ -51,6 +47,7 @@ public class DeviceInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         language = App.localeManager.getLanguage();
+
         // Inflate the layout for this fragment
         binding = FragmentDeviceInfoBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -58,44 +55,39 @@ public class DeviceInfoFragment extends Fragment {
         TextView deviceInfoView = (TextView) view.findViewById(R.id.device_info);
         String infoContent = setInfoContent();
         deviceInfoView.setText(infoContent);
+
         // Set listeners for buttons
         ImageButton back_button = (ImageButton) view.findViewById(R.id.back_button);
         back_button.setOnClickListener(onClickListener);
 
         updateFavoriteButton();
-        binding.favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
-                if (device.isFavorite == 0) {
-                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_added_favorite);
-                    userSingleton.addToFavorites(deviceIndex);
-                } else {
-                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_removed_favorite);
-                    userSingleton.removeFromFavorites(deviceIndex);
-                }
-                updateFavoriteButton();
+        binding.favorite.setOnClickListener((View.OnClickListener) v -> {
+            Device device =  userSingleton.getCurrentUserDevices().get(deviceIndex);
+            if (device.isFavorite == 0) {
+                ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_added_favorite);
+                userSingleton.addToFavorites(deviceIndex);
+            } else {
+                ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.device_removed_favorite);
+                userSingleton.removeFromFavorites(deviceIndex);
             }
+            updateFavoriteButton();
         });
 
         ImageButton directions_button = (ImageButton) view.findViewById(R.id.directions);
-        directions_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        directions_button.setOnClickListener((View.OnClickListener) v -> {
 
-                if (((MainActivity)getActivity()).isGPSEnabled()) {
-                    String[] latlon = userSingleton.getCurrentUserDevices().get(deviceIndex).position.split(",");
-                    String latitude = latlon[0];
-                    String longitude = latlon[1];
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
-                } else {
-                    ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.enable_GPS);;
-                }
-
+            if (((MainActivity)getActivity()).isGPSEnabled()) {
+                String[] latlon = userSingleton.getCurrentUserDevices().get(deviceIndex).position.split(",");
+                String latitude = latlon[0];
+                String longitude = latlon[1];
+                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + latitude + "," + longitude);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+            } else {
+                ((MainActivity)getActivity()).showToast(((MainActivity)getActivity()).getApplicationContext(), R.string.enable_GPS);;
             }
+
         });
 
         ImageButton share_button = (ImageButton) view.findViewById(R.id.share);

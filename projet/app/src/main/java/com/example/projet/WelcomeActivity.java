@@ -29,8 +29,6 @@ import java.util.Locale;
 public class WelcomeActivity extends AppCompatActivity {
     private Constants constants = new Constants();
     private UserSingleton userSingleton = UserSingleton.getInstance();
-    private GridView grid = null;
-    private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
     private String language;
     private ActivityWelcomeBinding binding;
@@ -39,7 +37,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
@@ -85,11 +82,19 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /** Load grid and display all profiles in the database
+     * @param -
+     * @return -
+     */
     void loadGrid(){
-            UserAdapter adapter = new UserAdapter(WelcomeActivity.this, userSingleton.getAllUserInfos());
-            binding.grid.setAdapter(adapter);
+        UserAdapter adapter = new UserAdapter(WelcomeActivity.this, userSingleton.getAllUserInfos());
+        binding.grid.setAdapter(adapter);
     }
 
+    /** Open specific user profile
+     * @param position - the user position in users array(userSingleton)
+     * @return
+     */
     public void openAccount(int position) {
         userSingleton.setCurrentUser(userSingleton.getAllUserInfos().get(position));
         userSingleton.fetchCurrentUserDevices();

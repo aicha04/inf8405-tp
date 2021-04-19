@@ -18,8 +18,6 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 public class UserAdapter extends ArrayAdapter<UserInfo> {
-        private  UserSingleton userSingleton = UserSingleton.getInstance();
-        // constructor for our list view adapter.
 
         private static ImageView profilePictureView = null;
         public UserAdapter(@NonNull Context context, ArrayList<UserInfo> dataModalArrayList) {
@@ -41,32 +39,34 @@ public class UserAdapter extends ArrayAdapter<UserInfo> {
             TextView usernameView = listItemView.findViewById(R.id.username);
             profilePictureView = listItemView.findViewById(R.id.photo);
 
+            //display username
             usernameView.setText(currentUser.getUserId());
+
+            //load profile picture
             if(currentUser.hasProfilePicture()){
                 loadProfilePicture(currentUser.getUserId());
             }
 
             // click listener for our item of list view.
-            listItemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (v.getContext() instanceof WelcomeActivity) {
-                        ((WelcomeActivity)v.getContext()).openAccount(position);
-                    }
-
+            listItemView.setOnClickListener(v -> {
+                if (v.getContext() instanceof WelcomeActivity) {
+                    ((WelcomeActivity)v.getContext()).openAccount(position);
                 }
             });
             return listItemView;
         }
 
 
+    /**Load user profile picture with Glide
+     * @param  -
+     * @return -
+     */
     private void loadProfilePicture(String userId){
         try {
             // Reference to an image file in Cloud Storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userId);
 
             // Download directly from StorageReference using Glide
-            // (See MyAppGlideModule for Loader registration)
             Glide.with(getContext())
                     .load(storageReference)
                     .into(profilePictureView);

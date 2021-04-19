@@ -50,14 +50,12 @@ public class Profile extends BaseActivity {
             Intent mainAct = new Intent(this, MainActivity.class);
             startActivity(mainAct);
             finish();
-
         });
 
         binding.changeProfileButton.setOnClickListener(v->{
             Intent mainAct = new Intent(this, WelcomeActivity.class);
             startActivity(mainAct);
             finish();
-
         });
 ;
         binding.changeLanguageButton.setOnClickListener(v -> {
@@ -127,7 +125,6 @@ public class Profile extends BaseActivity {
      * @return -
      */
     public void swapTheme() {
-
         if (userSingleton.getCurrentUserTheme().equals(constants.DARK_THEME)) {
             userSingleton.setCurrentUserTheme(constants.LIGHT_THEME);
             setTheme(R.style.Theme_projet);
@@ -136,21 +133,21 @@ public class Profile extends BaseActivity {
             setTheme(R.style.Theme_projet_dark);
             userSingleton.setCurrentUserTheme(constants.DARK_THEME);
         }
-
         finish();
         startActivity(getIntent());
-
     }
 
+    /**Load user profile picture with Glide
+     * @param  -
+     * @return -
+     */
     //Source: https://github.com/firebase/FirebaseUI-Android/blob/master/storage/README.md
-
     private void loadProfilePicture(){
         try {
             // Reference to an image file in Cloud Storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(userSingleton.getCurrentUserId());
 
             // Download directly from StorageReference using Glide
-            // (See MyAppGlideModule for Loader registration)
            Glide.with(this /* context */)
                     .load(storageReference)
                     .into(binding.profilePhotoView);

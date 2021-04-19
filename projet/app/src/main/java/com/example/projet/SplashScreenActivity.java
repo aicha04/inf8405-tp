@@ -77,14 +77,12 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-
                 //create intent to start main activity
                 Intent i = new Intent(SplashScreenActivity.this, WelcomeActivity.class);
                 startActivity(i);
 
                 // close this activity
                 finish();
-
             }
         }, time);
 
@@ -98,14 +96,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     void setUpSharedPreferences(){
         File file = new File(constants.SHARED_PREFERENCES_PATH);
         if(!file.exists()){
-//            sharedPreferences = getSharedPreferences(constants.SHARED_PREFERENCES_NAME, SplashScreenActivity.this.MODE_PRIVATE);
-//            if(sharedPreferences.contains(constants.SHARED_USER_ID)){
-//                userSingleton.setUserId(sharedPreferences.getString(constants.SHARED_USER_ID, ""));
-//            }
-//            if(sharedPreferences.contains(constants.CURRENT_THEME)){
-//                userSingleton.setCurrentTheme(sharedPreferences.getString(constants.CURRENT_THEME, constants.LIGHT_THEME));
-//            }
-//        }else{
             Log.d("SplashScreen", "first time opening app");
             sharedPreferences = getApplicationContext().getSharedPreferences(constants.SHARED_PREFERENCES_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();

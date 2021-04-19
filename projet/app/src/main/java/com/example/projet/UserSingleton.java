@@ -1,9 +1,7 @@
 package com.example.projet;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,18 +12,9 @@ public class UserSingleton {
    public static final UserSingleton instance = new UserSingleton();
     private Constants constants = new Constants();
     public UserInfo currentUser = new UserInfo();
-    private  String currentTheme = constants.LIGHT_THEME;
-    private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-
-    public void setAllUserInfos(ArrayList<UserInfo> allUserInfos) {
-        this.allUserInfos = allUserInfos;
-    }
+    private DatabaseReference databaseRef ;
 
     private ArrayList<UserInfo> allUserInfos = new ArrayList<UserInfo>();
-
-    public void setDevices(ArrayList<Device> devices) {
-        this.devices = devices;
-    }
 
     private ArrayList<Device> devices = new ArrayList<>();
 
@@ -34,6 +23,10 @@ public class UserSingleton {
     }
 
     private UserSingleton() {
+        //Enabling Offline Capabilities
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
+        databaseRef = database.getReference();
     }
 
     /**Get the instance of the singleton
@@ -48,10 +41,10 @@ public class UserSingleton {
      * @param  -
      * @return the user id
      */
-
     public void setCurrentUser(UserInfo user) {
         this.currentUser = user;
     }
+
     /**Get devices
      * @param  -
      * @return devices
@@ -68,7 +61,7 @@ public class UserSingleton {
         this.devices = new ArrayList<>();
     }
 
-    /** Retrieve user saved devices from firebase database
+    /** Retrieve current user saved devices from firebase database
      * @param -
      * @return -
      */
@@ -175,20 +168,35 @@ public class UserSingleton {
         return false;
     }
 
-
+    /**Add new user to the database
+     * @param  user the new user information
+     * @return -
+     */
     public void addNewUser(UserInfo user){
         allUserInfos.add(user);
         databaseRef.child(constants.USER_INFO_DATABASE_NAME).child(user.getUserId()).setValue(user);
     }
 
+    /**Get current user information
+     * @param
+     * @return current user information
+     */
     public UserInfo getCurrentUser() {
         return currentUser;
     }
 
+    /**Get current user id
+     * @param
+     * @return current user information
+     */
     public String getCurrentUserId() {
         return currentUser.getUserId();
     }
 
+    /**Get update user information
+     * @param  userInfo the new user with updated information
+     * @return
+     */
     public void updateUserInfo(UserInfo userInfo){
         databaseRef.child(constants.USER_INFO_DATABASE_NAME).child(userInfo.getUserId()).setValue(userInfo);
     }
@@ -222,6 +230,10 @@ public class UserSingleton {
         });
     }
 
+    /**Chexk if user is already in the database
+     * @param userId
+     * @return -
+     */
     public Boolean userExists(String userId){
         for(UserInfo user: allUserInfos){
             if(user.getUserId().equals(userId)){
