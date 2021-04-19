@@ -311,24 +311,11 @@ public class MainActivity extends BaseActivity{
         //this will refresh the osmdroid configuration on resuming.
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
         discoverDevices();
-        addBatteryLevel();
-
-    }
-    private void addBatteryLevel(){
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        int batteryPct = level * 100 / (int)scale;
-
         AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
-        ArrayList<Date> timestamps = analyticsInstance.getTimeStamps();
-        ArrayList<Integer> batteryLevels = analyticsInstance.getBatteryLevels();
-        batteryLevels.add(batteryPct);
-        timestamps.add(new Date());
-        System.out.println("---------------"+timestamps.size()+ "-------------");
+        analyticsInstance.addBatteryLevel(getApplicationContext());
+
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -786,7 +773,8 @@ public class MainActivity extends BaseActivity{
     public void onStop(){
         super.onStop();
         if(AppAnalyticsSingleton.getInstance().getTimeStamps().size() % 2 == 1){
-            addBatteryLevel();
+            AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
+            analyticsInstance.addBatteryLevel(getApplicationContext());
         }
 
     }

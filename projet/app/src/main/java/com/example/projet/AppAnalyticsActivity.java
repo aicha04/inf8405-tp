@@ -52,80 +52,33 @@ public class AppAnalyticsActivity extends BaseActivity {
         binding = ActivityAppAnalyticsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        final android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        final android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (wifi.isConnectedOrConnecting ()) {
-            setWifiLinkSpeed();
-            Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
-        } else if (mobile.isConnectedOrConnecting ()) {
-            setUplinkDownlinkBandwidth();
-            Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
-        } else {
-
-            Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
-        }
-
-
-
 
         binding.backButton.setOnClickListener(onClickListener);
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = getApplicationContext().registerReceiver(null, ifilter);
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        int batteryPct = level * 100 / (int)scale;
-
-        AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
-        ArrayList<Date> timestamps = analyticsInstance.getTimeStamps();
-        ArrayList<Integer> batteryLevels = analyticsInstance.getBatteryLevels();
-        batteryLevels.add(batteryPct);
-        timestamps.add(new Date());
-        System.out.println("aaaa" + batteryLevels.size());
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-
+        // Create graph to display battery usage
         try {
+            createBatteryUsageGraph();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
-            for(int i =0; i < batteryLevels.size(); i++){
-                if(i % 2 == 0) {
-                    series = new LineGraphSeries<>();
-                    DataPoint dataPoint = new DataPoint(timestamps.get(i), batteryLevels.get(i));
-                    series.appendData(dataPoint, true, 2);
-                    graph.addSeries(series);
+        // Set bandwidth information
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                }else{
-                    DataPoint dataPoint = new DataPoint(timestamps.get(i), batteryLevels.get(i));
-                    series.appendData(dataPoint, true, 2);
-                }
+            final android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            final android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if (wifi.isConnectedOrConnecting ()) {
+                setWifiLinkSpeed();
+                Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
+            } else if (mobile.isConnectedOrConnecting ()) {
+                setUplinkDownlinkBandwidth();
+                Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+            } else {
+
+                Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
             }
-
-
-            // set date label formatter
-            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getApplicationContext(), formatter));
-            graph.getGridLabelRenderer().setNumHorizontalLabels(4);
-            graph.getGridLabelRenderer().setNumVerticalLabels(5);
-            graph.setBackgroundColor(getResources().getColor(R.color.white));
-// set manual x bounds to have nice steps
-            graph.getViewport().setMinX(timestamps.get(0).getTime());
-            graph.getViewport().setMaxX(timestamps.get(timestamps.size()-1).getTime());
-//            graph.getViewport().setMinX(0);
-//            graph.getViewport().setMaxX(timestamps.size()-1);
-            graph.getViewport().setXAxisBoundsManual(true);
-            graph.getViewport().setMinY(0);
-            graph.getViewport().setMaxY(100);
-            graph.getViewport().setYAxisBoundsManual(true);
-
-// as we use dates as labels, the human rounding to nice readable numbers
-// is not necessary
-            graph.getGridLabelRenderer().setHumanRounding(false);
-        } catch (IllegalArgumentException e) {
-            Toast.makeText(AppAnalyticsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
 
     }
@@ -148,7 +101,7 @@ public class AppAnalyticsActivity extends BaseActivity {
         int downSpeed = nc.getLinkDownstreamBandwidthKbps()/1000;
         int upSpeed = nc.getLinkUpstreamBandwidthKbps()/1000;
         String upSpeedStr =  upSpeed + " Mbps";
-        String downSpeedStr = upSpeed+ " MB";
+        String downSpeedStr = upSpeed+ " Mbps";
         binding.uplinkView.setText(upSpeedStr);
         binding.downlinkView.setText(downSpeedStr);
         System.out.println(downSpeed);
@@ -163,6 +116,53 @@ public class AppAnalyticsActivity extends BaseActivity {
         }
 
     }
+    private void createBatteryUsageGraph(){
+        // add current battery level
+        AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();
+        analyticsInstance.addBatteryLevel(getApplicationContext());
+        ArrayList<Date> timestamps = analyticsInstance.getTimeStamps();
+        ArrayList<Integer> batteryLevels = analyticsInstance.getBatteryLevels();
+
+        GraphView graph = binding.graph;
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+        try {
+
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
+            for(int i =0; i < batteryLevels.size(); i++){
+                if(i % 2 == 0) {
+                    series = new LineGraphSeries<>();
+                    DataPoint dataPoint = new DataPoint(timestamps.get(i), batteryLevels.get(i));
+                    series.appendData(dataPoint, true, 2);
+                    graph.addSeries(series);
+
+                }else{
+                    DataPoint dataPoint = new DataPoint(timestamps.get(i), batteryLevels.get(i));
+                    series.appendData(dataPoint, true, 2);
+                }
+            }
+
+            // set date label formatter
+            graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getApplicationContext(), formatter));
+            graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+            graph.getGridLabelRenderer().setNumVerticalLabels(5);
+            graph.setBackgroundColor(getResources().getColor(R.color.white));
+            // set manual x bounds to have nice steps
+            graph.getViewport().setMinX(timestamps.get(0).getTime());
+            graph.getViewport().setMaxX(timestamps.get(timestamps.size()-1).getTime());
+            graph.getViewport().setXAxisBoundsManual(true);
+            // set manual y bounds to have nice steps
+            graph.getViewport().setMinY(0);
+            graph.getViewport().setMaxY(100);
+            graph.getViewport().setYAxisBoundsManual(true);
+
+            graph.getGridLabelRenderer().setHumanRounding(false);
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(AppAnalyticsActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
