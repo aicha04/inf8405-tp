@@ -85,6 +85,11 @@ public class AppAnalyticsActivity extends BaseActivity {
         startActivity(i);
         finish();
     }
+    /**
+     * display bandwidth uplink and downlink for mobile connection
+     * @param -
+     * @return -
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setUplinkDownlinkBandwidth(){
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -98,6 +103,11 @@ public class AppAnalyticsActivity extends BaseActivity {
         binding.downlinkView.setText(downSpeedStr);
         System.out.println(downSpeed);
     }
+    /**
+     * display wifi speed
+     * @param -
+     * @return -
+     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void setWifiLinkSpeed(){
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -108,6 +118,11 @@ public class AppAnalyticsActivity extends BaseActivity {
         }
 
     }
+    /**
+     * Creates battery usage graph of main activity from arrays in {@link AppAnalyticsSingleton}
+     * @param -
+     * @return -
+     */
     private void createBatteryUsageGraph(){
         // add current battery level
         AppAnalyticsSingleton analyticsInstance = AppAnalyticsSingleton.getInstance();

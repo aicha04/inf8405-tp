@@ -60,7 +60,11 @@
     <string name="bandwidth">Bandwidth</string>
     <string name="_0_Mbps" translatable="false">0 Mbps</string>
     <string name="wifi_speed">WiFi Speed:</string>
-
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="reset">Reset</string>
+    <string name="_0_0" translatable="false">0.0</string>
 
 
 </resources>

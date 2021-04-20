@@ -16,7 +16,11 @@ public class AppAnalyticsSingleton {
     public static AppAnalyticsSingleton getInstance(){return instance;}
     public ArrayList<Integer> getBatteryLevels(){return batteryLevels;}
     public ArrayList<Date> getTimeStamps(){return timeStamps;}
-
+    /**
+     * Adds current battery level and current time to respective arrays
+     * @param  context  app context
+     * @return
+     */
     public void addBatteryLevel(Context context){
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);

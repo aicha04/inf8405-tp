@@ -40,8 +40,7 @@
             android:background="?attr/background"
             android:textAllCaps="false"
             android:src="?attr/profileIcon"
-            android:layout_margin="5dp"
-            android:layout_alignParentLeft="true" />
+            android:layout_margin="5dp" />
 
         <ImageButton
             android:id="@+id/app_analytics"
@@ -51,8 +50,7 @@
             android:textAllCaps="false"
             android:src="?attr/analyticsIcon"
             android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/profile_button"
-            android:layout_toRightOf="@+id/profile_button" />
+            android:layout_toEndOf="@+id/profile_button" />
 
         <ImageButton
             android:id="@+id/sensors_button"
@@ -62,7 +60,6 @@
             android:textAllCaps="false"
             android:src="?attr/sensorsIcon"
             android:layout_margin="5dp"
-            android:layout_toEndOf="@+id/app_analytics"
-            android:layout_toRightOf="@+id/app_analytics" />
+            android:layout_toEndOf="@+id/app_analytics" />
     </RelativeLayout>
 </RelativeLayout>
