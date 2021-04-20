@@ -101,7 +101,7 @@ public class WelcomeActivity extends AppCompatActivity {
     public void openAccount(int position) throws InterruptedException {
         userSingleton.setCurrentUser(userSingleton.getAllUserInfos().get(position));
         userSingleton.fetchCurrentUserDevices();
-        TimeUnit.MILLISECONDS.sleep(300);
+        TimeUnit.MILLISECONDS.sleep(500);
         Intent mainAct = new Intent(this, MainActivity.class);
         startActivity(mainAct);
         finish();
