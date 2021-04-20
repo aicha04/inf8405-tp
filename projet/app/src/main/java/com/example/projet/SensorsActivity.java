@@ -1,7 +1,6 @@
 package com.example.projet;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,20 +13,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import com.example.projet.databinding.ActivitySensorsBinding;
 import java.text.DecimalFormat;
 
 public class SensorsActivity extends BaseActivity implements SensorEventListener {
-    private final UserSingleton userSingleton = UserSingleton.getInstance();
     private final Constants constants = new Constants();
     private SensorManager sensorManager;
     private Sensor accelerometer;

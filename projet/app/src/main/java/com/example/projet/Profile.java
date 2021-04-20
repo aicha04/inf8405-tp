@@ -38,7 +38,8 @@ public class Profile extends BaseActivity {
         }
 
         binding.usernameValue.setText(" " + userSingleton.getCurrentUserId());
-        binding.themeValue.setText(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)? R.string.light_theme_value : R.string.dark_theme_value);
+        binding.themeValue.setText(userSingleton.getCurrentUserTheme().equals(constants.LIGHT_THEME)?
+                R.string.light_theme_value : R.string.dark_theme_value);
         binding.languageValue.setText(R.string.language_value);
 
         // Set the button listener

@@ -9,7 +9,6 @@ public class Constants {
     public String DARK_THEME = "DARK";
     public String DEVICES_DATABASE_NAME = "devices";
     public String USER_INFO_DATABASE_NAME = "userInfo";
-    public String CURRENT_THEME = "CURRENT_THEME";
     public  String CURRENT_LANGUAGE = "My Lang";
     public final String[] LANGUAGES = {"Français", "English"};
 
